@@ -41,5 +41,5 @@ final class Main {
     public static void loadResources() throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
         Utilities.json = (JSONObject)jsonParser.parse(new InputStreamReader(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("resources/ROTMG.json")), StandardCharsets.UTF_8));
-    
+    }
 }

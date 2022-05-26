@@ -9,3 +9,6 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 ## [1.0] - 2022-05-19
 ### Added
 - Initial source code.
+- 
+### Changed
+- Added GUI Scaling for GUI.java.

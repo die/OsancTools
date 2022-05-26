@@ -53,7 +53,7 @@ public class SetTable extends JFrame {
         setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/Gravestone.png"))).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
+        setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
         setVisible(true);
     }
 

@@ -9,6 +9,7 @@ A Java application containing various tools for making security work in the Oryx
 - Obtain raid information from the WebApp's API.
 - Parse WebApp reacts.
 - Parse raider sets according to Oryx Sanctuary Reqs.
+- Filter/Mark raiders when parsing to remove duplicate and unnecessary manual checks.
 - Calculate the number of Oryx 3 completes for veteran verification.
 
 ## Installation

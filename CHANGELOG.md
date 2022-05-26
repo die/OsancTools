@@ -6,7 +6,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleased]
 
-## [1.0] - 2022-05-19
+## [1.0] - 2022-05-26
 ### Added
 - Initial source code.
 

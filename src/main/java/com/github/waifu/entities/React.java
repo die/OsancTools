@@ -1,7 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.util.Utilities;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import javax.swing.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,6 +15,7 @@ public class React {
     private String id;
     private String name;
     private String type;
+    private String requirement;
     private ImageIcon image;
     private List<Account> raiders;
 
@@ -28,13 +29,13 @@ public class React {
      * @param imageURL url of the image of the React.
      * @param raiders list of raiders who have reacted to this React.
      */
-    public React(String id, String name, String imageURL, List<Account> raiders) throws MalformedURLException {
+    public React(String id, String name, String requirement, String imageURL, List<Account> raiders) throws MalformedURLException {
         this.id = id;
         this.name = name;
         this.type = "";
+        this.requirement = requirement;
         this.image = new ImageIcon(new URL(imageURL));
         this.raiders = raiders;
-        parseReact(this.type);
     }
 
     /**
@@ -48,13 +49,13 @@ public class React {
      * @param imageURL url of the image of the React.
      * @param raiders list of raiders who have reacted to this React.
      */
-    public React(String id, String name, String type, String imageURL, List<Account> raiders) throws MalformedURLException {
+    public React(String id, String name, String type, String requirement, String imageURL, List<Account> raiders) throws MalformedURLException {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.requirement = requirement;
         this.image = new ImageIcon(new URL(imageURL));
         this.raiders = raiders;
-        parseReact(this.type);
     }
 
     public String getId() {
@@ -65,12 +66,28 @@ public class React {
         return this.name;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getRequirement() {
+        return this.requirement;
+    }
+
     public ImageIcon getImage() {
         return this.image;
     }
 
     public List<Account> getRaiders() {
         return this.raiders;
+    }
+
+    public void setRaiders(List<Account> raiders) {
+        this.raiders = raiders;
     }
 
     /**
@@ -134,8 +151,8 @@ public class React {
                     }
                     break;
                 case "Slow":
-                    JSONArray allowedSlows = (JSONArray) Utilities.json.get("slows");
-                    if (allowedSlows.contains(ability)) {
+                    JSONArray allowedSlows = Utilities.json.getJSONArray("slows");
+                    if (allowedSlows.toList().contains(ability)) {
                         inventory.setMessage("None");
                         inventory.setProblem("Good", 0);
                         inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
@@ -267,16 +284,18 @@ public class React {
         Inventory inventory = account.getCharacters().get(0).getInventory();
         if (name.equals(type)) {
             account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "good"));
-            if (inventory.getAbility().getName().equals("Empty slot") || inventory.getItems().get(1).getName().endsWith("UT") || inventory.getItems().get(1).getName().endsWith("ST")) {
-                inventory.setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
-                inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
-            } else {
-                if (Integer.parseInt(inventory.getItems().get(1).getName().substring(inventory.getItems().get(1).getName().length() - 1)) >= 6) {
-                    inventory.setMessage("None");
-                    inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
-                } else {
+            if (requirement.contains("T6")) {
+                if (inventory.getAbility().getName().equals("Empty slot") || inventory.getItems().get(1).getName().endsWith("UT") || inventory.getItems().get(1).getName().endsWith("ST")) {
                     inventory.setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
                     inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                } else {
+                    if (Integer.parseInt(inventory.getItems().get(1).getName().substring(inventory.getItems().get(1).getName().length() - 1)) >= 6) {
+                        inventory.setMessage("None");
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
+                    } else {
+                        inventory.setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                    }
                 }
             }
         } else {

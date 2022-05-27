@@ -16,10 +16,6 @@ public class Item {
     private final String type;
     private String itemClass;
     private ImageIcon image;
-    private ImageIcon parseSetImage;
-    private ImageIcon parseReactImage;
-    private String severity;
-    private String react;
 
     /**
      * Item method.
@@ -46,8 +42,6 @@ public class Item {
         this.type = type;
         this.itemClass = itemClass;
         createImage();
-        this.parseSetImage = image;
-        this.parseReactImage = image;
     }
 
     public String getName() {
@@ -148,11 +142,4 @@ public class Item {
         return this.image;
     }
 
-    public ImageIcon getParseSetImage() {
-        return this.parseSetImage;
-    }
-
-    public void setParseSetImage(String severity) {
-        this.parseSetImage = Utilities.markImage(image, severity);
-    }
 }

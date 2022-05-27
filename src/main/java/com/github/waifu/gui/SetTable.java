@@ -87,10 +87,10 @@ public class SetTable extends JFrame {
         for (Map.Entry<Account, Inventory> m : accountInventoryMap.entrySet()) {
             if (m.getValue() != null) {
                 Object[] array = new Object[4];
-                ImageIcon weapon = new ImageIcon(m.getValue().getItems().get(0).getParseSetImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                ImageIcon ability = new ImageIcon(m.getValue().getItems().get(1).getParseSetImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                ImageIcon armor = new ImageIcon(m.getValue().getItems().get(2).getParseSetImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                ImageIcon ring = new ImageIcon(m.getValue().getItems().get(3).getParseSetImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
+                ImageIcon weapon = new ImageIcon(m.getValue().getItems().get(0).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
+                ImageIcon ability = new ImageIcon(m.getValue().getItems().get(1).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
+                ImageIcon armor = new ImageIcon(m.getValue().getItems().get(2).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
+                ImageIcon ring = new ImageIcon(m.getValue().getItems().get(3).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
                 int w = weapon.getIconWidth() + ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth();
                 int h = weapon.getIconHeight();
                 BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);

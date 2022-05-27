@@ -1,12 +1,10 @@
 package com.github.waifu.gui;
 
 import com.github.waifu.util.Utilities;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import javax.swing.SwingUtilities;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -38,8 +36,8 @@ final class Main {
      *
      * Loads ROTMG.json from the resources file for other classes to use.
      */
-    public static void loadResources() throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        Utilities.json = (JSONObject)jsonParser.parse(new InputStreamReader(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("resources/ROTMG.json")), StandardCharsets.UTF_8));
+    public static void loadResources() {
+        JSONTokener tokener = new JSONTokener(new InputStreamReader(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("resources/ROTMG.json")), StandardCharsets.UTF_8));
+        Utilities.json = new JSONObject(tokener);
     }
 }

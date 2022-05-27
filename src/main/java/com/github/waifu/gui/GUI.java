@@ -11,10 +11,9 @@ import com.github.waifu.handlers.WebAppHandler;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.JSONArray;
 import org.jsoup.Jsoup;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -147,17 +146,14 @@ public class GUI extends JFrame {
                     } catch (MalformedURLException ex) {
                         ex.printStackTrace();
                     }
-                } else {
+                } else if (s != null){
                     JOptionPane.showMessageDialog(main,
                             "Error: failed to get json.",
                             "Error Message",
                             JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(main,
-                        ex.getStackTrace(),
-                        ex.getMessage(),
-                        JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
 
@@ -222,7 +218,9 @@ public class GUI extends JFrame {
                         progressBar.setValue(0);
                         processRunning = true;
                         List<React> reacts = getReacts(json, progressBar);
-                        new ReactTable(reacts);
+                        if (reacts != null) {
+                            new ReactTable(reacts);
+                        }
                         processRunning = false;
                         stopButton.setText("Finished");
                     }
@@ -250,7 +248,9 @@ public class GUI extends JFrame {
                         progressBar.setValue(0);
                         processRunning = true;
                         Map<Account, Inventory> sets = getSets(json, progressBar);
-                        new SetTable(sets);
+                        if (sets != null) {
+                            new SetTable(sets);
+                        }
                         processRunning = false;
                         stopButton.setText("Finished");
                     }
@@ -486,35 +486,36 @@ public class GUI extends JFrame {
         if (json == null || !json.has("raid")) {
             return null;
         } else {
-            Map<String, List<String>> map = Utilities.parseRaiderReacts(json);
+            Map<String, React> map = Utilities.parseRaiderReacts(json);
             if (map.isEmpty()) {
                 return null;
             } else {
                 JSONArray items = (JSONArray) Utilities.json.get("reactItem");
                 JSONArray classes = (JSONArray) Utilities.json.get("reactClass");
                 JSONArray reactDPS = (JSONArray) Utilities.json.get("reactDps");
-                List<React> reacts = new ArrayList<>();
                 bar.setMaximum(map.size());
                 int count = 1;
-                for (Map.Entry<String, List<String>> m : map.entrySet()) {
+                List<React> reacts = new ArrayList<>();
+                for (Map.Entry<String, React> m : map.entrySet()) {
                     List<Account> raiders = new ArrayList<>();
-                    for (int i = 2; i < m.getValue().size(); i++) {
-                        Account account = RealmeyeRequestHandler.GET(m.getValue().get(i));
+                    for (int i = 0; i < m.getValue().getRaiders().size(); i++) {
+                        Account account = RealmeyeRequestHandler.GET(m.getValue().getRaiders().get(i).getName());
                         raiders.add(account);
                         TimeUnit.SECONDS.sleep(1);
                     }
-                    String reactName = m.getValue().get(1);
-                    if (items.contains(reactName)) {
-                        reacts.add(new React(m.getKey(), reactName, "item", m.getValue().get(0), raiders));
-                    } else if (classes.contains(reactName)) {
-                        reacts.add(new React(m.getKey(), reactName, "class", m.getValue().get(0), raiders));
-                    } else if (reactDPS.contains(reactName)) {
-                        reacts.add(new React(m.getKey(), reactName, "dps", m.getValue().get(0), raiders));
+                    m.getValue().setRaiders(raiders);
+                    String reactName = m.getValue().getName();
+                    if (items.toList().contains(reactName)) {
+                        m.getValue().setType("item");
+                    } else if (classes.toList().contains(reactName)) {
+                        m.getValue().setType("class");
+                    } else if (reactDPS.toList().contains(reactName)) {
+                        m.getValue().setType("dps");
                     } else if (reactName.contains("Effusion")) {
-                        reacts.add(new React(m.getKey(), reactName, "lock", m.getValue().get(0), raiders));
-                    } else {
-                        reacts.add(new React(m.getKey(), reactName, m.getValue().get(0), raiders));
+                        m.getValue().setType("lock");
                     }
+                    m.getValue().parseReact(m.getValue().getType());
+                    reacts.add(m.getValue());
                     bar.setValue(count);
                     count++;
                 }

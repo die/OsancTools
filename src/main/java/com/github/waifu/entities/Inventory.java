@@ -1,7 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.util.Utilities;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,14 +75,14 @@ public class Inventory {
                 if (name.equals("Empty slot")) {
                     setProblem("Empty slot", 1);
                 } else if (name.endsWith("UT") || name.endsWith("ST")) {
-                    JSONArray banned = (JSONArray) Utilities.json.get("banned");
-                    JSONArray swapouts = (JSONArray) Utilities.json.get("swapouts");
-                    if (banned.contains(name)) {
+                    JSONArray banned = Utilities.json.getJSONArray("banned");
+                    JSONArray swapouts = Utilities.json.getJSONArray("swapouts");
+                    if (banned.toList().contains(name)) {
                         setProblem("Banned item", 2);
-                        i.setParseSetImage("issue");
-                    } else if (swapouts.contains(name)) {
+                        i.setImage(Utilities.markImage(i.getImage(), "issue"));
+                    } else if (swapouts.toList().contains(name)) {
                         setProblem("Swapout Item", 1);
-                        i.setParseSetImage("warning");
+                        i.setImage(Utilities.markImage(i.getImage(), "warning"));
                     }
                 } else {
                     int item;
@@ -95,12 +95,12 @@ public class Inventory {
                     if (type.equals("ability") || type.equals("ring")) {
                         if (item < 4) {
                             setProblem("Under Reqs", 3);
-                            i.setParseSetImage("issue");
+                            i.setImage(Utilities.markImage(i.getImage(), "issue"));
                         }
                     } else if (type.equals("weapon") || type.equals("armor")) {
                         if (item < 12) {
                             setProblem("Under Reqs", 3);
-                            i.setParseSetImage("issue");
+                            i.setImage(Utilities.markImage(i.getImage(), "issue"));
                         }
                     }
                 }
@@ -118,13 +118,13 @@ public class Inventory {
         JSONArray dpsItems = (JSONArray) Utilities.json.get("dps");
         int count = 0;
         for (Item s : items) {
-            if (dpsItems.contains(s.getName())) {
+            if (dpsItems.toList().contains(s.getName())) {
                 s.setImage(Utilities.markImage(s.getImage(), "good"));
                 count++;
             }
         }
         JSONArray exaltedSkins = (JSONArray) Utilities.json.get("exaltedSkins");
-        if (exaltedSkins.contains(skin)) {
+        if (exaltedSkins.toList().contains(skin)) {
             count++;
         }
         return count >= dps;

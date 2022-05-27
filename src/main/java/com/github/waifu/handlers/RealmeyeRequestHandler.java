@@ -7,9 +7,6 @@ import com.github.waifu.entities.Item;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;

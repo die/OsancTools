@@ -2,7 +2,6 @@ package com.github.waifu.handlers;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 

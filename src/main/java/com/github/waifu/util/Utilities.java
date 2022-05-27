@@ -1,12 +1,14 @@
 package com.github.waifu.util;
 
+import com.github.waifu.entities.Account;
+import com.github.waifu.entities.React;
 import org.json.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
@@ -25,16 +27,16 @@ public class Utilities {
      *
      * @param json JSONObject returned from the WebApp.
      */
-    public static Set<String> parseRaiders(org.json.JSONObject json) {
+    public static Set<String> parseRaiders(JSONObject json) throws IOException, InterruptedException {
         JSONArray members = json.getJSONObject("raid").getJSONArray("members");
         Set<String> set = new HashSet<>();
         Set<String> runes = new HashSet<>();
-        Map<String, java.util.List<String>> map = parseRaiderReacts(json);
-        for (Map.Entry<String, java.util.List<String>> m : map.entrySet()) {
-            switch (m.getValue().get(1)) {
+        Map<String, React> map = parseRaiderReacts(json);
+        for (Map.Entry<String, React> m : map.entrySet()) {
+            switch (m.getValue().getName()) {
                 case "Helmet Rune", "Sword Rune", "Shield Rune":
-                    for (int i = 2; i < m.getValue().size(); i++) {
-                        runes.add(m.getValue().get(i));
+                    for (int i = 0; i < m.getValue().getRaiders().size(); i++) {
+                        runes.add(m.getValue().getRaiders().get(i).getName());
                     }
             }
         }
@@ -58,15 +60,17 @@ public class Utilities {
      *
      * @param json JSONObject returned from the WebApp.
      */
-    public static Map<String, java.util.List<String>> parseRaiderReacts(org.json.JSONObject json) {
+    public static Map<String, React> parseRaiderReacts(org.json.JSONObject json) throws IOException, InterruptedException {
         JSONArray usernames = json.getJSONObject("raid").getJSONArray("members");
         JSONArray reacts = json.getJSONObject("raid").getJSONArray("reacts");
-        Map<String, List<String>> m = new HashMap<>();
+        Map<String, React> m = new HashMap<>();
         for (int i = 0; i < reacts.length(); i++) {
-            java.util.List<String> l = new ArrayList<>();
-            l.add(reacts.getJSONObject(i).getString("icon"));
-            l.add(reacts.getJSONObject(i).getString("name"));
-            m.put(String.valueOf(reacts.getJSONObject(i).getInt("id")), l);
+            String id = String.valueOf(reacts.getJSONObject(i).getInt("id"));
+            String name = reacts.getJSONObject(i).getString("name");
+            String icon = reacts.getJSONObject(i).getString("icon");
+            String requirement = String.valueOf(reacts.getJSONObject(i).get("reqs"));
+            React react = new React(id, name, requirement, icon, new ArrayList<>());
+            m.put(id, react);
         }
         for (int i = 0; i < usernames.length(); i++) {
             if (usernames.getJSONObject(i).getJSONArray("reacts") != null) {
@@ -74,7 +78,7 @@ public class Utilities {
                 for (int j = 0; j < userReacts.length(); j++) {
                     Set<String> parsedUsernames = getRaiderUsernames(usernames, i);
                     for (String parsedUsername : parsedUsernames) {
-                        m.get(String.valueOf(userReacts.get(j))).add(parsedUsername);
+                        m.get(String.valueOf(userReacts.get(j))).getRaiders().add(new Account(parsedUsername, null));
                     }
                 }
             }

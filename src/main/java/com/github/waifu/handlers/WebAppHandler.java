@@ -37,7 +37,6 @@ public class WebAppHandler {
         JSONObject request = new JSONObject();
         request.put("access_token", Preferences.userRoot().get("token", ""));
         request.put("raid_id", id);
-
         try {
            String data = Jsoup.connect("https://api.osanc.net/getRaid")
                     .requestBody(request.toString())
@@ -46,7 +45,6 @@ public class WebAppHandler {
                     .post()
                     .body()
                     .text();
-
            TimeUnit.SECONDS.sleep(1);
            return new JSONObject(data);
         } catch (Exception e) {

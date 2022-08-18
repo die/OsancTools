@@ -8,10 +8,10 @@ import java.util.List;
 public class Account {
 
     private final String name;
-    private final int stars;
-    private final int skins;
-    private final int exaltations;
-    private final long accountFame;
+    private final String stars;
+    private final String skins;
+    private final String exaltations;
+    private final String accountFame;
     private final String guild;
     private final String guildRank;
     private final String creationDate;
@@ -28,10 +28,10 @@ public class Account {
      */
     public Account(String name, List<Character> characters) {
         this.name = name;
-        this.stars = 0;
-        this.skins = 0;
-        this.exaltations = 0;
-        this.accountFame = 0;
+        this.stars = "";
+        this.skins = "";
+        this.exaltations = "";
+        this.accountFame = "";
         this.guild = "";
         this.guildRank = "";
         this.creationDate = "";
@@ -55,7 +55,7 @@ public class Account {
      * @param lastSeen last seen date of the Account.
      * @param characters list of characters the Account has.
      */
-    public Account(String name, int stars, int skins, int exaltations, long accountFame, String guild, String guildRank, String creationDate, String lastSeen, List<Character> characters) {
+    public Account(String name, String stars, String skins, String exaltations, String accountFame, String guild, String guildRank, String creationDate, String lastSeen, List<Character> characters) {
         this.name = name;
         this.stars = stars;
         this.skins = skins;
@@ -68,21 +68,35 @@ public class Account {
         this.characters = characters;
     }
 
+    public String printAccount() {
+        String account = "Name: " + this.name + "\n" +
+                           "Stars: " + this.stars + "\n" +
+                           "Skins: " + this.skins + "\n" +
+                           "Exaltations: " + this.exaltations + "\n" +
+                           "Account Fame: " + this.accountFame + "\n" +
+                           "Guild: " + this.guild + "\n" +
+                           "Guild Rank: " + this.guildRank + "\n" +
+                           "Creation Date: " + this.creationDate + "\n" +
+                           "Last Seen: " + this.lastSeen + "\n" +
+                           "Characters: " + this.characters.size() + "\n";
+        return account;
+    }
+
     public String getName() { return this.name; }
 
-    public int getStars() {
+    public String getStars() {
         return this.stars;
     }
 
-    public int getSkins() {
+    public String getSkins() {
         return this.skins;
     }
 
-    public int getExaltations() {
+    public String getExaltations() {
         return this.exaltations;
     }
 
-    public long getAccountFame() {
+    public String getAccountFame() {
         return this.accountFame;
     }
 

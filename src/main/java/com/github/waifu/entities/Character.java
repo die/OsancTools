@@ -9,14 +9,16 @@ import java.util.Objects;
 public class Character {
 
     private final String type;
-    private final long skin;
+    private final String skin;
     private ImageIcon skinImage;
-    private final int level;
+    private final String level;
     private final String cqc;
-    private final long fame;
-    private final long exp;
-    private final int place;
+    private final String fame;
+    private final String exp;
+    private final String place;
     private final String stats;
+    private final String lastSeen;
+    private final String server;
     private final Inventory inventory;
 
     /**
@@ -26,14 +28,16 @@ public class Character {
      */
     public Character() {
         this.type = "Wizard";
-        this.skin = 0;
-        this.skinImage = new ImageIcon(Objects.requireNonNull(Character.class.getClassLoader().getResource("resources/skins/Wizard.png")));
-        this.level = 0;
+        this.skin = "";
+        this.skinImage = new ImageIcon(Objects.requireNonNull(Character.class.getClassLoader().getResource("images/skins/Wizard.png")));
+        this.level = "";
         this.cqc = "";
-        this.fame = 0;
-        this.exp = 0;
-        this.place = 0;
+        this.fame = "";
+        this.exp = "";
+        this.place = "";
         this.stats = "";
+        this.lastSeen = "";
+        this.server = "";
         this.inventory = new Inventory();
     }
 
@@ -52,24 +56,39 @@ public class Character {
      * @param stats stats of the Character, currently as ?/8.
      * @param inventory Inventory of the Character.
      */
-    public Character(String type, long skin, int level, String cqc, long fame, long exp, int place, String stats, Inventory inventory) {
+    public Character(String type, String skin, String level, String cqc, String fame, String exp, String place, String stats, String lastSeen, String server, Inventory inventory) {
         this.type = type;
         this.skin = skin;
-        this.skinImage = new ImageIcon(Objects.requireNonNull(Character.class.getClassLoader().getResource("resources/skins/" + type + ".png")));
+        this.skinImage = new ImageIcon(Objects.requireNonNull(Character.class.getClassLoader().getResource("images/skins/" + type + ".png")));
         this.level = level;
         this.cqc = cqc;
         this.fame = fame;
         this.exp = exp;
         this.place = place;
         this.stats = stats;
+        this.lastSeen = lastSeen;
+        this.server = server;
         this.inventory = inventory;
+    }
+
+    public void printCharacter() {
+        System.out.println("Type: " + this.type + "\n" +
+                "Skin: " + this.skin + "\n" +
+                "Level: " + this.level + "\n" +
+                "CQC: " + this.cqc + "\n" +
+                "Fame: " + this.fame + "\n" +
+                "Exp: " + this.exp + "\n" +
+                "Place: " + this.place + "\n" +
+                "Stats: " + this.stats + "\n" +
+                "Last Seen: " + this.lastSeen + "\n" +
+                "Server: " + this.server + "\n");
     }
 
     public String getType() {
         return this.type;
     }
 
-    public long getSkin() {
+    public String getSkin() {
         return this.skin;
     }
 
@@ -81,21 +100,21 @@ public class Character {
         this.skinImage = skinImage;
     }
 
-    public int getLevel() {
+    public String getLevel() {
         return this.level;
     }
 
     public String getCqc() { return this.cqc; }
 
-    public long getFame() {
+    public String getFame() {
         return this.fame;
     }
 
-    public long getExp() {
+    public String getExp() {
         return this.exp;
     }
 
-    public int getPlace() {
+    public String getPlace() {
         return this.place;
     }
 

@@ -48,7 +48,7 @@ public class ReactTable extends JFrame {
         setContentPane(ReactPanel);
         setResizable(false);
         setTitle("OsancTools");
-        setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/Gravestone.png"))).getImage());
+        //setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/Gravestone.png"))).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
@@ -108,7 +108,7 @@ public class ReactTable extends JFrame {
                 ImageIcon result = new ImageIcon(combined);
                 width = result.getIconWidth() + skin.getIconWidth();
                 array[2] = result;
-                array[3] = a.getCharacters().get(0).getInventory().getMessage();
+                array[3] = a.getCharacters().get(0).getInventory().getIssue().getWhisper();
                 array[4] = false;
                 tableModel.addRow(array);
             }

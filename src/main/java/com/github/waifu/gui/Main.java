@@ -4,6 +4,7 @@ import com.github.waifu.util.Utilities;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import javax.swing.SwingUtilities;
+import java.awt.*;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -23,6 +24,7 @@ final class Main {
      * @param args input arguments that are not used.
      */
     public static void main(final String[] args) {
+
         try {
             loadResources();
             SwingUtilities.invokeLater(GUI::new);
@@ -37,7 +39,7 @@ final class Main {
      * Loads ROTMG.json from the resources file for other classes to use.
      */
     public static void loadResources() {
-        JSONTokener tokener = new JSONTokener(new InputStreamReader(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("resources/ROTMG.json")), StandardCharsets.UTF_8));
+        JSONTokener tokener = new JSONTokener(new InputStreamReader(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("ROTMG.json")), StandardCharsets.UTF_8));
         Utilities.json = new JSONObject(tokener);
     }
 }

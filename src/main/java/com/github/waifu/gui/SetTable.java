@@ -1,7 +1,10 @@
 package com.github.waifu.gui;
 
-import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
+import com.github.waifu.entities.Raider;
+import com.github.waifu.enums.Problem;
+import com.github.waifu.gui.actions.TableCopyAction;
+import com.github.waifu.gui.models.SetTableModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import javax.swing.*;
@@ -10,12 +13,16 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * SetTable class to construct the UI for the table containing parsed sets.
@@ -28,21 +35,24 @@ public class SetTable extends JFrame {
     private JCheckBox removeBadSetsCheckBox;
     private JCheckBox removePrivateProfilesCheckBox;
     private JCheckBox removeMarkedSetsCheckBox;
+    private JButton viewProfileButton;
     private RowFilter<Object, Object> removeGoodSets = RowFilter.regexFilter("");
     private RowFilter<Object, Object> removeBadSets = RowFilter.regexFilter("");
     private RowFilter<Object, Object> privateProfile = RowFilter.regexFilter("");
     private RowFilter<Object, Object> removeMarked = RowFilter.regexFilter("");
     private TableRowSorter<TableModel> sorter;
+    private Map<Raider, Inventory> accountInventoryMap;
 
     /**
      * SetTable method.
-     *
+     * <p>
      * Constructs a JFrame to display the set parse.
      *
      * @param accountInventoryMap Map containing an Account object as the key
      *                            and its Inventory as the value.
      */
-    public SetTable(Map<Account, Inventory> accountInventoryMap) throws MalformedURLException {
+    public SetTable(Map<Raider, Inventory> accountInventoryMap) throws MalformedURLException {
+        this.accountInventoryMap = accountInventoryMap;
         $$$setupUI$$$();
         createTable(accountInventoryMap);
         addActionListeners();
@@ -50,61 +60,55 @@ public class SetTable extends JFrame {
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/Gravestone.png"))).getImage());
+        // setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/Gravestone.png"))).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
+        //setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
         setVisible(true);
+        viewProfileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = (String) setsTable.getValueAt(setsTable.getSelectedRow(), 1);
+                for (Map.Entry<Raider, Inventory> m : accountInventoryMap.entrySet()) {
+                    if (m.getKey().getAccounts().get(0).getName().equalsIgnoreCase(username)) {
+                        Raider r = m.getKey();
+                        r.setAvatarSize(128, 128);
+                        new AccountView(r);
+                    }
+                }
+            }
+        });
+        TableCopyAction tableCopyAction = new TableCopyAction(setsTable);
+        pack();
     }
 
     /**
      * createTable method.
-     *
+     * <p>
      * Creates the table model, adds rows to the model, and applies the model to the table.
      *
      * @param accountInventoryMap Map containing an Account object as the key
      *                            and its Inventory as the value.
      */
-    private void createTable(Map<Account, Inventory> accountInventoryMap) throws MalformedURLException {
-        DefaultTableModel tableModel = new DefaultTableModel() {
-            @Override
-            public Class<?> getColumnClass(int column) {
-                if (column == 2) return ImageIcon.class;
-                if (column == 3) return Boolean.class;
-                return Object.class;
-            }
-            @Override
-            public boolean isCellEditable(int row, int column)
-            {
-                return column != 0 && column != 2;
-            }
-        };
-        tableModel.addColumn("Problem");
-        tableModel.addColumn("Username");
-        tableModel.addColumn("Inventory");
-        tableModel.addColumn("Mark");
+    private void createTable(Map<Raider, Inventory> accountInventoryMap) {
+        DefaultTableModel tableModel = new SetTableModel();
         int width = 0;
-        for (Map.Entry<Account, Inventory> m : accountInventoryMap.entrySet()) {
+        for (Map.Entry<Raider, Inventory> m : accountInventoryMap.entrySet()) {
             if (m.getValue() != null) {
-                Object[] array = new Object[4];
-                ImageIcon weapon = new ImageIcon(m.getValue().getItems().get(0).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                ImageIcon ability = new ImageIcon(m.getValue().getItems().get(1).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                ImageIcon armor = new ImageIcon(m.getValue().getItems().get(2).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                ImageIcon ring = new ImageIcon(m.getValue().getItems().get(3).getImage().getImage().getScaledInstance(setsTable.getRowHeight(), setsTable.getRowHeight(), Image.SCALE_SMOOTH));
-                int w = weapon.getIconWidth() + ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth();
-                int h = weapon.getIconHeight();
-                BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                Graphics g = combined.getGraphics();
-                g.drawImage(weapon.getImage(), 0, 0, null);
-                g.drawImage(ability.getImage(), ability.getIconWidth(), 0, null);
-                g.drawImage(armor.getImage(), ability.getIconWidth() + armor.getIconWidth(), 0, null);
-                g.drawImage(ring.getImage(), ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth(), 0, null);
-                ImageIcon result = new ImageIcon(combined);
+                Object[] array = new Object[6];
+                ImageIcon result = new ImageIcon(m.getValue().createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
                 width = result.getIconWidth();
-                array[0] = m.getValue().getProblem();
-                array[1] = m.getKey().getName();
+                array[0] = m.getValue().getIssue().getProblem().getProblem();
+                array[1] = m.getKey().getAccounts().get(0).getName();
                 array[2] = result;
-                array[3] = false;
+                if (!m.getValue().getIssue().getProblem().equals(Problem.NONE)) {
+                    array[3] = "/t " + m.getKey().getAccounts().get(0).getName() + " " + m.getValue().getIssue().getWhisper();
+                    array[4] = ";warn " + m.getKey().getAccounts().get(0).getName() + " " + m.getValue().getIssue().getMessage();
+                } else {
+                    array[3] = "";
+                    array[4] = "";
+                }
+                array[5] = false;
                 tableModel.addRow(array);
             }
         }
@@ -116,7 +120,7 @@ public class SetTable extends JFrame {
 
     /**
      * addActionListeners method.
-     *
+     * <p>
      * Constructs all listeners for the JFrame.
      */
     private void addActionListeners() {
@@ -190,7 +194,7 @@ public class SetTable extends JFrame {
      */
     private void $$$setupUI$$$() {
         main = new JPanel();
-        main.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
+        main.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
         final JScrollPane scrollPane1 = new JScrollPane();
         main.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "Sets", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
@@ -208,6 +212,9 @@ public class SetTable extends JFrame {
         removeMarkedSetsCheckBox = new JCheckBox();
         removeMarkedSetsCheckBox.setText("Remove Marked Sets");
         main.add(removeMarkedSetsCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        viewProfileButton = new JButton();
+        viewProfileButton.setText("View Profile");
+        main.add(viewProfileButton, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -219,7 +226,7 @@ public class SetTable extends JFrame {
 
     /**
      * updateFilters method.
-     *
+     * <p>
      * Updates the current filters to the table.
      * This allows real-time updates to filtered rows upon changes.
      */

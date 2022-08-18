@@ -1,5 +1,6 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.enums.Problem;
 import com.github.waifu.util.Utilities;
 import org.json.JSONArray;
 import javax.swing.*;
@@ -116,12 +117,12 @@ public class React {
                 break;
             case "lock":
                 for (Account a : raiders) {
-                    a.getCharacters().get(0).getInventory().setMessage("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
+                    a.getCharacters().get(0).getInventory().getIssue().setMessage("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
                 }
                 break;
             default:
                 for (Account a : raiders) {
-                    a.getCharacters().get(0).getInventory().setMessage("/lock " + a.getName());
+                    a.getCharacters().get(0).getInventory().getIssue().setMessage("/lock " + a.getName());
                 }
                 break;
         }
@@ -141,47 +142,47 @@ public class React {
             switch (name) {
                 case "Ogmur/Pogmur":
                     if (ability.equals("Shield of Ogmur UT") || ability.equals("Crystallised Fang's Venom UT")) {
-                        inventory.setMessage("None");
-                        inventory.setProblem("Good", 0);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
+                        inventory.getIssue().setMessage("None");
+                        inventory.getIssue().setProblem(Problem.NONE);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));
                     } else {
-                        inventory.setProblem("Missing Item", 2);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
-                        inventory.setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
+                        inventory.getIssue().setProblem(Problem.MISSING_REACT);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
                     }
                     break;
                 case "Slow":
                     JSONArray allowedSlows = Utilities.json.getJSONArray("slows");
                     if (allowedSlows.toList().contains(ability)) {
-                        inventory.setMessage("None");
-                        inventory.setProblem("Good", 0);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
+                        inventory.getIssue().setMessage("None");
+                        inventory.getIssue().setProblem(Problem.NONE);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));
                     } else {
-                        inventory.setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
-                        inventory.setProblem("Missing Item", 2);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
+                        inventory.getIssue().setProblem(Problem.MISSING_REACT);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
                     }
                     break;
                 case "Fungal Tome":
                     if (ability.equals("Tome of the Mushroom Tribes UT") || ability.equals("Non-Fungible Tome UT")) { // accounts for april fools name SMH
-                        inventory.setMessage("None");
-                        inventory.setProblem("Good", 0);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
+                        inventory.getIssue().setMessage("None");
+                        inventory.getIssue().setProblem(Problem.NONE);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));
                     } else {
-                        inventory.setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
-                        inventory.setProblem("Missing Item", 2);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
+                        inventory.getIssue().setProblem(Problem.MISSING_REACT);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
                     }
                     break;
                 case "Marble Seal":
                     if (ability.equals("Marble Seal UT")) {
-                        inventory.setMessage("None");
-                        inventory.setProblem("Good", 0);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
+                        inventory.getIssue().setMessage("None");
+                        inventory.getIssue().setProblem(Problem.NONE);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));
                     } else {
-                        inventory.setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
-                        inventory.setProblem("Missing Item", 2);
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
+                        inventory.getIssue().setProblem(Problem.MISSING_REACT);
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
                     }
                     break;
             }
@@ -199,73 +200,73 @@ public class React {
         Inventory inventory = account.getCharacters().get(0).getInventory();
         String type = account.getCharacters().get(0).getType();
         if (inventory.getItems().stream().allMatch(item -> item.getName().equals("Empty slot"))) {
-            inventory.setMessage("Private Profile");
+            inventory.getIssue().setMessage("Private Profile");
         } else {
             switch (name) {
                 case "Wizard/Summoner 2/4":
                     if (!(type.equals("Wizard") || type.equals("Summoner"))) {
-                        inventory.setMessage("Wrong Class");
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "issue"));
+                        inventory.getIssue().setMessage("Wrong Class");
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.MISSING_REACT.getColor()));
                     } else {
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "good"));
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.NONE.getColor()));
                         if (inventory.calculateDps(account.getCharacters().get(0).getSkin(), 2)) {
-                            inventory.setMessage("None");
+                            inventory.getIssue().setMessage("None");
                         } else {
-                            inventory.setMessage("/t " + account.getName() + " Please equip your 2/4+ set so I can confirm it. You can swap it out after.");
+                            inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your 2/4+ set so I can confirm it. You can swap it out after.");
                         }
                     }
                     break;
                 case "2/4+ Wizard":
                     if (!account.getCharacters().get(0).getType().equals("Wizard")) {
-                        inventory.setMessage("Wrong Class");
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "issue"));
+                        inventory.getIssue().setMessage("Wrong Class");
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.MISSING_REACT.getColor()));
                     } else {
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "good"));
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.NONE.getColor()));
                         if (inventory.calculateDps(account.getCharacters().get(0).getSkin(), 2)) {
-                            inventory.setMessage("None");
+                            inventory.getIssue().setMessage("None");
                         } else {
-                            inventory.setMessage("/t " + account.getName() + " Please equip your 2/4+ set so I can confirm it. You can swap it out after.");
+                            inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your 2/4+ set so I can confirm it. You can swap it out after.");
                         }
                     }
                     break;
                 case "2/4+ Ranged":
                     if (inventory.calculateDps(account.getCharacters().get(0).getSkin(), 2)) {
-                        inventory.setMessage("None");
+                        inventory.getIssue().setMessage("None");
                     } else {
-                        inventory.setMessage("/t " + account.getName() + " Please equip your 2/4+ set so I can confirm it. You can swap it out after.");
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your 2/4+ set so I can confirm it. You can swap it out after.");
                     }
                     break;
                 case "Wizard/Summoner 3/4":
                     if (!(account.getCharacters().get(0).getType().equals("Wizard") || account.getCharacters().get(0).getType().equals("Summoner"))) {
-                        inventory.setMessage("Wrong Class");
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "issue"));
+                        inventory.getIssue().setMessage("Wrong Class");
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.MISSING_REACT.getColor()));
                     } else {
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "good"));
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.NONE.getColor()));
                         if (inventory.calculateDps(account.getCharacters().get(0).getSkin(), 3)) {
-                            inventory.setMessage("None");
+                            inventory.getIssue().setMessage("None");
                         } else {
-                            inventory.setMessage("/t " + account.getName() + " Please equip your 3/4+ set so I can confirm it. You can swap it out after.");
+                            inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your 3/4+ set so I can confirm it. You can swap it out after.");
                         }
                     }
                     break;
                 case "3/4+ Wizard":
                     if (!account.getCharacters().get(0).getType().equals("Wizard")) {
-                        inventory.setMessage("Wrong Class");
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "issue"));
+                        inventory.getIssue().setMessage("Wrong Class");
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.MISSING_REACT.getColor()));
                     } else {
-                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "good"));
+                        account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.NONE.getColor()));
                         if (inventory.calculateDps(account.getCharacters().get(0).getSkin(), 3)) {
-                            inventory.setMessage("None");
+                            inventory.getIssue().setMessage("None");
                         } else {
-                            inventory.setMessage("/t " + account.getName() + " Please equip your 3/4+ set so I can confirm it. You can swap it out after.");
+                            inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your 3/4+ set so I can confirm it. You can swap it out after.");
                         }
                     }
                     break;
                 case "3/4+ Ranged":
                     if (inventory.calculateDps(account.getCharacters().get(0).getSkin(), 3)) {
-                        inventory.setMessage("None");
+                        inventory.getIssue().setMessage("None");
                     } else {
-                        inventory.setMessage("/t " + account.getName() + " Please equip your 3/4+ set so I can confirm it. You can swap it out after.");
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your 3/4+ set so I can confirm it. You can swap it out after.");
                     }
                     break;
             }
@@ -283,24 +284,25 @@ public class React {
         String type = account.getCharacters().get(0).getType();
         Inventory inventory = account.getCharacters().get(0).getInventory();
         if (name.equals(type)) {
-            account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "good"));
+            account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.NONE.getColor()));
+            inventory.getIssue().setMessage("None");
             if (requirement.contains("T6")) {
                 if (inventory.getAbility().getName().equals("Empty slot") || inventory.getItems().get(1).getName().endsWith("UT") || inventory.getItems().get(1).getName().endsWith("ST")) {
-                    inventory.setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
-                    inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                    inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
+                    inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
                 } else {
                     if (Integer.parseInt(inventory.getItems().get(1).getName().substring(inventory.getItems().get(1).getName().length() - 1)) >= 6) {
-                        inventory.setMessage("None");
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "good"));
+                        inventory.getIssue().setMessage("None");
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));
                     } else {
-                        inventory.setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
-                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), "issue"));
+                        inventory.getIssue().setMessage("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after.");
+                        inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
                     }
                 }
             }
         } else {
-            inventory.setMessage("Wrong Class");
-            account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), "issue"));
+            inventory.getIssue().setMessage("Wrong Class");
+            account.getCharacters().get(0).setSkinImage(Utilities.markImage(account.getCharacters().get(0).getSkinImage(), Problem.MISSING_REACT.getColor()));
         }
     }
 }

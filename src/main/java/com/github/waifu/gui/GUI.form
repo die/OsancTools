@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="298"/>
+      <xy x="20" y="20" width="540" height="309"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -109,12 +109,14 @@
                       <text value="Input Raid ID"/>
                     </properties>
                   </component>
-                  <component id="84649" class="javax.swing.JButton" binding="calcExaltsButton">
+                  <component id="84649" class="javax.swing.JButton" binding="vcParseButton">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Calculate Exalts"/>
+                      <actionCommand value="Parse VC"/>
+                      <label value="Parse VC"/>
+                      <text value="Parse VC"/>
                     </properties>
                   </component>
                   <component id="7f2a2" class="javax.swing.JButton" binding="parseReactsButton">
@@ -162,8 +164,239 @@
               </grid>
             </children>
           </grid>
+          <grid id="198a0" layout-manager="GridLayoutManager" row-count="8" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="5" left="5" bottom="5" right="5"/>
+            <constraints>
+              <tabbedpane title="Exalts"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="15d43" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enter username:"/>
+                </properties>
+              </component>
+              <component id="bdee8" class="javax.swing.JTextField" binding="exaltsInput">
+                <constraints>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <margin top="2" left="6" bottom="2" right="6"/>
+                </properties>
+              </component>
+              <component id="aa787" class="javax.swing.JButton" binding="exaltsButton">
+                <constraints>
+                  <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enter"/>
+                </properties>
+              </component>
+              <component id="6f272" class="javax.swing.JTextField" binding="requirementInput">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <margin top="2" left="6" bottom="2" right="6"/>
+                </properties>
+              </component>
+              <component id="be6c3" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Set requirement:"/>
+                </properties>
+              </component>
+              <component id="1675d" class="javax.swing.JButton" binding="requirementButton">
+                <constraints>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Set"/>
+                </properties>
+              </component>
+              <grid id="433e1" binding="exaltsSelection" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="5" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="0" column="2" row-span="8" col-span="8" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none" title="Stats"/>
+                <children>
+                  <component id="dd809" class="javax.swing.JRadioButton" binding="manaRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="9303e" class="javax.swing.JLabel" binding="manaPotionImage">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="2"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="ea7e5" class="javax.swing.JLabel" binding="defensePotionImage">
+                    <constraints>
+                      <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="2"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="287b6" class="javax.swing.JRadioButton" binding="defenseRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="4a3df" class="javax.swing.JRadioButton" binding="lifeRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="890fc" class="javax.swing.JRadioButton" binding="dexterityRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="dc4ce" class="javax.swing.JLabel" binding="dexterityPotionImage">
+                    <constraints>
+                      <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="2"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="1d7ad" class="javax.swing.JLabel" binding="wisdomPotionImage">
+                    <constraints>
+                      <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="2"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="f40f1" class="javax.swing.JRadioButton" binding="wisdomRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="cbf67" class="javax.swing.JRadioButton" binding="attackRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="1e936" class="javax.swing.JRadioButton" binding="speedRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="4"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="d1cb7" class="javax.swing.JRadioButton" binding="vitalityRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="de579" class="javax.swing.JLabel" binding="lifePotionImage">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="d4489" class="javax.swing.JLabel" binding="attackPotionImage">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <horizontalTextPosition value="2"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="f4dd3" class="javax.swing.JLabel" binding="speedPotionImage">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="f1a62" class="javax.swing.JLabel" binding="vitalityPotionImage">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <component id="26162" class="javax.swing.JLabel" binding="exaltsResult">
+                <constraints>
+                  <grid row="1" column="0" row-span="3" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="11"/>
+                  <horizontalTextPosition value="10"/>
+                  <text value="Calculate completions for each exalt."/>
+                </properties>
+              </component>
+              <component id="1e839" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Result:"/>
+                  <verticalAlignment value="0"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
           <grid id="a366e" binding="options" layout-manager="GridLayoutManager" row-count="6" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="5" bottom="5" right="5"/>
+            <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <tabbedpane title="Options"/>
             </constraints>
@@ -273,7 +506,6 @@
                 <properties>
                   <horizontalAlignment value="0"/>
                   <horizontalTextPosition value="0"/>
-                  <icon value="resources/Gravestone.png"/>
                   <text value="&lt;html&gt;Made with ♡ by Su&lt;br&gt;&lt;center&gt;su#4008&lt;/html&gt;"/>
                   <toolTipText value="https://discord.gg/oryx"/>
                   <verticalAlignment value="0"/>
@@ -290,6 +522,16 @@
     <group name="buttonGroup1">
       <member id="dc7f2"/>
       <member id="f309b"/>
+    </group>
+    <group name="buttonGroup2">
+      <member id="4a3df"/>
+      <member id="dd809"/>
+      <member id="287b6"/>
+      <member id="890fc"/>
+      <member id="f40f1"/>
+      <member id="d1cb7"/>
+      <member id="cbf67"/>
+      <member id="1e936"/>
     </group>
   </buttonGroups>
 </form>

@@ -1,23 +1,56 @@
 package com.github.waifu.util;
 
 import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Raider;
 import com.github.waifu.entities.React;
+import com.github.waifu.gui.GUI;
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.swing.*;
-import java.awt.Graphics;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
+import java.net.URL;
+import java.util.*;
+import java.util.List;
 
+/**
+ *
+ */
 public class Utilities {
 
     public static JSONObject json;
+
+    /**
+     *
+     * @param username
+     * @param account
+     * @return
+     */
+    public static Raider constructRaider(String username, Account account) {
+        JSONArray members = GUI.getJson().getJSONObject("raid").getJSONArray("members");
+
+        for (int i = 0; i < members.length(); i++) {
+                Set<String> usernames = getRaiderUsernames(members, i);
+                if (usernames.stream().anyMatch(username::equalsIgnoreCase)) {
+                    boolean gotPriority = members.getJSONObject(i).getBoolean("got_priority");
+                    boolean gotEarlyLocation = members.getJSONObject(i).getBoolean("got_earlyloc");
+                    boolean inWaitingList = members.getJSONObject(i).getBoolean("in_waiting_list");
+                    boolean inVC = members.getJSONObject(i).getBoolean("in_vc");
+                    JSONArray reacts = members.getJSONObject(i).getJSONArray("reacts");
+                    JSONArray roles = members.getJSONObject(i).getJSONArray("roles");
+                    String id = members.getJSONObject(i).getString("user_id");
+                    String avatar = members.getJSONObject(i).getString("avatar");
+                    String timestampJoined = members.getJSONObject(i).getString("timestamp_joined");
+                    List<Account> accounts = new ArrayList<>();
+                    accounts.add(account);
+                    return new Raider(id, timestampJoined, avatar, gotPriority, gotEarlyLocation, inWaitingList, inVC, roles, reacts, accounts);
+                }
+        }
+        return null;
+    }
 
     /**
      * parseRaiders method.
@@ -27,7 +60,26 @@ public class Utilities {
      *
      * @param json JSONObject returned from the WebApp.
      */
-    public static Set<String> parseRaiders(JSONObject json) throws IOException, InterruptedException {
+    public static Set<String> parseRaiders(JSONObject json) {
+        JSONArray members = json.getJSONObject("raid").getJSONArray("members");
+        Set<String> set = new HashSet<>();
+
+        for (int i = 0; i < members.length(); i++) {
+            Set<String> usernames = getRaiderUsernames(members, i);
+            set.addAll(usernames);
+        }
+        return set;
+    }
+
+    /**
+     * parseRaiders method.
+     *
+     * Returns a Set containing all usernames in the raid for parsing sets.
+     * Those who are runes are excluded from this Set.
+     *
+     * @param json JSONObject returned from the WebApp.
+     */
+    public static Set<String> parseRaiderSets(JSONObject json) throws IOException, InterruptedException {
         JSONArray members = json.getJSONObject("raid").getJSONArray("members");
         Set<String> set = new HashSet<>();
         Set<String> runes = new HashSet<>();
@@ -95,12 +147,12 @@ public class Utilities {
      * @param usernames contains JSONObjects for each raider.
      * @param i position in the JSONArray.
      */
-    private static Set<String> getRaiderUsernames(JSONArray usernames, int i) {
+    public static Set<String> getRaiderUsernames(JSONArray usernames, int i) {
         Set<String> parsedUsernames = new HashSet<>();
         if (!usernames.getJSONObject(i).getBoolean("in_waiting_list")) {
             String[] username = usernames.getJSONObject(i).getString("server_nickname").split(" ");
             for (String u : username) {
-                String replace =  u.replaceAll("[^\\p{L}]", "");
+                String replace = u.replaceAll("[^\\p{L}]", "");
                 if (!replace.equals(""))
                 {
                     parsedUsernames.add(replace);
@@ -116,19 +168,38 @@ public class Utilities {
      * Returns a modified ImageIcon that is marked with a background color.
      *
      * @param image image of the specific item.
-     * @param severity determines the background color.
+     * @param color color of the background image
      */
-    public static ImageIcon markImage(ImageIcon image, String severity) {
+    public static ImageIcon markImage(ImageIcon image, Color color) {
         BufferedImage bufferedImage = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.createGraphics();
-        switch (severity) {
-            case "issue" -> g.setColor(Color.RED);
-            case "warning" -> g.setColor(Color.YELLOW);
-            case "good" -> g.setColor(Color.GREEN);
-        }
+        g.setColor(color);
         g.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
         g.drawImage(image.getImage(), 0, 0, null);
         g.dispose();
         return new ImageIcon(bufferedImage);
+    }
+
+    /**
+     *
+     * @param path
+     * @return
+     */
+    public static URL getImageResource(String path) {
+        if (Utilities.class.getClassLoader().getResource("resources/" + path) != null) {
+            return Utilities.class.getClassLoader().getResource("resources/" + path);
+        } else {
+            return Utilities.class.getClassLoader().getResource(path);
+        }
+    }
+
+    /**
+     *
+     * @param file
+     * @return
+     */
+    public static boolean isImage(File file) {
+        String[] extensions = {"jpg", "jpeg", "png"};
+        return Arrays.stream(extensions).anyMatch(e -> e.equals(FilenameUtils.getExtension(file.getName())));
     }
 }

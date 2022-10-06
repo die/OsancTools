@@ -1,11 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.util.Utilities;
-
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 /**
  * Item class to store item data.
@@ -44,14 +40,26 @@ public class Item {
         createImage();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getType() {
         return this.type;
     }
 
+    /**
+     *
+     * @param image
+     */
     public void setImage(ImageIcon image) {
         this.image = image;
     }
@@ -62,10 +70,10 @@ public class Item {
      * Constructs the appropriate image for the item using given information.
      */
     public void createImage() {
-        if (Item.class.getClassLoader().getResource("images/items/" + name + ".png") != null) {
-            image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/" + name + ".png")));
-        } else if (Item.class.getClassLoader().getResource("images/items/" + name.replace("UT", "ST") + ".png") != null) {
-            image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/" + name.replace("UT", "ST") + ".png")));
+        if (Utilities.getImageResource("images/items/" + name + ".png") != null) {
+            image = new ImageIcon(Utilities.getImageResource("images/items/" + name + ".png"));
+        } else if (Utilities.getImageResource("images/items/" + name.replace("UT", "ST") + ".png") != null) {
+            image = new ImageIcon(Utilities.getImageResource("images/items/" + name.replace("UT", "ST") + ".png"));
         } else {
             if (itemClass != null) {
                 switch (type) {
@@ -93,14 +101,13 @@ public class Item {
      * @param itemClass class that can use the Item
      */
     private void setEmptyWeaponImage(String itemClass) {
-        /* add resources/ */
         switch (itemClass) {
-            case "Rogue", "Assassin", "Trickster" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyDagger.png")));
-            case "Archer", "Huntress", "Bard" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyBow.png")));
-            case "Wizard", "Necromancer", "Mystic" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyStaff.png")));
-            case "Priest", "Sorcerer", "Summoner" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyWand.png")));
-            case "Warrior", "Knight", "Paladin" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptySword.png")));
-            case "Ninja", "Samurai", "Kensei" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyKatana.png")));
+            case "Rogue", "Assassin", "Trickster" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyDagger.png"));
+            case "Archer", "Huntress", "Bard" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyBow.png"));
+            case "Wizard", "Necromancer", "Mystic" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyStaff.png"));
+            case "Priest", "Sorcerer", "Summoner" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyWand.png"));
+            case "Warrior", "Knight", "Paladin" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptySword.png"));
+            case "Ninja", "Samurai", "Kensei" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyKatana.png"));
         }
     }
 
@@ -112,7 +119,7 @@ public class Item {
      * @param itemClass class that can use the Item
      */
     private void setEmptyAbilityImage(String itemClass) {
-        image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/Empty" + itemClass + "Ability.png")));
+        image = new ImageIcon(Utilities.getImageResource("images/items/Empty" + itemClass + "Ability.png"));
     }
 
     /**
@@ -124,9 +131,9 @@ public class Item {
      */
     private void setEmptyArmorImage(String itemClass) {
         switch (itemClass) {
-            case "Rogue", "Assassin", "Trickster", "Archer", "Huntress", "Ninja" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyLeatherArmor.png")));
-            case "Wizard", "Necromancer", "Mystic", "Priest", "Sorcerer", "Summoner", "Bard" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyRobe.png")));
-            case "Warrior", "Knight", "Paladin", "Samurai", "Kensei" -> image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyHeavyArmor.png")));
+            case "Rogue", "Assassin", "Trickster", "Archer", "Huntress", "Ninja" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyLeatherArmor.png"));
+            case "Wizard", "Necromancer", "Mystic", "Priest", "Sorcerer", "Summoner", "Bard" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyRobe.png"));
+            case "Warrior", "Knight", "Paladin", "Samurai", "Kensei" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyHeavyArmor.png"));
         }
     }
 
@@ -136,9 +143,13 @@ public class Item {
      * Sets the appropriate image for the item, where all classes can use rings.
      */
     private void setEmptyRingImage() {
-        image = new ImageIcon(Objects.requireNonNull(Item.class.getClassLoader().getResource("images/items/EmptyRing.png")));
+        image = new ImageIcon(Utilities.getImageResource("images/items/EmptyRing.png"));
     }
 
+    /**
+     *
+     * @return
+     */
     public ImageIcon getImage() {
         return this.image;
     }

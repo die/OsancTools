@@ -4,14 +4,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+/**
+ *
+ */
 public class ExaltCalculator {
 
     private int stat;
 
+    /**
+     *
+     */
     public ExaltCalculator() {
         this.stat = Preferences.userRoot().getInt("stat", 0);
     }
 
+    /**
+     *
+     * @param exalts
+     * @return
+     */
     public int calculateCompletions(List<String[]> exalts) {
         int completes = 0;
         for (String[] s : exalts) {
@@ -29,6 +40,18 @@ public class ExaltCalculator {
         return completes;
     }
 
+    /**
+     *
+     * @return
+     */
+    public int getStat() {
+        return this.stat;
+    }
+
+    /**
+     *
+     * @param stat
+     */
     public void setStat(int stat) {
         this.stat = stat;
     }

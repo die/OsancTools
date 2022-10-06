@@ -4,21 +4,31 @@ import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.entities.React;
 import com.github.waifu.gui.GUI;
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.swing.*;
-import java.awt.Graphics;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
+/**
+ *
+ */
 public class Utilities {
 
     public static JSONObject json;
 
-
+    /**
+     *
+     * @param username
+     * @param account
+     * @return
+     */
     public static Raider constructRaider(String username, Account account) {
         JSONArray members = GUI.getJson().getJSONObject("raid").getJSONArray("members");
 
@@ -50,7 +60,7 @@ public class Utilities {
      *
      * @param json JSONObject returned from the WebApp.
      */
-    public static Set<String> parseRaiders(JSONObject json) throws IOException, InterruptedException {
+    public static Set<String> parseRaiders(JSONObject json) {
         JSONArray members = json.getJSONObject("raid").getJSONArray("members");
         Set<String> set = new HashSet<>();
 
@@ -170,11 +180,26 @@ public class Utilities {
         return new ImageIcon(bufferedImage);
     }
 
+    /**
+     *
+     * @param path
+     * @return
+     */
     public static URL getImageResource(String path) {
         if (Utilities.class.getClassLoader().getResource("resources/" + path) != null) {
             return Utilities.class.getClassLoader().getResource("resources/" + path);
         } else {
             return Utilities.class.getClassLoader().getResource(path);
         }
+    }
+
+    /**
+     *
+     * @param file
+     * @return
+     */
+    public static boolean isImage(File file) {
+        String[] extensions = {"jpg", "jpeg", "png"};
+        return Arrays.stream(extensions).anyMatch(e -> e.equals(FilenameUtils.getExtension(file.getName())));
     }
 }

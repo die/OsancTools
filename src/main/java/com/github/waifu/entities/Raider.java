@@ -2,17 +2,17 @@ package com.github.waifu.entities;
 
 import com.github.waifu.gui.GUI;
 import org.json.JSONArray;
-import org.jsoup.Jsoup;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+/**
+ *
+ */
 public class Raider {
 
     private String id;
@@ -25,8 +25,10 @@ public class Raider {
     private JSONArray roles;
     private JSONArray reacts;
     private final List<Account> accounts;
-    //private final Account account;
 
+    /**
+     *
+     */
     public Raider() {
         this.id = "";
         this.timestampJoined = "";
@@ -38,9 +40,21 @@ public class Raider {
         this.roles = null;
         this.reacts = null;
         this.accounts = null;
-        //account = null;
     }
 
+    /**
+     *
+     * @param id
+     * @param timestampJoined
+     * @param avatar
+     * @param gotPriority
+     * @param gotEarlyLocation
+     * @param inWaitingList
+     * @param inVC
+     * @param roles
+     * @param reacts
+     * @param accounts
+     */
     public Raider(String id, String timestampJoined, String avatar, boolean gotPriority, boolean gotEarlyLocation, boolean inWaitingList, boolean inVC, JSONArray roles, JSONArray reacts, List<Account> accounts) {
         this.id = id;
         this.timestampJoined = timestampJoined;
@@ -52,9 +66,12 @@ public class Raider {
         this.reacts = reacts;
         this.accounts = accounts;
         this.avatar = setAvatar(avatar);
-        //this.account = account;
     }
 
+    /**
+     *
+     * @return
+     */
     public String printRaider() {
         String raider = "ID: " + this.id + "\n" +
                         "Joined: " + new Date(Long.parseLong(this.timestampJoined)) + "\n" +
@@ -68,18 +85,35 @@ public class Raider {
         return raider;
     }
 
+    /**
+     *
+     * @param account
+     */
     public void addAccount(Account account) {
         this.accounts.add(account);
     }
 
+    /**
+     *
+     * @return
+     */
     public ImageIcon getAvatar() {
         return this.avatar;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Account> getAccounts() {
         return this.accounts;
     }
 
+    /**
+     *
+     * @param avatar
+     * @return
+     */
     public ImageIcon setAvatar(String avatar) {
         if (GUI.getMode() == GUI.LAN_MODE) {
             if (this.accounts != null) {
@@ -105,6 +139,11 @@ public class Raider {
         return null;
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     */
     public void setAvatarSize(int width, int height) {
         this.avatar = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
     }

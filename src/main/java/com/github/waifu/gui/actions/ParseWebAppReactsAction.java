@@ -3,14 +3,12 @@ package com.github.waifu.gui.actions;
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.React;
 import com.github.waifu.gui.GUI;
-import com.github.waifu.gui.ReactTable;
+import com.github.waifu.gui.tables.ReactTable;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -18,16 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ */
 public class ParseWebAppReactsAction implements ActionListener {
 
-    private JProgressBar progressBar;
-    private JButton stopButton;
+    private final JProgressBar progressBar;
+    private final JButton stopButton;
 
+    /**
+     *
+     * @param progressBar
+     * @param stopButton
+     */
     public ParseWebAppReactsAction(JProgressBar progressBar, JButton stopButton) {
         this.progressBar = progressBar;
         this.stopButton = stopButton;
     }
 
+    /**
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         new SwingWorker<Void, Void>() {

@@ -247,7 +247,6 @@
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="2"/>
-                      <icon value="images/potions/mana.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -257,7 +256,6 @@
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="2"/>
-                      <icon value="images/potions/defense.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -294,7 +292,6 @@
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="2"/>
-                      <icon value="images/potions/dexterity.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -304,7 +301,6 @@
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="2"/>
-                      <icon value="images/potions/wisdom.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -348,7 +344,6 @@
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <icon value="images/potions/life.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -358,7 +353,6 @@
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="2"/>
-                      <icon value="images/potions/attack.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -367,7 +361,6 @@
                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <icon value="images/potions/speed.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -376,7 +369,6 @@
                       <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <icon value="images/potions/vitality.png"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -514,7 +506,6 @@
                 <properties>
                   <horizontalAlignment value="0"/>
                   <horizontalTextPosition value="0"/>
-                  <icon value="Gravestone.png"/>
                   <text value="&lt;html&gt;Made with ♡ by Su&lt;br&gt;&lt;center&gt;su#4008&lt;/html&gt;"/>
                   <toolTipText value="https://discord.gg/oryx"/>
                   <verticalAlignment value="0"/>

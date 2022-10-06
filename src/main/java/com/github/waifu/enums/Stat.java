@@ -1,5 +1,8 @@
 package com.github.waifu.enums;
 
+/**
+ *
+ */
 public enum Stat {
 
     LIFE(0),
@@ -13,10 +16,18 @@ public enum Stat {
 
     private final int index;
 
+    /**
+     *
+     * @param index
+     */
     Stat(int index) {
         this.index = index;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getIndex() {
         return index;
     }

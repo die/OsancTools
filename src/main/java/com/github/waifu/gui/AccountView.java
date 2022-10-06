@@ -1,12 +1,15 @@
 package com.github.waifu.gui;
 
 import com.github.waifu.entities.Raider;
+import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ */
 public class AccountView extends JFrame {
     private JPanel main;
     private JLabel Realmeye;
@@ -14,6 +17,10 @@ public class AccountView extends JFrame {
     private JTabbedPane DiscordTab;
     private Raider raider;
 
+    /**
+     *
+     * @param raider
+     */
     public AccountView(Raider raider) {
         this.raider = raider;
         $$$setupUI$$$();
@@ -21,10 +28,10 @@ public class AccountView extends JFrame {
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        // setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/Gravestone.png"))).getImage());
+        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        //setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
+        setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
         setVisible(true);
         DiscordInfo.setIcon(raider.getAvatar());
         Realmeye.setText("<html>" + raider.getAccounts().get(0).printAccount().replace("\n", "<br/>") + "</html>");

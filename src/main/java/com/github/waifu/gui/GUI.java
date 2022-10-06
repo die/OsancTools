@@ -3,43 +3,19 @@ package com.github.waifu.gui;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.github.waifu.entities.Account;
-import com.github.waifu.entities.Inventory;
-import com.github.waifu.entities.React;
 import com.github.waifu.enums.Stat;
 import com.github.waifu.gui.actions.*;
-import com.github.waifu.handlers.RealmeyeRequestHandler;
-import com.github.waifu.handlers.WebAppHandler;
-import com.github.waifu.util.ExaltCalculator;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import net.sourceforge.tess4j.TesseractException;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
 /**
@@ -50,8 +26,6 @@ public class GUI extends JFrame {
     public static final int NORMAL_MODE = 0;
     public static final int DEBUG_MODE = 1;
     public static final int LAN_MODE = 2;
-
-
     public static String RESOURCE_PATH = "src/main/resources/";
     public static String TEST_RESOURCE_PATH = "src/test/resources/";
     private static int mode;
@@ -84,16 +58,16 @@ public class GUI extends JFrame {
     private JPanel buttonsPanel;
     private JPanel progressBarPanel;
     private JLabel creditsImage;
-    private JRadioButton manaRadioButton = new JRadioButton();
-    private JRadioButton defenseRadioButton = new JRadioButton();
-    private JRadioButton dexterityRadioButton = new JRadioButton();
-    private JRadioButton wisdomRadioButton = new JRadioButton();
-    private JRadioButton lifeRadioButton = new JRadioButton();
-    private JRadioButton attackRadioButton = new JRadioButton();
-    private JRadioButton speedRadioButton = new JRadioButton();
-    private JRadioButton vitalityRadioButton = new JRadioButton();
+    private JRadioButton manaRadioButton;
+    private JRadioButton defenseRadioButton;
+    private JRadioButton dexterityRadioButton;
+    private JRadioButton wisdomRadioButton;
+    private JRadioButton lifeRadioButton;
+    private JRadioButton attackRadioButton;
+    private JRadioButton speedRadioButton;
+    private JRadioButton vitalityRadioButton;
     private JTextField exaltsInput;
-    private JButton exaltsButton = new JButton();
+    private JButton exaltsButton;
     private JLabel exaltsResult;
     private JLabel lifePotionImage;
     private JLabel manaPotionImage;
@@ -103,8 +77,8 @@ public class GUI extends JFrame {
     private JLabel defensePotionImage;
     private JLabel dexterityPotionImage;
     private JLabel wisdomPotionImage;
-    private JTextField requirementInput = new JTextField();
-    private JButton requirementButton = new JButton();
+    private JTextField requirementInput;
+    private JButton requirementButton;
     private JPanel exaltsSelection;
     private TitledBorder border;
     private static JSONObject json;
@@ -124,17 +98,14 @@ public class GUI extends JFrame {
         }
         $$$setupUI$$$();
         createUIComponents();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         SwingUtilities.updateComponentTreeUI(getRootPane());
         addActionListeners();
         add(main);
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        setBounds(0, 0, screenSize.width / 4, screenSize.height / 4);
         setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
         pack();
         setVisible(true);
     }
@@ -147,7 +118,11 @@ public class GUI extends JFrame {
     private void addActionListeners() {
         inputRaidButton.addActionListener(new GetWebAppDataAction(main, border, connected, raid, raidPanel, description, metadata, this));
 
-        vcParseButton.addActionListener(new ParseVoiceChannelAction());
+        vcParseButton.addActionListener(e -> {
+            //new ParseVoiceChannelAction()
+            AcceptFilePanel acceptFilePanel = new AcceptFilePanel();
+            acceptFilePanel.setLocationRelativeTo(this);
+        });
 
         parseReactsButton.addActionListener(new ParseWebAppReactsAction(progressBar, stopButton));
 
@@ -249,9 +224,6 @@ public class GUI extends JFrame {
         lightRadioButton.addActionListener(e -> Preferences.userRoot().put("theme", "light"));
 
         darkRadioButton.addActionListener(e -> Preferences.userRoot().put("theme", "dark"));
-
-       // this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(78, 0, true), "n");
-        //this.getRootPane().getActionMap().put("n", act);
     }
 
 
@@ -353,12 +325,10 @@ public class GUI extends JFrame {
         exaltsSelection.add(manaRadioButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         manaPotionImage = new JLabel();
         manaPotionImage.setHorizontalTextPosition(2);
-        manaPotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/mana.png")));
         manaPotionImage.setText("");
         exaltsSelection.add(manaPotionImage, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         defensePotionImage = new JLabel();
         defensePotionImage.setHorizontalTextPosition(2);
-        defensePotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/defense.png")));
         defensePotionImage.setText("");
         exaltsSelection.add(defensePotionImage, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         defenseRadioButton = new JRadioButton();
@@ -375,12 +345,10 @@ public class GUI extends JFrame {
         exaltsSelection.add(dexterityRadioButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         dexterityPotionImage = new JLabel();
         dexterityPotionImage.setHorizontalTextPosition(2);
-        dexterityPotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/dexterity.png")));
         dexterityPotionImage.setText("");
         exaltsSelection.add(dexterityPotionImage, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         wisdomPotionImage = new JLabel();
         wisdomPotionImage.setHorizontalTextPosition(2);
-        wisdomPotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/wisdom.png")));
         wisdomPotionImage.setText("");
         exaltsSelection.add(wisdomPotionImage, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         wisdomRadioButton = new JRadioButton();
@@ -399,20 +367,16 @@ public class GUI extends JFrame {
         vitalityRadioButton.setText("");
         exaltsSelection.add(vitalityRadioButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lifePotionImage = new JLabel();
-        lifePotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/life.png")));
         lifePotionImage.setText("");
         exaltsSelection.add(lifePotionImage, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         attackPotionImage = new JLabel();
         attackPotionImage.setHorizontalTextPosition(2);
-        attackPotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/attack.png")));
         attackPotionImage.setText("");
         exaltsSelection.add(attackPotionImage, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         speedPotionImage = new JLabel();
-        speedPotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/speed.png")));
         speedPotionImage.setText("");
         exaltsSelection.add(speedPotionImage, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         vitalityPotionImage = new JLabel();
-        vitalityPotionImage.setIcon(new ImageIcon(getClass().getResource("/images/potions/vitality.png")));
         vitalityPotionImage.setText("");
         exaltsSelection.add(vitalityPotionImage, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         exaltsResult = new JLabel();
@@ -463,7 +427,6 @@ public class GUI extends JFrame {
         creditsImage = new JLabel();
         creditsImage.setHorizontalAlignment(0);
         creditsImage.setHorizontalTextPosition(0);
-        creditsImage.setIcon(new ImageIcon(getClass().getResource("/Gravestone.png")));
         creditsImage.setText("<html>Made with ♡ by Su<br><center>su#4008</html>");
         creditsImage.setToolTipText("https://discord.gg/oryx");
         creditsImage.setVerticalAlignment(0);
@@ -491,10 +454,17 @@ public class GUI extends JFrame {
         return main;
     }
 
+    /**
+     *
+     * @param mode
+     */
     public void setMode(int mode) {
         GUI.mode = mode;
     }
 
+    /**
+     *
+     */
     public void updateGUI() {
         try {
             if (json != null && json.get("status").equals(1)) {
@@ -540,7 +510,15 @@ public class GUI extends JFrame {
             case "light" -> lightRadioButton.setSelected(true);
             case "dark" -> darkRadioButton.setSelected(true);
         }
-
+        creditsImage.setIcon(new ImageIcon(Utilities.getImageResource("Gravestone.png")));
+        lifePotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/life.png")));
+        manaPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/mana.png")));
+        attackPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/attack.png")));
+        defensePotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/defense.png")));
+        speedPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/speed.png")));
+        dexterityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/dexterity.png")));
+        vitalityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/vitality.png")));
+        wisdomPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/wisdom.png")));
         switch (Preferences.userRoot().getInt("stat", 0)) {
             case 0 -> lifeRadioButton.setSelected(true);
             case 1 -> manaRadioButton.setSelected(true);
@@ -561,31 +539,58 @@ public class GUI extends JFrame {
         betaTokenField.setText(Preferences.userRoot().get("betaToken", ""));
     }
 
-
+    /**
+     *
+     * @return
+     */
     public static SwingWorker getWorker() {
         return worker;
     }
 
+    /**
+     *
+     * @param worker
+     */
     public static void setWorker(SwingWorker worker) {
         GUI.worker = worker;
     }
 
+    /**
+     *
+     * @return
+     */
     public static JSONObject getJson() {
         return GUI.json;
     }
 
+    /**
+     *
+     * @param json
+     */
     public static void setJson(JSONObject json) {
         GUI.json = json;
     }
 
+    /**
+     *
+     * @return
+     */
     public static int getMode() {
         return mode;
     }
 
+    /**
+     *
+     * @param processRunning
+     */
     public static void setProcessRunning(boolean processRunning) {
         GUI.processRunning = processRunning;
     }
 
+    /**
+     *
+     * @return
+     */
     public static boolean checkProcessRunning() {
         if (processRunning) {
             Component rootPane = GUI.getFrames()[0].getComponents()[0];

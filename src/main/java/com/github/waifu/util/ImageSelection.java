@@ -1,32 +1,49 @@
 package com.github.waifu.util;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
+/**
+ *
+ */
 public class ImageSelection implements Transferable {
 
     private Image image;
 
-    public ImageSelection(Image image) {
-        this.image = image;
+    /**
+     *
+     */
+    public ImageSelection() {
+
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public DataFlavor[] getTransferDataFlavors() {
         return new DataFlavor[] { DataFlavor.imageFlavor };
     }
 
+    /**
+     *
+     * @param flavor
+     * @return
+     */
     @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
         return false;
     }
 
+    /**
+     *
+     * @param flavor
+     * @return
+     */
     @Override
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(DataFlavor flavor) {
         return image;
     }
 }

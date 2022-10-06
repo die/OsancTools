@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.internal.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -17,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +25,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class RealmeyeRequestHandler {
 
-
+    /**
+     *
+     * @param username
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public static Document getRealmeyeData(String username) throws IOException, InterruptedException {
         if (GUI.getMode() == GUI.LAN_MODE) {
             File html = new File(GUI.TEST_RESOURCE_PATH + "raids/" + GUI.getJson().getJSONObject("raid").getInt("id") + "/players/" + username + "/data.html");
@@ -37,8 +41,10 @@ public class RealmeyeRequestHandler {
             try {
                 Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
                 doc = Jsoup.connect("https://www.realmeye.com/player/" + username).proxy(proxy).get();
+                TimeUnit.SECONDS.sleep(1);
             } catch (Exception e) {
                 doc = Jsoup.connect("https://www.realmeye.com/player/" + username).get();
+                TimeUnit.SECONDS.sleep(1);
             }
             if (GUI.getMode() == GUI.DEBUG_MODE) {
                 File file = new File("src/test/resources/raids" + "/" + String.valueOf(GUI.getJson().getJSONObject("raid").getInt("id")) + "/" + "players/" + username + "/data.html");
@@ -49,11 +55,14 @@ public class RealmeyeRequestHandler {
                     playerHTML.close();
                 }
             }
-            TimeUnit.SECONDS.sleep(1);
             return doc;
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public static boolean checkDirectConnect() {
         try {
             Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
@@ -68,6 +77,7 @@ public class RealmeyeRequestHandler {
             return confirm == 0;
         }
     }
+
     /**
      * GET method.
      *
@@ -100,19 +110,21 @@ public class RealmeyeRequestHandler {
                 List<String> characterData = Jsoup.parse(doc.html()).select("table[class=table table-striped tablesorter] tr").eachText();
                 List<String> characterSkinData = Jsoup.parse(doc.html()).select("a.character").eachAttr("data-skin");
                 List<String> itemData = Jsoup.parse(doc.html()).select("span.item").eachAttr("title");
+               // List<String> itemImageData = Jsoup.parse(doc.html()).select("span.item").eachAttr("style");
                 List<Character> characters = new ArrayList<>();
                 String headers = characterData.get(0);
                 for (int i = 1; i < characterData.size(); i++) {
                     String[] metadata = characterData.get(i).split(" ");
                     String type = getElementFromCharacterTable(metadata, headers, "Class");
-                    String level = getElementFromCharacterTable(metadata, headers, "L");
-                    String cqc = getElementFromCharacterTable(metadata, headers, "CQC");
-                    String fame = getElementFromCharacterTable(metadata, headers, "Fame");
-                    String exp = getElementFromCharacterTable(metadata, headers, "Exp");
-                    String place = getElementFromCharacterTable(metadata, headers, "Pl.");
-                    String stats = getElementFromCharacterTable(metadata, headers, "Stats");
+                    String level = ""; //getElementFromCharacterTable(metadata, headers, "L");
+                    String cqc = ""; //getElementFromCharacterTable(metadata, headers, "CQC");
+                    String fame = ""; //getElementFromCharacterTable(metadata, headers, "Fame");
+                    String exp = ""; //getElementFromCharacterTable(metadata, headers, "Exp");
+                    String place = ""; //getElementFromCharacterTable(metadata, headers, "Pl.");
+                    String stats = ""; //getElementFromCharacterTable(metadata, headers, "Stats");
                     String skin = characterSkinData.get(i-1);
                     List<String> items = itemData.subList(4 * i - 4, 4 * i);
+                    //List<String> itemsImage = itemImageData.subList(4 * i - 4, 4 * i);
                     String characterLastSeen = getElementFromCharacterTable(metadata, headers, "Last seen");
                     String server = getElementFromCharacterTable(metadata, headers, "Srv.");
                     List<Item> inventory = new ArrayList<>();
@@ -209,6 +221,12 @@ public class RealmeyeRequestHandler {
         return collection;
     }
 
+    /**
+     *
+     * @param doc
+     * @param request
+     * @return
+     */
     private static String getElementFromSummary(Document doc, String request) {
         List<String> summary = Jsoup.parse(doc.html()).select("table[class=summary] tr").eachText();
         for (String s : summary) {
@@ -232,6 +250,13 @@ public class RealmeyeRequestHandler {
         return "";
     }
 
+    /**
+     *
+     * @param characterData
+     * @param headers
+     * @param request
+     * @return
+     */
     private static String getElementFromCharacterTable(String[] characterData, String headers, String request) {
         if ((request.equals("Last seen") || request.equals("Srv.")) && !headers.contains(request)) {
             return "";

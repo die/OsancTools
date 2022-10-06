@@ -20,7 +20,11 @@ public class WebAppHandler {
     public static JSONObject getRaid(String raidId) {
         try {
             int id = Integer.parseInt(raidId);
-            return getData(id);
+            if (id > 9) {
+                return getData(id);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             return null;
         }

@@ -1,32 +1,40 @@
 package com.github.waifu.gui.actions;
 
 import com.github.waifu.entities.*;
-import com.github.waifu.entities.Character;
 import com.github.waifu.gui.GUI;
-import com.github.waifu.gui.ReactTable;
-import com.github.waifu.gui.SetTable;
+import com.github.waifu.gui.tables.SetTable;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ *
+ */
 public class ParseWebAppSetsAction implements ActionListener {
 
-    private JProgressBar progressBar;
-    private JButton stopButton;
+    private final JProgressBar progressBar;
+    private final JButton stopButton;
 
+    /**
+     *
+     * @param progressBar
+     * @param stopButton
+     */
     public ParseWebAppSetsAction(JProgressBar progressBar, JButton stopButton) {
         this.progressBar = progressBar;
         this.stopButton = stopButton;
     }
 
+    /**
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         new SwingWorker<Void, Void>() {
@@ -77,7 +85,6 @@ public class ParseWebAppSetsAction implements ActionListener {
             for (int i = 0; i < usernames.size(); i++) {
                 String username = usernames.get(i);
                 Account account = RealmeyeRequestHandler.parseHTML(Objects.requireNonNull(RealmeyeRequestHandler.getRealmeyeData(username)), username);
-                System.out.println("Name:" + account.getName() + " | Guild:" + account.getGuild());
                 Raider raider = Utilities.constructRaider(username, account);
                 if (account.getCharacters() != null) {
                     Inventory inventory = account.getCharacters().get(0).getInventory();

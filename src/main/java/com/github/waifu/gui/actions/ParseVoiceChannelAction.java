@@ -1,9 +1,7 @@
 package com.github.waifu.gui.actions;
 
 import com.github.waifu.gui.GUI;
-import com.github.waifu.gui.VCParse;
 import com.github.waifu.handlers.WebAppHandler;
-import net.sourceforge.tess4j.TesseractException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -18,14 +16,22 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+/**
+ *
+ */
 public class ParseVoiceChannelAction implements ActionListener {
 
     private JSONArray members;
     private Image image;
 
+    /**
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (GUI.getMode()) {
+       // JDialog dialog = new JDialog()
+        /*switch (GUI.getMode()) {
             case GUI.NORMAL_MODE, GUI.DEBUG_MODE -> parseVoiceChannelFromClipboard();
             case GUI.LAN_MODE -> parseVoiceChannelFromFile();
         }
@@ -35,9 +41,12 @@ public class ParseVoiceChannelAction implements ActionListener {
             ex.printStackTrace();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
-        }
+        }*/
     }
 
+    /**
+     *
+     */
     private void parseVoiceChannelFromClipboard() {
         try {
             image = (Image) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.imageFlavor);
@@ -64,6 +73,9 @@ public class ParseVoiceChannelAction implements ActionListener {
         }
     }
 
+    /**
+     *
+     */
     private void parseVoiceChannelFromFile() {
         try {
             File outputfile = new File("src/test/resources/raids" + "/" + GUI.getJson().getJSONObject("raid").getInt("id") + "/who.png");

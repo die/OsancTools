@@ -6,14 +6,15 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class SetTableModel extends DefaultTableModel {
+public class ReactTableModel extends DefaultTableModel {
     /**
      *
      */
-    public SetTableModel() {
-        addColumn("Problem");
+    public ReactTableModel() {
+        addColumn("React");
         addColumn("Username");
         addColumn("Inventory");
+        addColumn("Message");
         addColumn("Mark");
     }
 
@@ -24,8 +25,9 @@ public class SetTableModel extends DefaultTableModel {
      */
     @Override
     public Class<?> getColumnClass(int column) {
+        if (column == 0) return ImageIcon.class;
         if (column == 2) return ImageIcon.class;
-        if (column == 3) return Boolean.class;
+        if (column == 4) return Boolean.class;
         return Object.class;
     }
 
@@ -37,6 +39,6 @@ public class SetTableModel extends DefaultTableModel {
      */
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column == 3;
+        return column == 4;
     }
 }

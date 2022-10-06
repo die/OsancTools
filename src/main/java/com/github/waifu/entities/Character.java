@@ -1,7 +1,7 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.util.Utilities;
 import javax.swing.*;
-import java.util.Objects;
 
 /**
  * Character class to store character data.
@@ -29,7 +29,7 @@ public class Character {
     public Character() {
         this.type = "Wizard";
         this.skin = "";
-        this.skinImage = new ImageIcon(Objects.requireNonNull(Character.class.getClassLoader().getResource("images/skins/Wizard.png")));
+        this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/Wizard.png"));
         this.level = "";
         this.cqc = "";
         this.fame = "";
@@ -59,7 +59,7 @@ public class Character {
     public Character(String type, String skin, String level, String cqc, String fame, String exp, String place, String stats, String lastSeen, String server, Inventory inventory) {
         this.type = type;
         this.skin = skin;
-        this.skinImage = new ImageIcon(Objects.requireNonNull(Character.class.getClassLoader().getResource("images/skins/" + type + ".png")));
+        this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/" + type + ".png"));
         this.level = level;
         this.cqc = cqc;
         this.fame = fame;
@@ -71,6 +71,9 @@ public class Character {
         this.inventory = inventory;
     }
 
+    /**
+     *
+     */
     public void printCharacter() {
         System.out.println("Type: " + this.type + "\n" +
                 "Skin: " + this.skin + "\n" +
@@ -84,42 +87,90 @@ public class Character {
                 "Server: " + this.server + "\n");
     }
 
+    /**
+     *
+     * @return
+     */
     public String getType() {
         return this.type;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSkin() {
         return this.skin;
     }
 
+    /**
+     *
+     * @return
+     */
     public ImageIcon getSkinImage() {
         return this.skinImage;
     }
 
+    /**
+     *
+     * @param skinImage
+     */
     public void setSkinImage(ImageIcon skinImage) {
         this.skinImage = skinImage;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLevel() {
         return this.level;
     }
 
-    public String getCqc() { return this.cqc; }
+    /**
+     *
+     * @return
+     */
+    public String getCqc() {
+        return this.cqc;
+    }
 
+    /**
+     *
+     * @return
+     */
     public String getFame() {
         return this.fame;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getExp() {
         return this.exp;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPlace() {
         return this.place;
     }
 
-    public String getStats() { return this.stats; }
+    /**
+     *
+     * @return
+     */
+    public String getStats() {
+        return this.stats;
+    }
 
+    /**
+     *
+     * @return
+     */
     public Inventory getInventory() {
         return this.inventory;
     }

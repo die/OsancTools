@@ -68,6 +68,10 @@ public class Account {
         this.characters = characters;
     }
 
+    /**
+     *
+     * @return
+     */
     public String printAccount() {
         String account = "Name: " + this.name + "\n" +
                            "Stars: " + this.stars + "\n" +
@@ -82,33 +86,91 @@ public class Account {
         return account;
     }
 
-    public String getName() { return this.name; }
+    /**
+     *
+     * @return
+     */
+    public String getName() {
+        return this.name;
+    }
 
+    /**
+     *
+     * @return
+     */
     public String getStars() {
         return this.stars;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSkins() {
         return this.skins;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getExaltations() {
         return this.exaltations;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getAccountFame() {
         return this.accountFame;
     }
 
-    public String getGuild() { return this.guild; }
+    /**
+     *
+     * @return
+     */
+    public String getGuild() {
+        return this.guild;
+    }
 
-    public String getGuildRank() { return this.guildRank; }
+    /**
+     *
+     * @return
+     */
+    public String getGuildRank() {
+        return this.guildRank;
+    }
 
-    public String getCreationDate() { return this.creationDate; }
+    /**
+     *
+     * @return
+     */
+    public String getCreationDate() {
+        return this.creationDate;
+    }
 
-    public String getLastSeen() { return this.lastSeen; }
+    /**
+     *
+     * @return
+     */
+    public String getLastSeen() {
+        return this.lastSeen;
+    }
 
+    /**
+     *
+     * @return
+     */
     public List<Character> getCharacters() {
         return this.characters;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Character getRecentCharacter() {
+        return this.characters.get(0);
     }
 }

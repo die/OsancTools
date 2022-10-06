@@ -1,5 +1,8 @@
 package com.github.waifu.enums;
 
+/**
+ *
+ */
 public enum InventorySlots {
 
     WEAPON(0),
@@ -9,10 +12,18 @@ public enum InventorySlots {
 
     private final int index;
 
+    /**
+     *
+     * @param index
+     */
     InventorySlots(int index) {
         this.index = index;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getIndex() {
         return index;
     }

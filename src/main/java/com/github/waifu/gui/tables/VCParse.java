@@ -1,7 +1,8 @@
-package com.github.waifu.gui;
-import com.github.waifu.entities.Account;
-import com.github.waifu.entities.Raider;
-import com.github.waifu.handlers.RealmeyeRequestHandler;
+package com.github.waifu.gui.tables;
+
+import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.actions.TableCopyAction;
+import com.github.waifu.gui.models.VCTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -10,11 +11,8 @@ import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.ImageHelper;
 import net.sourceforge.tess4j.util.LoadLibs;
 import org.json.JSONArray;
-
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -23,30 +21,58 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+/**
+ *
+ */
 public class VCParse extends JFrame {
     private JPanel main;
     private JTable vcParseTable;
     private JCheckBox showInGroup;
-    private JLabel Unrecognized;
     private JCheckBox removeCelestial;
     private JCheckBox removeInVCCheckBox;
-    private JLabel ParseImage;
+    private JCheckBox removeMarkedRaidersCheckBox;
+    private boolean destroy = false;
     private TableRowSorter<TableModel> sorter;
     private RowFilter<Object, Object> celestial = RowFilter.regexFilter("");
     private RowFilter<Object, Object> ingroup = RowFilter.regexFilter("");
     private RowFilter<Object, Object> invc = RowFilter.regexFilter("");
+    private RowFilter<Object, Object> removeMarked = RowFilter.regexFilter("");
 
+    /**
+     *
+     * @param image
+     * @param members
+     * @throws IOException
+     * @throws TesseractException
+     * @throws InterruptedException
+     */
     public VCParse(Image image, JSONArray members) throws IOException, TesseractException, InterruptedException {
+        createTable(image, members);
+        if (destroy) {
+            return;
+        }
         setContentPane(main);
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Gravestone.png"))).getImage());
+        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
+        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        //setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
         setVisible(true);
+        pack();
+        new TableCopyAction(vcParseTable);
+    }
 
+    /**
+     * createTable method.
+     * <p>
+     * Creates the table model, adds rows to the model, and applies the model to the table.
+     *
+     * @param image   image of the /who to parse
+     * @param members list of members in the webapp
+     */
+    private void createTable(Image image, JSONArray members) throws TesseractException {
         BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().drawImage(image, 0, 0, null);
         Tesseract instance = new Tesseract();
@@ -54,18 +80,20 @@ public class VCParse extends JFrame {
         instance.setDatapath(LoadLibs.extractTessResources("tessdata").getPath());
         instance.setOcrEngineMode(1);
         String result = instance.doOCR(ImageHelper.convertImageToGrayscale(bufferedImage));
-        System.out.println(result);
+        if (!result.contains("Players online")) {
+            Component rootPane = GUI.getFrames()[0].getComponents()[0];
+            if (members == null) {
+                JOptionPane.showMessageDialog(rootPane, "Failed get members", "Error", JOptionPane.WARNING_MESSAGE);
+                destroy = true;
+            }
+            JOptionPane.showMessageDialog(rootPane, "Failed to parse image", "Error", JOptionPane.WARNING_MESSAGE);
+            destroy = true;
+            this.dispose();
+            return;
+        }
         List<String> temp = Arrays.asList(Arrays.asList(result.split(": ")).get(1).replace(",", "").replace("\n", " ").split(" "));
-        List<String> names = new ArrayList<>();
-        names.addAll(temp);
-        DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.addColumn("IGN");
-        tableModel.addColumn("In Group");
-        tableModel.addColumn("In VC");
-        tableModel.addColumn("Nickname");
-        tableModel.addColumn("Discord ID");
-        tableModel.addColumn("Role");
-
+        List<String> names = new ArrayList<>(temp);
+        DefaultTableModel tableModel = new VCTableModel();
         for (int i = 0; i < members.length(); i++) {
             String username = members.getJSONObject(i).getString("server_nickname");
             String id = members.getJSONObject(i).getString("user_id");
@@ -84,37 +112,35 @@ public class VCParse extends JFrame {
                     }
                 }
             }
-
             if (members.getJSONObject(i).getBoolean("in_vc")) {
                 inVC = "In VC";
             }
-
             if (members.getJSONObject(i).getJSONArray("roles").toList().contains("907008641079586817")) {
                 celestial = "@Celestial";
             }
-            String[] array = new String[6];
+            Object[] array = new Object[7];
             array[0] = inGroupUsername;
             array[1] = inGroup;
             array[2] = inVC;
             array[3] = username;
             array[4] = id;
             array[5] = celestial;
+            array[6] = false;
             tableModel.addRow(array);
         }
-
-        /*for (String n : names) {
-            String[] array = new String[6];
-            array[0] = n;
-            array[1] = "Crasher";
-            array[2] = "Not In VC";
-            array[3] = "";
-            array[4] = "";
-            array[5] = "";
-            tableModel.addRow(array);
-        }*/
         sorter = new TableRowSorter<>(tableModel);
         vcParseTable.setRowSorter(sorter);
         vcParseTable.setModel(tableModel);
+        addActionListeners();
+    }
+
+    /**
+     * addActionListeners method.
+     * <p>
+     * Constructs all listeners for the JFrame.
+     */
+    private void addActionListeners() {
+        vcParseTable.addPropertyChangeListener(evt -> updateFilters());
 
         showInGroup.addActionListener(e -> new SwingWorker<Void, Void>() {
             @Override
@@ -157,6 +183,20 @@ public class VCParse extends JFrame {
                 return null;
             }
         }.execute());
+
+        removeMarkedRaidersCheckBox.addActionListener(e -> new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                if (removeMarkedRaidersCheckBox.isSelected()) {
+                    removeMarked = RowFilter.notFilter(RowFilter.regexFilter("true", 6));
+                    updateFilters();
+                } else {
+                    removeMarked = RowFilter.regexFilter("");
+                    updateFilters();
+                }
+                return null;
+            }
+        }.execute());
     }
 
     /**
@@ -170,23 +210,16 @@ public class VCParse extends JFrame {
         filters.add(this.celestial);
         filters.add(this.ingroup);
         filters.add(this.invc);
+        filters.add(this.removeMarked);
         this.sorter.setRowFilter(RowFilter.andFilter(filters));
     }
 
+    /**
+     *
+     */
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        /*JTable vcParseTable = new JTable() {
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
-            {
-                Component comp= super.prepareRenderer(renderer,row, column);
-                if(column==3 && "ACTIVE".equals(tblPackage.getModel().getValueAt(row, 3).toString()))
-                {
-                    comp.setForeground(Color.GREEN);
-                }
-                return comp;
 
-            }
-        };*/
     }
 
     {
@@ -206,22 +239,23 @@ public class VCParse extends JFrame {
     private void $$$setupUI$$$() {
         main = new JPanel();
         main.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
-        Unrecognized = new JLabel();
-        Unrecognized.setText("Label");
-        main.add(Unrecognized, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
-        main.add(scrollPane1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        main.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         vcParseTable = new JTable();
+        vcParseTable.setCellSelectionEnabled(true);
         scrollPane1.setViewportView(vcParseTable);
         showInGroup = new JCheckBox();
         showInGroup.setText("Show In Group");
-        main.add(showInGroup, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        main.add(showInGroup, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         removeCelestial = new JCheckBox();
         removeCelestial.setText("Remove Celestial");
-        main.add(removeCelestial, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        main.add(removeCelestial, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         removeInVCCheckBox = new JCheckBox();
         removeInVCCheckBox.setText("Remove In VC");
-        main.add(removeInVCCheckBox, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        main.add(removeInVCCheckBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        removeMarkedRaidersCheckBox = new JCheckBox();
+        removeMarkedRaidersCheckBox.setText("Remove Marked Raiders");
+        main.add(removeMarkedRaidersCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -230,4 +264,5 @@ public class VCParse extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return main;
     }
+
 }

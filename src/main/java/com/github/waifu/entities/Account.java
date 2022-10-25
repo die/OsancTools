@@ -18,6 +18,19 @@ public class Account {
     private final String lastSeen;
     private final List<Character> characters;
 
+    public Account(String name) {
+        this.name = name;
+        this.stars = "";
+        this.skins = "";
+        this.exaltations = "";
+        this.accountFame = "";
+        this.guild = "";
+        this.guildRank = "";
+        this.creationDate = "";
+        this.lastSeen = "";
+        this.characters = null;
+    }
+
     /**
      * Account method.
      *

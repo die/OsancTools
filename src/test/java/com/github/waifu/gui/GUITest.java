@@ -17,8 +17,7 @@ class GUITest {
         loadResources();
         SwingUtilities.invokeLater(() -> {
             GUI gui = new GUI();
-            gui.setMode(GUI.NORMAL_MODE);
-            
+            gui.setMode(GUI.LAN_MODE);
         });
         while (true) {
             Thread.sleep(2000);

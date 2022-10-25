@@ -44,12 +44,7 @@ public class TableCopyAction extends AbstractAction {
                 if (!string.isEmpty()) {
                     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(string), null);
                 }
-            } /*else if (object instanceof ImageIcon) {
-                ImageIcon imageIcon = (ImageIcon) jTable.getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
-                if (imageIcon != null) {
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new ImageSelection(imageIcon.getImage()), null);
-                }
-            }*/
+            }
         }
     }
 

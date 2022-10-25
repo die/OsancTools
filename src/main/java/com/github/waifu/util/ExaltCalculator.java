@@ -1,8 +1,9 @@
 package com.github.waifu.util;
 
+import com.github.waifu.gui.Main;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 /**
  *
@@ -15,7 +16,7 @@ public class ExaltCalculator {
      *
      */
     public ExaltCalculator() {
-        this.stat = Preferences.userRoot().getInt("stat", 0);
+        this.stat = Main.settings.getStat();
     }
 
     /**

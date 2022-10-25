@@ -20,7 +20,7 @@ public class React {
     private String type;
     private String requirement;
     private ImageIcon image;
-    private List<Account> raiders;
+    private List<Raider> raiders;
 
     /**
      * React method.
@@ -32,7 +32,7 @@ public class React {
      * @param imageURL url of the image of the React.
      * @param raiders list of raiders who have reacted to this React.
      */
-    public React(String id, String name, String requirement, String imageURL, List<Account> raiders) throws MalformedURLException {
+    public React(String id, String name, String requirement, String imageURL, List<Raider> raiders) throws MalformedURLException {
         this.id = id;
         this.name = name;
         this.type = "";
@@ -52,12 +52,16 @@ public class React {
      * @param imageURL url of the image of the React.
      * @param raiders list of raiders who have reacted to this React.
      */
-    public React(String id, String name, String type, String requirement, String imageURL, List<Account> raiders) throws MalformedURLException {
+    public React(String id, String name, String type, String requirement, String imageURL, List<Raider> raiders) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.requirement = requirement;
-        this.image = new ImageIcon(new URL(imageURL));
+        try {
+            this.image = new ImageIcon(new URL(imageURL));
+        } catch (MalformedURLException exception) {
+            this.image = null;
+        }
         this.raiders = raiders;
     }
 
@@ -113,7 +117,7 @@ public class React {
      *
      * @return
      */
-    public List<Account> getRaiders() {
+    public List<Raider> getRaiders() {
         return this.raiders;
     }
 
@@ -121,7 +125,7 @@ public class React {
      *
      * @param raiders
      */
-    public void setRaiders(List<Account> raiders) {
+    public void setRaiders(List<Raider> raiders) {
         this.raiders = raiders;
     }
 
@@ -135,28 +139,38 @@ public class React {
     public void parseReact(String type) {
         switch (type) {
             case "item":
-                for (Account a : raiders) {
-                    parseItem(a);
+                for (Raider r : raiders) {
+                    for (Account a : r.getAccounts()) {
+                        parseItem(a);
+                    }
                 }
                 break;
             case "class":
-                for (Account a : raiders) {
-                    parseClass(a);
+                for (Raider r : raiders) {
+                    for (Account a : r.getAccounts()) {
+                        parseClass(a);
+                    }
                 }
                 break;
             case "dps":
-                for (Account a : raiders) {
-                    parseDps(a);
+                for (Raider r : raiders) {
+                    for (Account a : r.getAccounts()) {
+                        parseDps(a);
+                    }
                 }
                 break;
             case "lock":
-                for (Account a : raiders) {
-                    a.getCharacters().get(0).getInventory().getIssue().setWhisper("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
+                for (Raider r : raiders) {
+                    for (Account a : r.getAccounts()) {
+                        a.getCharacters().get(0).getInventory().getIssue().setWhisper("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
+                    }
                 }
                 break;
             default:
-                for (Account a : raiders) {
-                    a.getCharacters().get(0).getInventory().getIssue().setWhisper("/lock " + a.getName());
+                for (Raider r : raiders) {
+                    for (Account a : r.getAccounts()) {
+                        a.getCharacters().get(0).getInventory().getIssue().setWhisper("/lock " + a.getName());
+                    }
                 }
                 break;
         }

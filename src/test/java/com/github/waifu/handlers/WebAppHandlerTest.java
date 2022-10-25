@@ -1,30 +1,23 @@
 package com.github.waifu.handlers;
 
-import com.github.waifu.util.Utilities;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class WebAppHandlerTest {
 
     @Test
-    void getData() throws IOException, InterruptedException {
-        JSONObject jsonObject = WebAppHandler.getData(15982);
-        JSONObject jsonObject2 = WebAppHandler.getData(15981);
-        System.out.println("\nObtained JSON:\n" + jsonObject + "\n");
-        Set<String> raiders = Utilities.parseRaiders(jsonObject);
-        Set<String> raiders2 = Utilities.parseRaiders(jsonObject2);
+    void getRaidTest() {
+        JSONObject jsonObject = WebAppHandler.getRaid("15982");
+        assertNotNull(jsonObject);
 
-        for (String s : raiders) {
-            for (String s1 : raiders2) {
-                if (s.equals(s1)) {
-                    System.out.println(s);
-                }
-            }
-        }
+        jsonObject = WebAppHandler.getRaid("-1");
+        assertNull(jsonObject);
+
+        jsonObject = WebAppHandler.getRaid("10000000");
+        assertNotNull(jsonObject);
+
+        jsonObject = WebAppHandler.getRaid("test");
+        assertNull(jsonObject);
     }
 }

@@ -1,21 +1,22 @@
 package com.github.waifu.gui.models;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  */
 public class VCTableModel extends DefaultTableModel {
+
     /**
      *
      */
     public VCTableModel() {
+        addColumn("Avatar");
+        addColumn("Nickname");
         addColumn("IGN");
         addColumn("In Group");
         addColumn("In VC");
-        addColumn("Nickname");
-        addColumn("Discord ID");
-        addColumn("Role");
         addColumn("Mark");
     }
 
@@ -26,7 +27,8 @@ public class VCTableModel extends DefaultTableModel {
      */
     @Override
     public Class<?> getColumnClass(int column) {
-        if (column == 6) return Boolean.class;
+        if (column == 0) return ImageIcon.class;
+        if (column == 5) return Boolean.class;
         return Object.class;
     }
 
@@ -38,6 +40,6 @@ public class VCTableModel extends DefaultTableModel {
      */
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column == 6;
+        return column == 5;
     }
 }

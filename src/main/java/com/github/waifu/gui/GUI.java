@@ -3,8 +3,10 @@ package com.github.waifu.gui;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.github.waifu.entities.Raid;
 import com.github.waifu.enums.Stat;
 import com.github.waifu.gui.actions.*;
+import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -14,9 +16,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.prefs.Preferences;
 
 /**
  * GUI class to construct the GUI.
@@ -26,7 +25,6 @@ public class GUI extends JFrame {
     public static final int NORMAL_MODE = 0;
     public static final int DEBUG_MODE = 1;
     public static final int LAN_MODE = 2;
-    public static String RESOURCE_PATH = "src/main/resources/";
     public static String TEST_RESOURCE_PATH = "src/test/resources/";
     private static int mode;
     private JButton inputRaidButton;
@@ -37,7 +35,7 @@ public class GUI extends JFrame {
     private JPanel main;
     private JTabbedPane tabbedPane;
     private JPanel home;
-    private JLabel raid;
+    private JLabel raidLabel;
     private JPanel raidPanel;
     private JPanel descriptionPanel;
     private JLabel description;
@@ -82,6 +80,7 @@ public class GUI extends JFrame {
     private JPanel exaltsSelection;
     private TitledBorder border;
     private static JSONObject json;
+    public static Raid raid;
     private static boolean processRunning;
     private static SwingWorker<Void, Void> worker;
 
@@ -92,7 +91,7 @@ public class GUI extends JFrame {
      */
     public GUI() {
         try {
-            UIManager.setLookAndFeel(Preferences.userRoot().get("theme", "light").equals("dark") ? new FlatDarkLaf() : new FlatLightLaf());
+            UIManager.setLookAndFeel(Main.settings.getTheme().equals("dark") ? new FlatDarkLaf() : new FlatLightLaf());
             FlatLaf.updateUI();
         } catch (Exception ignored) {
         }
@@ -108,6 +107,27 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
         setVisible(true);
+        // checkRealmeye();
+    }
+
+    private void checkRealmeye() {
+        try {
+
+            if (Main.settings.showAlert()) {
+                JLabel status = RealmeyeRequestHandler.checkRealmeyeStatus();
+                if (status != null) {
+                    JCheckBox checkbox = new JCheckBox("Don't alert in the future");
+                    Object[] params = {status, checkbox};
+                    JOptionPane.showMessageDialog(this,
+                            params, "Realmeye server error", JOptionPane.WARNING_MESSAGE);
+                    if (checkbox.isSelected()) {
+                        Main.settings.setShowAlert(false);
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -116,7 +136,7 @@ public class GUI extends JFrame {
      * Constructs all listeners for the JFrame.
      */
     private void addActionListeners() {
-        inputRaidButton.addActionListener(new GetWebAppDataAction(main, border, connected, raid, raidPanel, description, metadata, this));
+        inputRaidButton.addActionListener(new GetWebAppDataAction(main, this));
 
         vcParseButton.addActionListener(e -> {
             //new ParseVoiceChannelAction()
@@ -136,8 +156,7 @@ public class GUI extends JFrame {
         });
 
         requirementButton.addActionListener(e -> {
-            Preferences userPrefs = Preferences.userRoot();
-            userPrefs.putInt("requirement", Integer.parseInt(requirementInput.getText()));
+            Main.settings.setRequirement(Integer.parseInt(requirementInput.getText()));
         });
 
         exaltsButton.addActionListener(new CalculatePlayerExaltationsAction(exaltsInput, exaltsResult));
@@ -164,36 +183,29 @@ public class GUI extends JFrame {
                     "Confirmation",
                     JOptionPane.YES_NO_OPTION);
             if (confirm == 0) {
-                Preferences userPrefs = Preferences.userRoot();
-                userPrefs.remove("token");
-                userPrefs.remove("betaToken");
-                userPrefs.remove("theme");
-                userPrefs.remove("stat");
-                userPrefs.remove("requirement");
+                Main.settings.clearSettings();
             }
         });
 
         setTokenButton.addActionListener(e -> {
-            Preferences userPrefs = Preferences.userRoot();
-            String newToken = String.valueOf(tokenField.getPassword());
+            String token = String.valueOf(tokenField.getPassword());
             int confirm = JOptionPane.showConfirmDialog(main,
-                    "The current token is: " + userPrefs.get("token", "") + "\n Would you like to change it to: " + newToken,
+                    "The current token is: " + Main.settings.getToken() + "\n Would you like to change it to: " + token,
                     "Confirmation",
                     JOptionPane.YES_NO_OPTION);
             if (confirm == 0) {
-                userPrefs.put("token", newToken);
+                Main.settings.setToken(token);
             }
         });
 
         setBetaTokenButton.addActionListener(e -> {
-            Preferences userPrefs = Preferences.userRoot();
-            String newToken = String.valueOf(betaTokenField.getPassword());
+            String betaToken = String.valueOf(betaTokenField.getPassword());
             int confirm = JOptionPane.showConfirmDialog(main,
-                    "The current token is: " + userPrefs.get("betaToken", "") + "\n Would you like to change it to: " + newToken,
+                    "The current token is: " + Main.settings.getBetaToken() + "\n Would you like to change it to: " + betaToken,
                     "Confirmation",
                     JOptionPane.YES_NO_OPTION);
             if (confirm == 0) {
-                userPrefs.put("betaToken", newToken);
+                Main.settings.setBetaToken(betaToken);
             }
         });
 
@@ -221,9 +233,9 @@ public class GUI extends JFrame {
             }
         });
 
-        lightRadioButton.addActionListener(e -> Preferences.userRoot().put("theme", "light"));
+        lightRadioButton.addActionListener(e -> Main.settings.setTheme("light"));
 
-        darkRadioButton.addActionListener(e -> Preferences.userRoot().put("theme", "dark"));
+        darkRadioButton.addActionListener(e -> Main.settings.setTheme("dark"));
     }
 
 
@@ -249,11 +261,11 @@ public class GUI extends JFrame {
         raidPanel = new JPanel();
         raidPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         connected.add(raidPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, 1, null, null, null, 0, false));
-        raid = new JLabel();
-        raid.setHorizontalAlignment(0);
-        raid.setHorizontalTextPosition(2);
-        raid.setText(" ");
-        raidPanel.add(raid, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, 1, null, null, null, 0, false));
+        raidLabel = new JLabel();
+        raidLabel.setHorizontalAlignment(0);
+        raidLabel.setHorizontalTextPosition(2);
+        raidLabel.setText(" ");
+        raidPanel.add(raidLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, 1, null, null, null, 0, false));
         descriptionPanel = new JPanel();
         descriptionPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         connected.add(descriptionPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, 1, null, null, null, 0, false));
@@ -389,17 +401,17 @@ public class GUI extends JFrame {
         label3.setVerticalAlignment(0);
         panel1.add(label3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         options = new JPanel();
-        options.setLayout(new GridLayoutManager(6, 4, new Insets(5, 5, 5, 5), -1, -1));
+        options.setLayout(new GridLayoutManager(6, 5, new Insets(5, 5, 5, 5), -1, -1));
         tabbedPane.addTab("Options", options);
         tokenField = new JPasswordField();
         tokenField.putClientProperty("JPasswordField.cutCopyAllowed", Boolean.TRUE);
         options.add(tokenField, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(150, -1), null, 0, false));
         setTokenButton = new JButton();
         setTokenButton.setText("Set Token");
-        options.add(setTokenButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        options.add(setTokenButton, new GridConstraints(3, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         WebAppTokenField = new JLabel();
         WebAppTokenField.setText("WebApp Token");
-        options.add(WebAppTokenField, new GridConstraints(2, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        options.add(WebAppTokenField, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lightRadioButton = new JRadioButton();
         lightRadioButton.setText("Light");
         options.add(lightRadioButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -407,20 +419,20 @@ public class GUI extends JFrame {
         darkRadioButton.setText("Dark");
         options.add(darkRadioButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("Theme (Requires Restart)");
-        options.add(label4, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label5 = new JLabel();
-        label5.setText("WebApp Beta Token");
-        options.add(label5, new GridConstraints(4, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        label4.setText("WebApp Beta Token");
+        options.add(label4, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         betaTokenField = new JPasswordField();
         betaTokenField.putClientProperty("JPasswordField.cutCopyAllowed", Boolean.TRUE);
         options.add(betaTokenField, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(150, -1), null, 0, false));
         setBetaTokenButton = new JButton();
         setBetaTokenButton.setText("Set Beta Token");
-        options.add(setBetaTokenButton, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        options.add(setBetaTokenButton, new GridConstraints(5, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         clearSettingsButton = new JButton();
         clearSettingsButton.setText("Clear Settings");
-        options.add(clearSettingsButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        options.add(clearSettingsButton, new GridConstraints(1, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setText("Theme (Requires Restart)");
+        options.add(label5, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         creditsPanel = new JPanel();
         creditsPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Credits", creditsPanel);
@@ -455,7 +467,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     *
      * @param mode
      */
     public void setMode(int mode) {
@@ -467,32 +478,21 @@ public class GUI extends JFrame {
      */
     public void updateGUI() {
         try {
-            if (json != null && json.get("status").equals(1)) {
+            if (raid != null) {
                 border.setTitle("Connected");
                 border.setTitleColor(Color.green);
                 connected.setBorder(border);
                 SwingUtilities.updateComponentTreeUI(connected);
                 raidPanel.setOpaque(true);
-                Color color = new Color(json.getJSONObject("raid").getInt("bg_color"));
+                Color color = new Color(raid.getJson().getInt("bg_color"));
                 Color invertedColor = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
                 raidPanel.setBackground(color);
-                raid.setForeground(invertedColor);
-                try {
-                    String avatar = json.getJSONObject("raid").getJSONObject("creator").getString("avatar");
-                    Image i;
-                    if (avatar.contains(".gif")) {
-                        i = new ImageIcon(new URL(json.getJSONObject("raid").getJSONObject("creator").getString("avatar"))).getImage().getScaledInstance(25, 25, Image.SCALE_REPLICATE);
-                    } else {
-                        i = new ImageIcon(new URL(json.getJSONObject("raid").getJSONObject("creator").getString("avatar"))).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-                    }
-                    raid.setIcon(new ImageIcon(i));
-                    raid.setText(json.getJSONObject("raid").getString(("name")) + " led by " + json.getJSONObject("raid").getJSONObject("creator").getString("server_nickname"));
-                    metadata.setText("ID: " + json.getJSONObject("raid").getInt(("id")) + " Status: " + json.getJSONObject("raid").getString("status") + " Location: " + json.getJSONObject("raid").get("location"));
-                    description.setText(String.valueOf(json.getJSONObject("raid").get("description")));
-                    pack();
-                } catch (MalformedURLException ex) {
-                    ex.printStackTrace();
-                }
+                raidLabel.setForeground(invertedColor);
+                raidLabel.setIcon(raid.getRaidLeader().getAvatar());
+                raidLabel.setText(raid.getName() + " led by " + raid.getRaidLeader().getServerNickname());
+                metadata.setText("ID: " + raid.getId() + " Status: " + raid.getStatus() + " Location: " + raid.getLocation());
+                description.setText(String.valueOf(raid.getDescription()));
+                pack();
             }
         } catch (JSONException exception) {
             System.out.println("Cannot find assets from JSON, did you select the right file?");
@@ -506,7 +506,7 @@ public class GUI extends JFrame {
      */
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        switch (Preferences.userRoot().get("theme", "light")) {
+        switch (Main.settings.getTheme()) {
             case "light" -> lightRadioButton.setSelected(true);
             case "dark" -> darkRadioButton.setSelected(true);
         }
@@ -519,7 +519,7 @@ public class GUI extends JFrame {
         dexterityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/dexterity.png")));
         vitalityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/vitality.png")));
         wisdomPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/wisdom.png")));
-        switch (Preferences.userRoot().getInt("stat", 0)) {
+        switch (Main.settings.getStat()) {
             case 0 -> lifeRadioButton.setSelected(true);
             case 1 -> manaRadioButton.setSelected(true);
             case 2 -> attackRadioButton.setSelected(true);
@@ -529,26 +529,17 @@ public class GUI extends JFrame {
             case 6 -> vitalityRadioButton.setSelected(true);
             case 7 -> wisdomRadioButton.setSelected(true);
         }
-        requirementInput.setText(String.valueOf(Preferences.userRoot().getInt("requirement", 100)));
+        requirementInput.setText(String.valueOf(Main.settings.getRequirement()));
         border = BorderFactory.createTitledBorder("None");
         border.setTitle("Not Connected");
         border.setTitleColor(Color.red);
         connected.setBorder(border);
         raidPanel.setOpaque(false);
-        tokenField.setText(Preferences.userRoot().get("token", ""));
-        betaTokenField.setText(Preferences.userRoot().get("betaToken", ""));
+        tokenField.setText(Main.settings.getToken());
+        betaTokenField.setText(Main.settings.getBetaToken());
     }
 
     /**
-     *
-     * @return
-     */
-    public static SwingWorker getWorker() {
-        return worker;
-    }
-
-    /**
-     *
      * @param worker
      */
     public static void setWorker(SwingWorker worker) {
@@ -556,7 +547,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     *
      * @return
      */
     public static JSONObject getJson() {
@@ -564,7 +554,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     *
      * @param json
      */
     public static void setJson(JSONObject json) {
@@ -572,7 +561,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     *
      * @return
      */
     public static int getMode() {
@@ -580,7 +568,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     *
      * @param processRunning
      */
     public static void setProcessRunning(boolean processRunning) {
@@ -588,7 +575,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     *
      * @return
      */
     public static boolean checkProcessRunning() {

@@ -1,16 +1,24 @@
 package com.github.waifu.gui;
 
+import com.github.waifu.config.Settings;
 import com.github.waifu.util.Utilities;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import javax.swing.SwingUtilities;
 import java.io.IOException;
-import java.net.URL;
+import java.net.*;
+import java.util.Set;
+import java.util.prefs.Preferences;
 
 /**
  * Main class to initialize the UI.
  */
-final class Main {
+public final class Main {
+
+    public static Settings settings = new Settings();
 
     private Main() { }
 
@@ -22,7 +30,6 @@ final class Main {
      * @param args input arguments that are not used.
      */
     public static void main(final String[] args) {
-
         try {
             loadResources();
             SwingUtilities.invokeLater(GUI::new);

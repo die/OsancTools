@@ -8,7 +8,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [1.0.0.2] - 2022-10-25
 ### Added
-- Accounts in set/react tables now color code raiders with multiple accounts.
+- Set/react tables now color code raiders with multiple accounts.
 - Checking one of the accounts checks all that are visible.
 
 ### Changed

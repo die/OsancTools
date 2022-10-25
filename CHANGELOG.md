@@ -6,6 +6,16 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleased]
 
+## [1.0.0.2] - 2022-10-25
+### Added
+- Accounts in set/react tables now color code raiders with multiple accounts.
+- Checking one of the accounts checks all that are visible.
+
+### Changed
+- VC Parse now has a better layout
+- Raiders with celestial are now indicated by a yellow font color.
+- Copying the image in the cell copies the discord id of the raider.
+- Metadata such as character level, CQC, fame, etc is not being logged due to Realmeye issues. Will be fixed in a new version.
 
 ## [1.0.0.1] - 2022-10-06
 ### Added

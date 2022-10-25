@@ -3,6 +3,7 @@ package com.github.waifu.gui.tables;
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
+import com.github.waifu.gui.AccountView;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.SetTableModel;
@@ -53,16 +54,11 @@ public class SetTable extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
         setVisible(true);
-        /*viewProfileButton.addActionListener(e -> {
+        viewProfileButton.addActionListener(e -> {
             String username = (String) setsTable.getValueAt(setsTable.getSelectedRow(), 1);
-            for (Map.Entry<Raider, Inventory> m : accountInventoryMap.entrySet()) {
-                if (m.getKey().getAccounts().get(0).getName().equalsIgnoreCase(username)) {
-                    Raider r = m.getKey();
-                    r.setAvatarSize(128, 128);
-                    new AccountView(r);
-                }
-            }
-        });*/
+            Raider r = GUI.raid.findRaiderByUsername(username);
+            new AccountView(r);
+        });
         new TableCopyAction(setsTable);
 
         pack();

@@ -488,7 +488,7 @@ public class GUI extends JFrame {
                 Color invertedColor = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
                 raidPanel.setBackground(color);
                 raidLabel.setForeground(invertedColor);
-                raidLabel.setIcon(raid.getRaidLeader().getAvatar());
+                raidLabel.setIcon(raid.getRaidLeader().getResizedAvatar(25, 25));
                 raidLabel.setText(raid.getName() + " led by " + raid.getRaidLeader().getServerNickname());
                 metadata.setText("ID: " + raid.getId() + " Status: " + raid.getStatus() + " Location: " + raid.getLocation());
                 description.setText(String.valueOf(raid.getDescription()));

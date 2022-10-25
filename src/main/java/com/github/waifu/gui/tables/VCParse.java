@@ -118,7 +118,7 @@ public class VCParse extends JFrame {
             }
 
             Object[] array = new Object[6];
-            array[0] = raiders.get(i).getAvatar();
+            array[0] = raiders.get(i).getResizedAvatar(vcParseTable.getRowHeight(), vcParseTable.getRowHeight());
             array[1] = username;
             array[2] = inGroupUsername;
             array[3] = inGroup;

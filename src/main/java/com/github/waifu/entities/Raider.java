@@ -157,9 +157,9 @@ public class Raider {
             try {
                 Image image;
                 if (avatar.contains(".gif")) {
-                    image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(25, 25, Image.SCALE_REPLICATE);
+                    image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_REPLICATE);
                 } else {
-                    image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+                    image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
                 }
                 ImageIcon icon = new ImageIcon(image);
                 icon.setDescription(id);
@@ -176,7 +176,9 @@ public class Raider {
      * @param width
      * @param height
      */
-    public void setAvatarSize(int width, int height) {
-        this.avatar = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
+    public ImageIcon getResizedAvatar(int width, int height) {
+        ImageIcon resized = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
+        resized.setDescription(avatar.getDescription());
+        return resized;
     }
 }

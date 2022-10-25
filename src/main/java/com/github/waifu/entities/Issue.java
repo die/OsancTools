@@ -31,19 +31,6 @@ public class Issue {
 
     /**
      *
-     */
-    public void setWhisper() {
-        switch (this.problem) {
-            case EMPTY_SLOT -> this.whisper = "Please equip an item that meets reqs in your empty slot";
-            case MISSING_REACT_CLASS -> this.whisper = "Please switch to the class that you reacted to";
-            case MISSING_REACT_CLASS_ABILITY_T6 -> this.whisper = "Please equip your T6/T7 ability so I can confirm it. You can swap it out after";
-            case PRIVATE_PROFILE -> this.whisper = "No Whisper";
-            case NONE -> this.whisper = "None";
-        }
-    }
-
-    /**
-     *
      * @param string
      */
     public void setWhisper(String string) {

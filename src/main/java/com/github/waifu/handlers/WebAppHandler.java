@@ -1,9 +1,9 @@
 package com.github.waifu.handlers;
 
+import com.github.waifu.gui.Main;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import java.util.concurrent.TimeUnit;
-import java.util.prefs.Preferences;
 
 /**
  * Handler to work with the WebApp API
@@ -20,7 +20,8 @@ public class WebAppHandler {
     public static JSONObject getRaid(String raidId) {
         try {
             int id = Integer.parseInt(raidId);
-            if (id > 9) {
+            /* Oldest Valid ID is 9 */
+            if (id >= 9) {
                 return getData(id);
             } else {
                 return null;
@@ -39,19 +40,24 @@ public class WebAppHandler {
      */
     public static JSONObject getData(int id) {
         JSONObject request = new JSONObject();
-        request.put("access_token", Preferences.userRoot().get("token", ""));
-        request.put("raid_id", id);
-        try {
-           String data = Jsoup.connect("https://api.osanc.net/getRaid")
-                    .requestBody(request.toString())
-                    .header("Content-Type", "application/json")
-                    .ignoreContentType(true)
-                    .post()
-                    .body()
-                    .text();
-           TimeUnit.SECONDS.sleep(1);
-           return new JSONObject(data);
-        } catch (Exception e) {
+        String token = Main.settings.getToken();
+        if (!token.equals("")) {
+            request.put("access_token", token);
+            request.put("raid_id", id);
+            try {
+                String data = Jsoup.connect("https://api.osanc.net/getRaid")
+                        .requestBody(request.toString())
+                        .header("Content-Type", "application/json")
+                        .ignoreContentType(true)
+                        .post()
+                        .body()
+                        .text();
+                TimeUnit.SECONDS.sleep(1);
+                return new JSONObject(data);
+            } catch (Exception e) {
+                return null;
+            }
+        } else {
             return null;
         }
     }

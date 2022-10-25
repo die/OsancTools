@@ -2,7 +2,9 @@ package com.github.waifu.gui.tables;
 
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
+import com.github.waifu.entities.Raider;
 import com.github.waifu.entities.React;
+import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.ReactTableModel;
 import com.github.waifu.util.Utilities;
@@ -70,28 +72,35 @@ public class ReactTable extends JFrame {
         reactTable.setRowSorter(sorter);
         int width = 0;
         for (React react : reacts) {
-            for (Account a : react.getRaiders()) {
-                Object[] array = new Object[5];
-                array[0] = new ImageIcon(react.getImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
-                array[1] = a.getName();
-                Inventory inventory = a.getCharacters().get(0).getInventory();
-                ImageIcon result = new ImageIcon(inventory.createImage(reactTable.getRowHeight(), reactTable.getRowHeight()).getImage());
-                ImageIcon skin = new ImageIcon(a.getCharacters().get(0).getSkinImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
-                width = result.getIconWidth() + skin.getIconWidth();
-                BufferedImage bufferedImage = new BufferedImage(width, reactTable.getRowHeight(), BufferedImage.TYPE_INT_ARGB);
-                Graphics g = bufferedImage.getGraphics();
-                g.drawImage(skin.getImage(), 0, 0, null);
-                g.drawImage(result.getImage(), skin.getIconWidth(), 0, null);
-                g.dispose();
-                ImageIcon imageIcon = new ImageIcon(bufferedImage);
-                imageIcon.setDescription(inventory.printInventory());
-                array[2] = new ImageIcon(bufferedImage);
-                String whisper = a.getCharacters().get(0).getInventory().getIssue().getWhisper();
-                array[3] = whisper;
-                array[4] = false;
-                tableModel.addRow(array);
+            for (Raider r  : react.getRaiders()) {
+                for (Account a : r.getAccounts()) {
+                    Object[] array = new Object[5];
+                    array[0] = new ImageIcon(react.getImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
+                    array[1] = a.getName();
+                    Inventory inventory = a.getCharacters().get(0).getInventory();
+                    ImageIcon result = new ImageIcon(inventory.createImage(reactTable.getRowHeight(), reactTable.getRowHeight()).getImage());
+                    ImageIcon skin = new ImageIcon(a.getCharacters().get(0).getSkinImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
+                    width = result.getIconWidth() + skin.getIconWidth();
+                    BufferedImage bufferedImage = new BufferedImage(width, reactTable.getRowHeight(), BufferedImage.TYPE_INT_ARGB);
+                    Graphics g = bufferedImage.getGraphics();
+                    g.drawImage(skin.getImage(), 0, 0, null);
+                    g.drawImage(result.getImage(), skin.getIconWidth(), 0, null);
+                    g.dispose();
+                    ImageIcon imageIcon = new ImageIcon(bufferedImage);
+                    imageIcon.setDescription(inventory.printInventory());
+                    array[2] = new ImageIcon(bufferedImage);
+                    String whisper = a.getCharacters().get(0).getInventory().getIssue().getWhisper();
+                    array[3] = whisper;
+                    array[4] = false;
+                    tableModel.addRow(array);
+                }
             }
         }
+        List<Raider> raiders = new ArrayList<>();
+        for (React react : reacts) {
+            raiders.addAll(react.getRaiders());
+        }
+        reactTable.setDefaultRenderer(Object.class, new ColorTableRenderer(raiders));
         reactTable.setModel(tableModel);
         reactTable.getColumnModel().getColumn(2).setMinWidth(width);
     }
@@ -102,7 +111,24 @@ public class ReactTable extends JFrame {
      * Constructs all listeners for the JFrame.
      */
     private void addActionListeners() {
-        reactTable.addPropertyChangeListener(evt -> updateFilters());
+        reactTable.addPropertyChangeListener(evt -> {
+            JTable editedTable = (JTable) evt.getSource();
+            int row = editedTable.getEditingRow();
+            int column = editedTable.getEditingColumn();
+
+            if (column == 4) {
+                String username = (String) editedTable.getValueAt(row, 1);
+                Raider r  = GUI.raid.findRaiderByUsername(username);
+                boolean newValue = (boolean) editedTable.getValueAt(row, column);
+                for (Account a : r.getAccounts()) {
+                    int n = findRowValue(a.getName());
+                    if (n != -1) {
+                        reactTable.setValueAt(newValue, n, column);
+                    }
+                }
+            }
+            updateFilters();
+        });
 
         removeGoodReactsCheckBox.addActionListener(e -> new SwingWorker<Void, Void>() {
             @Override
@@ -211,5 +237,14 @@ public class ReactTable extends JFrame {
         filters.add(this.privateProfile);
         filters.add(this.removeMarked);
         this.sorter.setRowFilter(RowFilter.andFilter(filters));
+    }
+
+    private int findRowValue(String value) {
+        for (int i = 0; i < reactTable.getRowCount(); i++) {
+            if (reactTable.getValueAt(i, 1).equals(value)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

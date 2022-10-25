@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
  */
 public class Raider {
 
-    private String id;
+    private final String id;
+    private final String serverNickname;
     private String timestampJoined;
     private ImageIcon avatar;
     private boolean gotPriority;
@@ -31,6 +33,7 @@ public class Raider {
      */
     public Raider() {
         this.id = "";
+        this.serverNickname = "";
         this.timestampJoined = "";
         this.avatar = null;
         this.gotPriority = false;
@@ -42,9 +45,17 @@ public class Raider {
         this.accounts = null;
     }
 
+    public Raider(String id, String avatar, String serverNickname) {
+        this.id = id;
+        this.avatar = setAvatar(avatar);
+        this.serverNickname = serverNickname;
+        this.accounts = null;
+    }
+
     /**
      *
      * @param id
+     * @param serverNickname
      * @param timestampJoined
      * @param avatar
      * @param gotPriority
@@ -55,8 +66,9 @@ public class Raider {
      * @param reacts
      * @param accounts
      */
-    public Raider(String id, String timestampJoined, String avatar, boolean gotPriority, boolean gotEarlyLocation, boolean inWaitingList, boolean inVC, JSONArray roles, JSONArray reacts, List<Account> accounts) {
+    public Raider(String id, String serverNickname, String timestampJoined, String avatar, boolean gotPriority, boolean gotEarlyLocation, boolean inWaitingList, boolean inVC, JSONArray roles, JSONArray reacts, List<Account> accounts) {
         this.id = id;
+        this.serverNickname = serverNickname;
         this.timestampJoined = timestampJoined;
         this.gotPriority = gotPriority;
         this.gotEarlyLocation = gotEarlyLocation;
@@ -85,12 +97,24 @@ public class Raider {
         return raider;
     }
 
-    /**
-     *
-     * @param account
-     */
-    public void addAccount(Account account) {
-        this.accounts.add(account);
+    public String getId() {
+        return id;
+    }
+
+    public String getServerNickname() {
+        return serverNickname;
+    }
+
+    public boolean isCelestial() {
+        return roles.toList().contains("907008641079586817");
+    }
+
+    public boolean isInVC() {
+        return inVC;
+    }
+
+    public JSONArray getReacts() {
+        return this.reacts;
     }
 
     /**
@@ -131,9 +155,17 @@ public class Raider {
             }
         } else {
             try {
-                return new ImageIcon(new URL(avatar));
+                Image image;
+                if (avatar.contains(".gif")) {
+                    image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_REPLICATE);
+                } else {
+                    image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+                }
+                ImageIcon icon = new ImageIcon(image);
+                icon.setDescription(id);
+                return icon;
             } catch (Exception e) {
-                e.printStackTrace();
+                return null;
             }
         }
         return null;
@@ -144,7 +176,9 @@ public class Raider {
      * @param width
      * @param height
      */
-    public void setAvatarSize(int width, int height) {
-        this.avatar = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
+    public ImageIcon getResizedAvatar(int width, int height) {
+        ImageIcon resized = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
+        resized.setDescription(avatar.getDescription());
+        return resized;
     }
 }

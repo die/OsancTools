@@ -48,7 +48,7 @@ public class ParseWebAppSetsAction implements ActionListener {
                         GUI.setWorker(this);
                         progressBar.setValue(0);
                         GUI.setProcessRunning(true);
-                        Map<Raider, Inventory> sets = getSets(GUI.getJson(), progressBar);
+                        List<Raider> sets = getSets(GUI.raid, progressBar);
                         if (sets != null) {
                             new SetTable(sets);
                         }
@@ -64,37 +64,53 @@ public class ParseWebAppSetsAction implements ActionListener {
         }.execute();
     }
 
+    public enum Rune {
+        SHIELD_RUNE(20), SWORD_RUNE(21), HELMET_RUNE(22);
+
+        int id;
+
+        Rune(int id) {
+            this.id = id;
+        }
+    }
+
     /**
      * getSets method.
      * <p>
      * Constructs a map containing accounts and their inventories.
      *
-     * @param json JSONObject returned from the WebApp
+     *
      * @param bar  progress bar to be updated over time.
      */
-    private Map<Raider, Inventory> getSets(JSONObject json, JProgressBar bar) throws InterruptedException, IOException {
-        if (json == null || !json.has("raid")) {
+    private List<Raider> getSets(Raid raid, JProgressBar bar) throws InterruptedException, IOException {
+        if (raid.getRaiders().isEmpty()) {
             return null;
         } else {
-            List<String> usernames = Utilities.parseRaiderSets(json).stream().toList();
-            if (usernames.isEmpty()) {
-                return null;
-            }
-            bar.setMaximum(usernames.size());
-            Map<Raider, Inventory> map = new HashMap<>();
-            for (int i = 0; i < usernames.size(); i++) {
-                String username = usernames.get(i);
-                Account account = RealmeyeRequestHandler.parseHTML(Objects.requireNonNull(RealmeyeRequestHandler.getRealmeyeData(username)), username);
-                Raider raider = Utilities.constructRaider(username, account);
-                if (account.getCharacters() != null) {
-                    Inventory inventory = account.getCharacters().get(0).getInventory();
-                    map.put(raider, inventory.parseInventory());
+            List<Raider> raiders = new ArrayList<>();
+
+            for (Raider r : raid.getRaiders()) {
+                List<Object> reactIds = r.getReacts().toList();
+                if (reactIds.isEmpty()) {
+                    raiders.add(r);
                 } else {
-                    map.put(raider, null);
+                    if (!reactIds.contains(Rune.SHIELD_RUNE.id) && !reactIds.contains(Rune.SWORD_RUNE.id) && !reactIds.contains(Rune.HELMET_RUNE.id)) {
+                        raiders.add(r);
+                    }
+                }
+            }
+            bar.setMaximum(raiders.size());
+            for (int i = 0; i < raiders.size(); i++) {
+                for (int j = 0; j < raiders.get(i).getAccounts().size(); j++) {
+                    String username = raiders.get(i).getAccounts().get(j).getName();
+                    Account account = RealmeyeRequestHandler.parseHTML(Objects.requireNonNull(RealmeyeRequestHandler.getRealmeyeData(username)), username);
+                    if (account.getCharacters() != null) {
+                        account.getCharacters().get(0).getInventory().parseInventory();
+                    }
+                    raiders.get(i).getAccounts().set(j, account);
                 }
                 bar.setValue(i + 1);
             }
-            return map;
+            return raiders;
         }
     }
 }

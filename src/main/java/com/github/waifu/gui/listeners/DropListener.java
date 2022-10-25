@@ -74,7 +74,6 @@ public class DropListener implements DropTargetListener {
             java.util.List<File> files = (java.util.List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
             File file = files.get(0); // get first selected file if multiple
             if (Utilities.isImage(file)) {
-
                 frame.getLabel().setText("");
                 frame.setImage(ImageIO.read(files.get(0)));
                 frame.getLabel().setIcon(new ImageIcon(frame.getImage().getScaledInstance(frame.getPanelWidth(), frame.getPanelHeight(), Image.SCALE_DEFAULT)));

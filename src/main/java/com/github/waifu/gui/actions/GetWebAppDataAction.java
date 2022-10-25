@@ -1,11 +1,11 @@
 package com.github.waifu.gui.actions;
 
+import com.github.waifu.entities.Raid;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.handlers.WebAppHandler;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,33 +18,15 @@ import java.nio.charset.StandardCharsets;
 public class GetWebAppDataAction implements ActionListener {
 
     private final JPanel main;
-    private final TitledBorder border;
-    private final JPanel connected;
-    private final JLabel raid;
-    private final JPanel raidPanel;
-    private final JLabel description;
-    private final JLabel metadata;
     private final GUI gui;
 
     /**
      *
      * @param main
-     * @param border
-     * @param connected
-     * @param raid
-     * @param raidPanel
-     * @param description
-     * @param metadata
      * @param gui
      */
-    public GetWebAppDataAction(JPanel main, TitledBorder border, JPanel connected, JLabel raid, JPanel raidPanel, JLabel description, JLabel metadata, GUI gui) {
+    public GetWebAppDataAction(JPanel main, GUI gui) {
         this.main = main;
-        this.border = border;
-        this.connected = connected;
-        this.raid = raid;
-        this.raidPanel = raidPanel;
-        this.description = description;
-        this.metadata = metadata;
         this.gui = gui;
     }
 
@@ -81,6 +63,7 @@ public class GetWebAppDataAction implements ActionListener {
             JSONObject jsonObject = WebAppHandler.getRaid(s);
             if (jsonObject != null) {
                 GUI.setJson(jsonObject);
+                GUI.raid = new Raid(jsonObject.getJSONObject("raid"));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -97,7 +80,9 @@ public class GetWebAppDataAction implements ActionListener {
         int returnVal = fc.showOpenDialog(rootPane);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                GUI.setJson(new JSONObject(new JSONTokener(new InputStreamReader(new FileInputStream(fc.getSelectedFile()), StandardCharsets.UTF_8))));
+                JSONObject jsonObject = new JSONObject(new JSONTokener(new InputStreamReader(new FileInputStream(fc.getSelectedFile()), StandardCharsets.UTF_8)));
+                GUI.setJson(jsonObject);
+                GUI.raid = new Raid(jsonObject.getJSONObject("raid"));
             } catch (FileNotFoundException exception) {
                 System.out.println("Could not find file: " + fc.getSelectedFile().getName());
             } catch (Exception exception) {

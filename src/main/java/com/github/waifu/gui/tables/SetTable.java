@@ -1,8 +1,10 @@
 package com.github.waifu.gui.tables;
 
+import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.AccountView;
+import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.SetTableModel;
 import com.github.waifu.util.Utilities;
@@ -10,13 +12,10 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * SetTable class to construct the UI for the table containing parsed sets.
@@ -44,7 +43,7 @@ public class SetTable extends JFrame {
      * @param accountInventoryMap Map containing an Account object as the key
      *                            and its Inventory as the value.
      */
-    public SetTable(Map<Raider, Inventory> accountInventoryMap) {
+    public SetTable(List<Raider> accountInventoryMap) {
         $$$setupUI$$$();
         createTable(accountInventoryMap);
         addActionListeners();
@@ -57,15 +56,11 @@ public class SetTable extends JFrame {
         setVisible(true);
         viewProfileButton.addActionListener(e -> {
             String username = (String) setsTable.getValueAt(setsTable.getSelectedRow(), 1);
-            for (Map.Entry<Raider, Inventory> m : accountInventoryMap.entrySet()) {
-                if (m.getKey().getAccounts().get(0).getName().equalsIgnoreCase(username)) {
-                    Raider r = m.getKey();
-                    r.setAvatarSize(128, 128);
-                    new AccountView(r);
-                }
-            }
+            Raider r = GUI.raid.findRaiderByUsername(username);
+            new AccountView(r);
         });
         new TableCopyAction(setsTable);
+
         pack();
     }
 
@@ -77,22 +72,25 @@ public class SetTable extends JFrame {
      * @param accountInventoryMap Map containing an Account object as the key
      *                            and its Inventory as the value.
      */
-    private void createTable(Map<Raider, Inventory> accountInventoryMap) {
+    private void createTable(List<Raider> accountInventoryMap) {
         DefaultTableModel tableModel = new SetTableModel();
         int width = 0;
-        for (Map.Entry<Raider, Inventory> m : accountInventoryMap.entrySet()) {
-            if (m.getValue() != null) {
+        for (Raider raider : accountInventoryMap) {
+            for (int j = 0; j < raider.getAccounts().size(); j++) {
+                Account account = raider.getAccounts().get(j);
+                Inventory inventory = account.getCharacters().get(0).getInventory();
                 Object[] array = new Object[6];
-                ImageIcon result = new ImageIcon(m.getValue().createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
-                result.setDescription(m.getValue().printInventory());
+                ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
+                result.setDescription(inventory.printInventory());
                 width = result.getIconWidth();
-                array[0] = m.getValue().getIssue().getProblem().getProblem();
-                array[1] = m.getKey().getAccounts().get(0).getName();
+                array[0] = inventory.getIssue().getProblem().getProblem();
+                array[1] = account.getName();
                 array[2] = result;
                 array[3] = false;
                 tableModel.addRow(array);
             }
         }
+        setsTable.setDefaultRenderer(Object.class, new ColorTableRenderer(accountInventoryMap));
         sorter = new TableRowSorter<>(tableModel);
         setsTable.setRowSorter(sorter);
         setsTable.setModel(tableModel);
@@ -105,7 +103,24 @@ public class SetTable extends JFrame {
      * Constructs all listeners for the JFrame.
      */
     private void addActionListeners() {
-        setsTable.addPropertyChangeListener(evt -> updateFilters());
+        setsTable.addPropertyChangeListener(evt -> {
+            JTable editedTable = (JTable) evt.getSource();
+            int row = editedTable.getEditingRow();
+            int column = editedTable.getEditingColumn();
+
+            if (column == 3) {
+                String username = (String) editedTable.getValueAt(row, 1);
+                Raider r  = GUI.raid.findRaiderByUsername(username);
+                boolean newValue = (boolean) editedTable.getValueAt(row, column);
+                for (Account a : r.getAccounts()) {
+                    int n = findRowValue(a.getName());
+                    if (n != -1) {
+                        setsTable.setValueAt(newValue, n, column);
+                    }
+                }
+            }
+            updateFilters();
+        });
 
         removeGoodSetsCheckBox.addActionListener(e -> new SwingWorker<Void, Void>() {
             @Override
@@ -217,5 +232,18 @@ public class SetTable extends JFrame {
         filters.add(this.privateProfile);
         filters.add(this.removeMarked);
         this.sorter.setRowFilter(RowFilter.andFilter(filters));
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
+
+    private int findRowValue(String value) {
+        for (int i = 0; i < setsTable.getRowCount(); i++) {
+            if (setsTable.getValueAt(i, 1).equals(value)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

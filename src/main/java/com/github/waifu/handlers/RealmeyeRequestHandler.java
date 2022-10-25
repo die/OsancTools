@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.sql.Time;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +60,35 @@ public class RealmeyeRequestHandler {
         }
     }
 
+    public static JLabel checkRealmeyeStatus() throws InterruptedException {
+        Document document = null;
+        try {
+            Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
+            document = Jsoup.connect("https://www.realmeye.com").proxy(proxy).get();
+        } catch (IOException e) {
+            try {
+                document = Jsoup.connect("https://www.realmeye.com").get();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        TimeUnit.SECONDS.sleep(1);
+        if (document != null) {
+            String query = "div[class=help-block alert alert-warning col-md-8 col-md-offset-2]";
+            if (document.select(query).hasText()) {
+                JLabel label;
+                if (document.select(query).select("strong").hasText()) {
+                    String serverList = document.select(query).select("strong").text();
+                    label = new JLabel("<html>Parsing will not work for the following servers:<br><p align=center><b>" + serverList + "<br>");
+                    return label;
+                } else {
+                    label = new JLabel("<html>Parsing currently does not work.<br><p align=center>Realmeye cannot access <b>any</b> RoTMG servers.<br>");
+                    return label;
+                }
+            }
+        }
+        return null;
+    }
     /**
      *
      * @return

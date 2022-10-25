@@ -19,7 +19,6 @@ public class Inventory {
 
     private final List<Item> items;
     private final Issue issue;
-    private String message;
 
     /**
      * Inventory method.

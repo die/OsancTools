@@ -1,5 +1,6 @@
 package com.github.waifu.gui;
 
+import com.github.waifu.entities.Raid;
 import com.github.waifu.gui.listeners.DropListener;
 import com.github.waifu.gui.tables.VCParse;
 import com.github.waifu.handlers.WebAppHandler;
@@ -104,10 +105,11 @@ public class AcceptFilePanel extends JFrame {
                 return;
             }
             JSONObject newJson = WebAppHandler.getData(jsonObject.getJSONObject("raid").getInt("id"));
-            JSONArray members = newJson.getJSONObject("raid").getJSONArray("members");
+            assert newJson != null;
+            Raid raid = new Raid(newJson.getJSONObject("raid"));
             try {
                 setVisible(false);
-                JFrame frame = new VCParse(image, members);
+                JFrame frame = new VCParse(image, raid.getRaiders());
                 frame.setLocationRelativeTo(this);
                 dispose();
             } catch (IOException | TesseractException | InterruptedException ex) {

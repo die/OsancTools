@@ -1,5 +1,8 @@
 package com.github.waifu.gui.tables;
 
+import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Raid;
+import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.VCTableModel;
@@ -13,6 +16,7 @@ import net.sourceforge.tess4j.util.LoadLibs;
 import org.json.JSONArray;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -39,15 +43,14 @@ public class VCParse extends JFrame {
     private RowFilter<Object, Object> removeMarked = RowFilter.regexFilter("");
 
     /**
-     *
      * @param image
-     * @param members
+     * @param raiders
      * @throws IOException
      * @throws TesseractException
      * @throws InterruptedException
      */
-    public VCParse(Image image, JSONArray members) throws IOException, TesseractException, InterruptedException {
-        createTable(image, members);
+    public VCParse(Image image, List<Raider> raiders) throws IOException, TesseractException, InterruptedException {
+        createTable(image, raiders);
         if (destroy) {
             return;
         }
@@ -70,9 +73,9 @@ public class VCParse extends JFrame {
      * Creates the table model, adds rows to the model, and applies the model to the table.
      *
      * @param image   image of the /who to parse
-     * @param members list of members in the webapp
+     * @param raiders list of members in the webapp
      */
-    private void createTable(Image image, JSONArray members) throws TesseractException {
+    private void createTable(Image image, List<Raider> raiders) throws TesseractException {
         BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().drawImage(image, 0, 0, null);
         Tesseract instance = new Tesseract();
@@ -82,7 +85,7 @@ public class VCParse extends JFrame {
         String result = instance.doOCR(ImageHelper.convertImageToGrayscale(bufferedImage));
         if (!result.contains("Players online")) {
             Component rootPane = GUI.getFrames()[0].getComponents()[0];
-            if (members == null) {
+            if (raiders == null) {
                 JOptionPane.showMessageDialog(rootPane, "Failed get members", "Error", JOptionPane.WARNING_MESSAGE);
                 destroy = true;
             }
@@ -94,14 +97,12 @@ public class VCParse extends JFrame {
         List<String> temp = Arrays.asList(Arrays.asList(result.split(": ")).get(1).replace(",", "").replace("\n", " ").split(" "));
         List<String> names = new ArrayList<>(temp);
         DefaultTableModel tableModel = new VCTableModel();
-        for (int i = 0; i < members.length(); i++) {
-            String username = members.getJSONObject(i).getString("server_nickname");
-            String id = members.getJSONObject(i).getString("user_id");
-            Set<String> usernames = Utilities.getRaiderUsernames(members, i);
+        for (int i = 0; i < raiders.size(); i++) {
+            String username = raiders.get(i).getServerNickname();
+            List<String> usernames = Utilities.parseUsernamesFromNickname(raiders.get(i).getServerNickname());
             String inGroup = "Not In Group";
             String inGroupUsername = "";
             String inVC = "Not In VC";
-            String celestial = "";
             for (String s : usernames) {
                 for (String n : names) {
                     if (n.equalsIgnoreCase(s)) {
@@ -112,22 +113,20 @@ public class VCParse extends JFrame {
                     }
                 }
             }
-            if (members.getJSONObject(i).getBoolean("in_vc")) {
+            if (raiders.get(i).isInVC()) {
                 inVC = "In VC";
             }
-            if (members.getJSONObject(i).getJSONArray("roles").toList().contains("907008641079586817")) {
-                celestial = "@Celestial";
-            }
-            Object[] array = new Object[7];
-            array[0] = inGroupUsername;
-            array[1] = inGroup;
-            array[2] = inVC;
-            array[3] = username;
-            array[4] = id;
-            array[5] = celestial;
-            array[6] = false;
+
+            Object[] array = new Object[6];
+            array[0] = raiders.get(i).getResizedAvatar(vcParseTable.getRowHeight(), vcParseTable.getRowHeight());
+            array[1] = username;
+            array[2] = inGroupUsername;
+            array[3] = inGroup;
+            array[4] = inVC;
+            array[5] = false;
             tableModel.addRow(array);
         }
+        vcParseTable.setDefaultRenderer(Object.class, new VCTableRenderer());
         sorter = new TableRowSorter<>(tableModel);
         vcParseTable.setRowSorter(sorter);
         vcParseTable.setModel(tableModel);
@@ -146,7 +145,7 @@ public class VCParse extends JFrame {
             @Override
             protected Void doInBackground() {
                 if (showInGroup.isSelected()) {
-                    ingroup = RowFilter.notFilter(RowFilter.regexFilter("Not In Group", 1));
+                    ingroup = RowFilter.notFilter(RowFilter.regexFilter("Not In Group", 3));
                     updateFilters();
                 } else {
                     ingroup = RowFilter.regexFilter("");
@@ -160,7 +159,7 @@ public class VCParse extends JFrame {
             @Override
             protected Void doInBackground() {
                 if (removeInVCCheckBox.isSelected()) {
-                    invc = RowFilter.regexFilter("Not In VC", 2);
+                    invc = RowFilter.regexFilter("Not In VC", 4);
                     updateFilters();
                 } else {
                     invc = RowFilter.regexFilter("");
@@ -173,8 +172,19 @@ public class VCParse extends JFrame {
         removeCelestial.addActionListener(e -> new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
+                RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+                    @Override
+                    public boolean include(Entry entry) {
+                        String serverNickname = (String) entry.getValue(1);
+                        if (GUI.raid.findRaiderByServerNickname(serverNickname).isCelestial()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                };
                 if (removeCelestial.isSelected()) {
-                    celestial = RowFilter.notFilter(RowFilter.regexFilter("@Celestial", 5));
+                    celestial = filter;
                     updateFilters();
                 } else {
                     celestial = RowFilter.regexFilter("");
@@ -188,7 +198,7 @@ public class VCParse extends JFrame {
             @Override
             protected Void doInBackground() {
                 if (removeMarkedRaidersCheckBox.isSelected()) {
-                    removeMarked = RowFilter.notFilter(RowFilter.regexFilter("true", 6));
+                    removeMarked = RowFilter.notFilter(RowFilter.regexFilter("true", 5));
                     updateFilters();
                 } else {
                     removeMarked = RowFilter.regexFilter("");

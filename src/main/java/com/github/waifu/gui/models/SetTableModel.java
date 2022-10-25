@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableModel;
  *
  */
 public class SetTableModel extends DefaultTableModel {
+
     /**
      *
      */

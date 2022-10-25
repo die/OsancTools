@@ -41,7 +41,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="b2b60" class="javax.swing.JLabel" binding="raid">
+                      <component id="b2b60" class="javax.swing.JLabel" binding="raidLabel">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -395,7 +395,7 @@
               </component>
             </children>
           </grid>
-          <grid id="a366e" binding="options" layout-manager="GridLayoutManager" row-count="6" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="a366e" binding="options" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <tabbedpane title="Options"/>
@@ -416,7 +416,7 @@
               </component>
               <component id="8aaaf" class="javax.swing.JButton" binding="setTokenButton">
                 <constraints>
-                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="3" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Set Token"/>
@@ -424,7 +424,7 @@
               </component>
               <component id="bf4a8" class="javax.swing.JLabel" binding="WebAppTokenField">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="WebApp Token"/>
@@ -446,17 +446,9 @@
                   <text value="Dark"/>
                 </properties>
               </component>
-              <component id="2238" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Theme (Requires Restart)"/>
-                </properties>
-              </component>
               <component id="b7794" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="WebApp Beta Token"/>
@@ -475,7 +467,7 @@
               </component>
               <component id="89782" class="javax.swing.JButton" binding="setBetaTokenButton">
                 <constraints>
-                  <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="3" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Set Beta Token"/>
@@ -483,10 +475,18 @@
               </component>
               <component id="671c0" class="javax.swing.JButton" binding="clearSettingsButton" default-binding="true">
                 <constraints>
-                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Clear Settings"/>
+                </properties>
+              </component>
+              <component id="2238" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Theme (Requires Restart)"/>
                 </properties>
               </component>
             </children>

@@ -29,30 +29,7 @@ class UtilitiesTest {
 
     private String id = "14993";
 
-    @Test
-    void parseRaiders() throws IOException, InterruptedException {
-        JSONTokener tokener = new JSONTokener(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("WebAppResponse.json")), StandardCharsets.UTF_8));
-        Set<String> set = Utilities.parseRaiderSets(new JSONObject(tokener));
-        System.out.println(set);
-    }
-
-    @Test
-    void parseRaiderReacts() throws IOException, InterruptedException {
-        JSONTokener tokener = new JSONTokener(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("WebAppResponse.json")), StandardCharsets.UTF_8));
-        Map<String, React> map = Utilities.parseRaiderReacts(new JSONObject(tokener));
-
-        for (Map.Entry<String, React> m : map.entrySet()) {
-            System.out.println("Name: " + m.getValue().getName());
-            System.out.println("Requirement: " + m.getValue().getRequirement());
-            System.out.println("Raiders:");
-            for (Account a : m.getValue().getRaiders()) {
-                System.out.print(a.getName() + " ");
-            }
-            System.out.println("\n");
-        }
-    }
-
-    @Test
+    /*@Test
     void logData() throws IOException, InterruptedException {
         File file = new File("src/test/resources/raids");
         if (!file.exists()){
@@ -144,7 +121,7 @@ class UtilitiesTest {
     }
 
     @Test
-    void saveImage() throws IOException, UnsupportedFlavorException {
+    void saveImage() {
         try {
             BufferedImage image = (BufferedImage) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.imageFlavor);
             File outputfile = new File("src/test/resources/raids" + "/" + id + "/who.png");
@@ -157,5 +134,5 @@ class UtilitiesTest {
         } catch (Exception e) {
             System.out.println("No image in clipboard.");
         }
-    }
+    }*/
 }

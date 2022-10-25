@@ -3,7 +3,6 @@ package com.github.waifu.handlers;
 import com.github.waifu.gui.Main;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Handler to work with the WebApp API
@@ -52,7 +51,6 @@ public class WebAppHandler {
                         .post()
                         .body()
                         .text();
-                TimeUnit.SECONDS.sleep(1);
                 return new JSONObject(data);
             } catch (Exception e) {
                 return null;

@@ -98,6 +98,7 @@ public class AcceptFilePanel extends JFrame {
         });
 
         chooseButton.addActionListener(e -> {
+            if (image == null) return;
             JSONObject jsonObject = GUI.getJson();
             if (jsonObject == null) {
                 Component rootPane = GUI.getFrames()[0].getComponents()[0];

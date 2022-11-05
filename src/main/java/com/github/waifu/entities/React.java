@@ -205,7 +205,7 @@ public class React {
                     for (String keys : slowItems.keySet()) {
                         JSONObject jsonObject = (JSONObject) slowItems.get(keys);
                         JSONArray items = jsonObject.getJSONArray("items");
-                        String item = ability.substring(0, name.length() - 3);
+                        String item = ability.substring(0, ability.length() - 3);
                         if (items.toList().contains(item)) {
                             JSONArray slotArray = jsonObject.getJSONArray("slot");
                             for (int j = 0; j < slotArray.length(); j++) {

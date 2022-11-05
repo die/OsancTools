@@ -236,6 +236,9 @@ public class GUI extends JFrame {
         lightRadioButton.addActionListener(e -> Main.settings.setTheme("light"));
 
         darkRadioButton.addActionListener(e -> Main.settings.setTheme("dark"));
+
+        //getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, true), "activateDebugMode");
+       // getRootPane().getActionMap().put("activateDebugMode", new DebugModeAction());
     }
 
 

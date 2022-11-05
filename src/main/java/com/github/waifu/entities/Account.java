@@ -20,14 +20,14 @@ public class Account {
 
     public Account(String name) {
         this.name = name;
-        this.stars = "";
-        this.skins = "";
-        this.exaltations = "";
-        this.accountFame = "";
-        this.guild = "";
-        this.guildRank = "";
-        this.creationDate = "";
-        this.lastSeen = "";
+        this.stars = null;
+        this.skins = null;
+        this.exaltations = null;
+        this.accountFame = null;
+        this.guild = null;
+        this.guildRank = null;
+        this.creationDate = null;
+        this.lastSeen = null;
         this.characters = null;
     }
 

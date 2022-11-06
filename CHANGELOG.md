@@ -6,6 +6,10 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleased]
 
+## [1.0.0.3] - 2022-11-05
+### Changed
+- Fixed slow items from not being parsed properly
+
 ## [1.0.0.2] - 2022-10-25
 ### Added
 - Set/react tables now color code raiders with multiple accounts.

@@ -72,7 +72,6 @@ public class RealmeyeRequestHandler {
                 ex.printStackTrace();
             }
         }
-        TimeUnit.SECONDS.sleep(1);
         if (document != null) {
             String query = "div[class=help-block alert alert-warning col-md-8 col-md-offset-2]";
             if (document.select(query).hasText()) {

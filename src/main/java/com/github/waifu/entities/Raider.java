@@ -42,7 +42,7 @@ public class Raider {
         this.inVC = false;
         this.roles = null;
         this.reacts = null;
-        this.accounts = null;
+        this.accounts = new ArrayList<>();
     }
 
     public Raider(String id, String avatar, String serverNickname) {

@@ -1,5 +1,6 @@
 package com.github.waifu.gui;
 
+import com.github.waifu.config.Receipt;
 import com.github.waifu.config.Settings;
 import com.github.waifu.util.Utilities;
 import org.json.JSONObject;

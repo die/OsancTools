@@ -33,7 +33,7 @@ public class ReactTable extends JFrame {
     private JCheckBox removeMarkedReactsCheckBox;
     private RowFilter<Object, Object> removeGoodReacts = RowFilter.regexFilter("");
     private RowFilter<Object, Object> removeBadReacts = RowFilter.regexFilter("");
-    private RowFilter<Object, Object> privateProfile = RowFilter.regexFilter("");
+    private RowFilter<Object, Object> removeManualReacts = RowFilter.regexFilter("");
     private RowFilter<Object, Object> removeMarked = RowFilter.regexFilter("");
     private TableRowSorter<TableModel> sorter;
 
@@ -75,7 +75,9 @@ public class ReactTable extends JFrame {
             for (Raider r  : react.getRaiders()) {
                 for (Account a : r.getAccounts()) {
                     Object[] array = new Object[5];
-                    array[0] = new ImageIcon(react.getImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
+                    ImageIcon reactImage = new ImageIcon(react.getImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
+                    reactImage.setDescription(react.getName());
+                    array[0] = reactImage;
                     array[1] = a.getName();
                     Inventory inventory = a.getCharacters().get(0).getInventory();
                     ImageIcon result = new ImageIcon(inventory.createImage(reactTable.getRowHeight(), reactTable.getRowHeight()).getImage());
@@ -88,7 +90,7 @@ public class ReactTable extends JFrame {
                     g.dispose();
                     ImageIcon imageIcon = new ImageIcon(bufferedImage);
                     imageIcon.setDescription(inventory.printInventory());
-                    array[2] = new ImageIcon(bufferedImage);
+                    array[2] = imageIcon;
                     String whisper = a.getCharacters().get(0).getInventory().getIssue().getWhisper();
                     array[3] = whisper;
                     array[4] = false;
@@ -162,10 +164,10 @@ public class ReactTable extends JFrame {
             @Override
             protected Void doInBackground() {
                 if (removeManualReactsCheckBox.isSelected()) {
-                    privateProfile = RowFilter.notFilter(RowFilter.regexFilter("/lock", 3));
+                    removeManualReacts = RowFilter.notFilter(RowFilter.regexFilter("/lock", 3));
                     updateFilters();
                 } else {
-                    privateProfile = RowFilter.regexFilter("", 3);
+                    removeManualReacts = RowFilter.regexFilter("", 3);
                     updateFilters();
                 }
                 return null;
@@ -234,7 +236,7 @@ public class ReactTable extends JFrame {
         List<RowFilter<Object, Object>> filters = new ArrayList<>();
         filters.add(this.removeGoodReacts);
         filters.add(this.removeBadReacts);
-        filters.add(this.privateProfile);
+        filters.add(this.removeManualReacts);
         filters.add(this.removeMarked);
         this.sorter.setRowFilter(RowFilter.andFilter(filters));
     }

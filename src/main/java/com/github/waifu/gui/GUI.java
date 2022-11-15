@@ -3,6 +3,8 @@ package com.github.waifu.gui;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.github.waifu.config.Receipt;
+import com.github.waifu.debug.KeyListener;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.enums.Stat;
 import com.github.waifu.gui.actions.*;
@@ -10,17 +12,23 @@ import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
+
 
 /**
  * GUI class to construct the GUI.
  */
 public class GUI extends JFrame {
+
+    private final String version = "v1.0.0.4";
 
     public static final int NORMAL_MODE = 0;
     public static final int DEBUG_MODE = 1;
@@ -107,7 +115,9 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
         setVisible(true);
-        // checkRealmeye();
+        setFocusable(false);
+        checkRealmeye();
+        checkNewVersion();
     }
 
     private void checkRealmeye() {
@@ -120,14 +130,57 @@ public class GUI extends JFrame {
                     Object[] params = {status, checkbox};
                     JOptionPane.showMessageDialog(this,
                             params, "Realmeye server error", JOptionPane.WARNING_MESSAGE);
-                    if (checkbox.isSelected()) {
-                        Main.settings.setShowAlert(false);
-                    }
+                    Main.settings.setShowAlert(!checkbox.isSelected());
                 }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void checkNewVersion() {
+        int remaining = getGithubRateLimit();
+
+        if (remaining <= 30) {
+            return;
+        }
+
+        try {
+            URL url = new URL("https://api.github.com/repos/waifu/osanctools/releases");
+            JSONTokener tokener = new JSONTokener(url.openStream());
+            JSONArray jsonArray = new JSONArray(tokener);
+            String recentVersion = jsonArray.getJSONObject(0).getString("tag_name");
+            int parseVersion = parseVersion(recentVersion);
+            int currentVersion = parseVersion(version);
+
+            if (currentVersion < parseVersion) {
+                JTextArea textarea = new JTextArea("> https://github.com/Waifu/OsancTools/releases/tag/" + recentVersion);
+                textarea.setEditable(false);
+                JLabel label = new JLabel("<html>Note: previous versions are <b>deprecated</b>. Please update immediately.");
+                Object[] params = {"A new version was found. Please download it here:", textarea, label};
+
+                JOptionPane.showMessageDialog(this,
+                        params, "New release version found", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getGithubRateLimit() {
+        JSONObject jsonObject = null;
+        try {
+            URL url = new URL("https://api.github.com/rate_limit");
+            JSONTokener tokener = new JSONTokener(url.openStream());
+            jsonObject = new JSONObject(tokener);
+            return jsonObject.getJSONObject("resources").getJSONObject("core").getInt("remaining");
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private int parseVersion(String version) {
+        return Integer.parseInt(version.replace('.', ' ').replace("v", "").replace(" ", ""));
     }
 
     /**
@@ -139,7 +192,8 @@ public class GUI extends JFrame {
         inputRaidButton.addActionListener(new GetWebAppDataAction(main, this));
 
         vcParseButton.addActionListener(e -> {
-            //new ParseVoiceChannelAction()
+            new PrintReceipt(new Receipt());
+
             AcceptFilePanel acceptFilePanel = new AcceptFilePanel();
             acceptFilePanel.setLocationRelativeTo(this);
         });
@@ -236,9 +290,6 @@ public class GUI extends JFrame {
         lightRadioButton.addActionListener(e -> Main.settings.setTheme("light"));
 
         darkRadioButton.addActionListener(e -> Main.settings.setTheme("dark"));
-
-        //getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, true), "activateDebugMode");
-       // getRootPane().getActionMap().put("activateDebugMode", new DebugModeAction());
     }
 
 
@@ -540,6 +591,7 @@ public class GUI extends JFrame {
         raidPanel.setOpaque(false);
         tokenField.setText(Main.settings.getToken());
         betaTokenField.setText(Main.settings.getBetaToken());
+        creditsPanel.addKeyListener(new KeyListener());
     }
 
     /**

@@ -6,28 +6,14 @@ import com.github.waifu.util.Utilities;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DebugMenu extends JFrame implements KeyListener {
+public class KeyListener implements java.awt.event.KeyListener {
 
     List<Character> gerpep = Arrays.asList('g', 'e', 'r', 'p', 'e', 'p');
     List<Character> keys = new ArrayList<>();
-
-    public DebugMenu() {
-       // setContentPane();
-        setAlwaysOnTop(true);
-        setResizable(false);
-        setTitle("OsancTools");
-        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
-        setVisible(true);
-        pack();
-        addKeyListener(this);
-    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -41,13 +27,13 @@ public class DebugMenu extends JFrame implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-
         int index = keys.size();
 
         keys.add(e.getKeyChar());
 
         if (keys.equals(gerpep)) {
-            System.out.println("bluecat");
+            ImageIcon icon = new ImageIcon(new ImageIcon(Utilities.getImageResource("bluecat.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+            JOptionPane.showMessageDialog(GUI.getFrames()[0], new JLabel("how did you get here?", icon, JLabel.TRAILING));
             keys.clear();
         } else if (keys.size() == gerpep.size() || !gerpep.contains(e.getKeyChar()) || !gerpep.get(index).equals(e.getKeyChar())) {
             keys.clear();

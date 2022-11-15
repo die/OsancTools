@@ -35,7 +35,7 @@ public class React {
     public React(String id, String name, String requirement, String imageURL, List<Raider> raiders) throws MalformedURLException {
         this.id = id;
         this.name = name;
-        this.type = "";
+        this.type = "manual";
         this.requirement = requirement;
         this.image = new ImageIcon(new URL(imageURL));
         this.raiders = raiders;
@@ -233,6 +233,7 @@ public class React {
                                 inventory.getIssue().setWhisper("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
                                 inventory.getIssue().setProblem(Problem.MISSING_REACT);
                             }
+                            break;
                         } else {
                             inventory.getIssue().setWhisper("/t " + account.getName() + " Please equip your " + name.toLowerCase() + " so I can confirm it. You can swap it out after.");
                             inventory.getIssue().setProblem(Problem.MISSING_REACT);

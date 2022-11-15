@@ -91,12 +91,15 @@ public class ParseWebAppReactsAction implements ActionListener {
             for (React react : reactList) {
                 for (Raider raider : raid.getRaiders()) {
                     if (raider.getReacts().toList().contains(Integer.parseInt(react.getId()))) {
+                        /* Create deep copy */
+                        Raider temp = new Raider();
                         for (int i = 0; i < raider.getAccounts().size(); i++) {
                             String username = raider.getAccounts().get(i).getName();
                             Account account = RealmeyeRequestHandler.parseHTML(RealmeyeRequestHandler.getRealmeyeData(username), username);
                             raider.getAccounts().set(i, account);
+                            temp.getAccounts().add(account);
                         }
-                        react.getRaiders().add(raider);
+                        react.getRaiders().add(temp);
                     }
                 }
 

@@ -192,8 +192,6 @@ public class GUI extends JFrame {
         inputRaidButton.addActionListener(new GetWebAppDataAction(main, this));
 
         vcParseButton.addActionListener(e -> {
-            new PrintReceipt(new Receipt());
-
             AcceptFilePanel acceptFilePanel = new AcceptFilePanel();
             acceptFilePanel.setLocationRelativeTo(this);
         });

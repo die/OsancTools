@@ -3,7 +3,6 @@ package com.github.waifu.gui;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.github.waifu.config.Receipt;
 import com.github.waifu.debug.KeyListener;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.enums.Stat;

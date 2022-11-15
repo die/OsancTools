@@ -48,33 +48,17 @@ public class CalculatePlayerExaltationsAction implements ActionListener {
             if (collection != null) {
                 ExaltCalculator calculator = new ExaltCalculator();
                 int stat = calculator.getStat();
-                String statName = "";
-                switch(stat) {
-                    case 0:
-                        statName = "Oryx 3";
-                        break;
-                    case 1:
-                        statName = "Void";
-                        break;
-                    case 2:
-                        statName = "Shatters";
-                        break;
-                    case 3:
-                        statName = "MBC";
-                        break;
-                    case 4:
-                        statName = "Cult";
-                        break;
-                    case 5:
-                        statName = "Nest";
-                        break;
-                    case 6:
-                        statName = "Cavern";
-                        break;
-                    case 7:
-                        statName = "Fungal";
-                        break;
-                }
+                String statName = switch (stat) {
+                    case 0 -> "Oryx 3";
+                    case 1 -> "Void";
+                    case 2 -> "Shatters";
+                    case 3 -> "MBC";
+                    case 4 -> "Cult";
+                    case 5 -> "Nest";
+                    case 6 -> "Cavern";
+                    case 7 -> "Fungal";
+                    default -> "";
+                };
                 int completes = calculator.calculateCompletions(collection);
                 if (completes >= Preferences.userRoot().getInt("requirement", 100)) {
                     exaltsResult.setForeground(Color.green);

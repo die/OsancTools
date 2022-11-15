@@ -207,9 +207,7 @@ public class GUI extends JFrame {
             }
         });
 
-        requirementButton.addActionListener(e -> {
-            Main.settings.setRequirement(Integer.parseInt(requirementInput.getText()));
-        });
+        requirementButton.addActionListener(e -> Main.settings.setRequirement(Integer.parseInt(requirementInput.getText())));
 
         exaltsButton.addActionListener(new CalculatePlayerExaltationsAction(exaltsInput, exaltsResult));
 

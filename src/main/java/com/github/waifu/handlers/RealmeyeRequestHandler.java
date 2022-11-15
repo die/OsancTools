@@ -16,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.sql.Time;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

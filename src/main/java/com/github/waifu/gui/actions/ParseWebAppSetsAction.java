@@ -4,9 +4,6 @@ import com.github.waifu.entities.*;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.tables.SetTable;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
-import com.github.waifu.util.Utilities;
-import org.json.JSONObject;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

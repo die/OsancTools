@@ -1,7 +1,5 @@
 package com.github.waifu.gui.tables;
 
-import com.github.waifu.entities.Account;
-import com.github.waifu.entities.Raid;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.actions.TableCopyAction;
@@ -13,10 +11,8 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.ImageHelper;
 import net.sourceforge.tess4j.util.LoadLibs;
-import org.json.JSONArray;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -60,8 +56,6 @@ public class VCParse extends JFrame {
         setTitle("OsancTools");
         setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        //setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
         setVisible(true);
         pack();
         new TableCopyAction(vcParseTable);
@@ -97,9 +91,9 @@ public class VCParse extends JFrame {
         List<String> temp = Arrays.asList(Arrays.asList(result.split(": ")).get(1).replace(",", "").replace("\n", " ").split(" "));
         List<String> names = new ArrayList<>(temp);
         DefaultTableModel tableModel = new VCTableModel();
-        for (int i = 0; i < raiders.size(); i++) {
-            String username = raiders.get(i).getServerNickname();
-            List<String> usernames = Utilities.parseUsernamesFromNickname(raiders.get(i).getServerNickname());
+        for (Raider raider : raiders) {
+            String username = raider.getServerNickname();
+            List<String> usernames = Utilities.parseUsernamesFromNickname(raider.getServerNickname());
             String inGroup = "Not In Group";
             String inGroupUsername = "";
             String inVC = "Not In VC";
@@ -113,12 +107,12 @@ public class VCParse extends JFrame {
                     }
                 }
             }
-            if (raiders.get(i).isInVC()) {
+            if (raider.isInVC()) {
                 inVC = "In VC";
             }
 
             Object[] array = new Object[6];
-            array[0] = raiders.get(i).getResizedAvatar(vcParseTable.getRowHeight(), vcParseTable.getRowHeight());
+            array[0] = raider.getResizedAvatar(vcParseTable.getRowHeight(), vcParseTable.getRowHeight());
             array[1] = username;
             array[2] = inGroupUsername;
             array[3] = inGroup;
@@ -172,15 +166,11 @@ public class VCParse extends JFrame {
         removeCelestial.addActionListener(e -> new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+                RowFilter<Object, Object> filter = new RowFilter<>() {
                     @Override
                     public boolean include(Entry entry) {
                         String serverNickname = (String) entry.getValue(1);
-                        if (GUI.raid.findRaiderByServerNickname(serverNickname).isCelestial()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !GUI.raid.findRaiderByServerNickname(serverNickname).isCelestial();
                     }
                 };
                 if (removeCelestial.isSelected()) {

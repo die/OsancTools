@@ -8,7 +8,6 @@ import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import net.sourceforge.tess4j.TesseractException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.imageio.ImageIO;
 import javax.swing.*;

@@ -85,7 +85,7 @@ public class Raider {
      * @return
      */
     public String printRaider() {
-        String raider = "ID: " + this.id + "\n" +
+        return "ID: " + this.id + "\n" +
                         "Joined: " + new Date(Long.parseLong(this.timestampJoined)) + "\n" +
                         "Got Priority: " + this.gotPriority + "\n" +
                         "Got Early Location: " + this.gotEarlyLocation + "\n" +
@@ -94,7 +94,6 @@ public class Raider {
                         "Reacts: " + this.reacts.length() + "\n" +
                         "Roles: " + this.roles.length() + "\n" +
                         "Accounts: " + this.accounts.size() + "\n";
-        return raider;
     }
 
     public String getId() {

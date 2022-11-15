@@ -2,9 +2,7 @@ package com.github.waifu.gui.tables;
 
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Raider;
-import com.github.waifu.gui.Main;
 import com.github.waifu.util.Utilities;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;

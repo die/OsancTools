@@ -86,7 +86,7 @@ public class Account {
      * @return
      */
     public String printAccount() {
-        String account = "Name: " + this.name + "\n" +
+        return "Name: " + this.name + "\n" +
                            "Stars: " + this.stars + "\n" +
                            "Skins: " + this.skins + "\n" +
                            "Exaltations: " + this.exaltations + "\n" +
@@ -96,7 +96,6 @@ public class Account {
                            "Creation Date: " + this.creationDate + "\n" +
                            "Last Seen: " + this.lastSeen + "\n" +
                            "Characters: " + this.characters.size() + "\n";
-        return account;
     }
 
     /**

@@ -539,8 +539,16 @@ public class GUI extends JFrame {
                 raidLabel.setForeground(invertedColor);
                 raidLabel.setIcon(raid.getRaidLeader().getResizedAvatar(25, 25));
                 raidLabel.setText(raid.getName() + " led by " + raid.getRaidLeader().getServerNickname());
-                metadata.setText("ID: " + raid.getId() + " Status: " + raid.getStatus() + " Location: " + raid.getLocation());
-                description.setText(String.valueOf(raid.getDescription()));
+
+
+                String raidMetadata = "ID: " + raid.getId() + " Status: " + raid.getStatus() + " Location: " + raid.getLocation();
+                metadata.setText(raidMetadata);
+
+                String raidDescription = raid.getDescription();
+                if (raidDescription.length() > raidMetadata.length()) {
+                    raidDescription = raidDescription.substring(0, raidMetadata.length()) + "...";
+                }
+                description.setText(raidDescription);
                 pack();
             }
         } catch (JSONException exception) {

@@ -3,7 +3,7 @@ package com.github.waifu.entities;
 import java.util.List;
 
 /**
- * Account class to store account data.
+ * Account class to store ROTMG account data.
  */
 public class Account {
 
@@ -18,6 +18,13 @@ public class Account {
     private final String lastSeen;
     private final List<Character> characters;
 
+    /**
+     * Account Constructor
+     *
+     * Constructs an Account with limited information.
+     *
+     * @param name username of the Account.
+     */
     public Account(String name) {
         this.name = name;
         this.stars = null;
@@ -32,7 +39,7 @@ public class Account {
     }
 
     /**
-     * Account method.
+     * Account Constructor
      *
      * Constructs an Account with limited information.
      *
@@ -53,7 +60,7 @@ public class Account {
     }
 
     /**
-     * Account method.
+     * Account Constructor.
      *
      * Constructs an Account with all information.
      *
@@ -82,8 +89,8 @@ public class Account {
     }
 
     /**
-     *
-     * @return
+     * Get a string that contains object data to print.
+     * @return a string that contains all variable values.
      */
     public String printAccount() {
         return "Name: " + this.name + "\n" +
@@ -99,88 +106,134 @@ public class Account {
     }
 
     /**
+     * Gets the name of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * Su
+     * </blockquote>
      *
-     * @return
+     * @return the name as a string
      */
     public String getName() {
         return this.name;
     }
 
     /**
-     *
-     * @return
+     * Gets the number of stars of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * 70
+     * </blockquote>
+     * @return the number of stars as a string
      */
     public String getStars() {
         return this.stars;
     }
 
     /**
-     *
-     * @return
+     * Gets the number of skins of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * 202
+     * </blockquote>
+     * @return the number of skins as a string
      */
     public String getSkins() {
         return this.skins;
     }
 
     /**
-     *
-     * @return
+     * Gets the number of exaltations of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * 185
+     * </blockquote>
+     * @return the number of exaltations as a string
      */
     public String getExaltations() {
         return this.exaltations;
     }
 
     /**
-     *
-     * @return
+     * Gets the number of account fame of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * 30721
+     * </blockquote>
+     * @return the number of account fame as a string
      */
     public String getAccountFame() {
         return this.accountFame;
     }
 
     /**
-     *
-     * @return
+     * Gets the name of the guild the ROTMG account is in.
+     * <p>
+     * Example:
+     * <blockquote>
+     * Dim
+     * </blockquote>
+     * @return the name of the guild as a string
      */
     public String getGuild() {
         return this.guild;
     }
 
     /**
-     *
-     * @return
+     * Gets the name of the guild rank the ROTMG account has.
+     * <p>
+     * Example:
+     * <blockquote>
+     * Founder
+     * </blockquote>
+     * @return the name of the guild rank as a string
      */
     public String getGuildRank() {
         return this.guildRank;
     }
 
     /**
-     *
-     * @return
+     * Gets the creation date of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * ~4 years and 77 days ago
+     * </blockquote>
+     * @return the creation date as a string
      */
     public String getCreationDate() {
         return this.creationDate;
     }
 
     /**
-     *
-     * @return
+     * Gets the last seen date of the ROTMG account.
+     * <p>
+     * Example:
+     * <blockquote>
+     * 2022-11-13 02:45:34 at USSouthWest as Assassin
+     * </blockquote>
+     * @return the last seen date as a string
      */
     public String getLastSeen() {
         return this.lastSeen;
     }
 
     /**
-     *
-     * @return
+     * Gets the list of visible characters a ROTMG account has.
+     * @return list of Character objects.
      */
     public List<Character> getCharacters() {
         return this.characters;
     }
 
     /**
-     *
-     * @return
+     * Gets the most recently logged in character of a ROTMG account.
+     * @return a Character object in the front of the account's character list.
      */
     public Character getRecentCharacter() {
         return this.characters.get(0);

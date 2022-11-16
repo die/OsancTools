@@ -540,7 +540,6 @@ public class GUI extends JFrame {
                 raidLabel.setIcon(raid.getRaidLeader().getResizedAvatar(25, 25));
                 raidLabel.setText(raid.getName() + " led by " + raid.getRaidLeader().getServerNickname());
 
-
                 String raidMetadata = "ID: " + raid.getId() + " Status: " + raid.getStatus() + " Location: " + raid.getLocation();
                 metadata.setText(raidMetadata);
 

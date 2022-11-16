@@ -138,18 +138,17 @@ public class RealmeyeRequestHandler {
                 List<String> characterData = Jsoup.parse(doc.html()).select("table[class=table table-striped tablesorter] tr").eachText();
                 List<String> characterSkinData = Jsoup.parse(doc.html()).select("a.character").eachAttr("data-skin");
                 List<String> itemData = Jsoup.parse(doc.html()).select("span.item").eachAttr("title");
-               // List<String> itemImageData = Jsoup.parse(doc.html()).select("span.item").eachAttr("style");
                 List<Character> characters = new ArrayList<>();
                 String headers = characterData.get(0);
                 for (int i = 1; i < characterData.size(); i++) {
                     String[] metadata = characterData.get(i).split(" ");
                     String type = getElementFromCharacterTable(metadata, headers, "Class");
-                    String level = ""; //getElementFromCharacterTable(metadata, headers, "L");
-                    String cqc = ""; //getElementFromCharacterTable(metadata, headers, "CQC");
-                    String fame = ""; //getElementFromCharacterTable(metadata, headers, "Fame");
-                    String exp = ""; //getElementFromCharacterTable(metadata, headers, "Exp");
-                    String place = ""; //getElementFromCharacterTable(metadata, headers, "Pl.");
-                    String stats = ""; //getElementFromCharacterTable(metadata, headers, "Stats");
+                    String level = getElementFromCharacterTable(metadata, headers, "L");
+                    String cqc = getElementFromCharacterTable(metadata, headers, "CQC");
+                    String fame = getElementFromCharacterTable(metadata, headers, "Fame");
+                    String exp = getElementFromCharacterTable(metadata, headers, "Exp");
+                    String place = getElementFromCharacterTable(metadata, headers, "Pl.");
+                    String stats = getElementFromCharacterTable(metadata, headers, "Stats");
                     String skin = characterSkinData.get(i-1);
                     List<String> items = itemData.subList(4 * i - 4, 4 * i);
                     //List<String> itemsImage = itemImageData.subList(4 * i - 4, 4 * i);
@@ -293,25 +292,29 @@ public class RealmeyeRequestHandler {
         } else if (request.equals("Srv.") && characterData.length <= 9) {
             return "";
         } else {
-            switch (request) {
-                case "Class":
-                    return characterData[0];
-                case "L":
-                    return characterData[1];
-                case "CQC":
-                    return characterData[2];
-                case "Fame":
-                    return characterData[3];
-                case "Exp":
-                    return characterData[4];
-                case "Pl.":
-                    return characterData[5];
-                case "Stats":
-                    return characterData[6];
-                case "Last seen":
-                    return characterData[7] + " " + characterData[8];
-                case "Srv.":
-                    return characterData[9];
+            try {
+                switch (request) {
+                    case "Class":
+                        return characterData[0];
+                    case "L":
+                        return characterData[1];
+                    case "CQC":
+                        return characterData[2];
+                    case "Fame":
+                        return characterData[3];
+                    case "Exp":
+                        return characterData[4];
+                    case "Pl.":
+                        return characterData[5];
+                    case "Stats":
+                        return characterData[6];
+                    case "Last seen":
+                        return characterData[7] + " " + characterData[8];
+                    case "Srv.":
+                        return characterData[9];
+                }
+            } catch (Exception e){
+                return "";
             }
         }
         return "";

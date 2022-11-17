@@ -10,6 +10,8 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 ### Added
 - Added a new color to the list for displaying alt accounts.
 - Added images for new ST sets.
+- Checks Realmeye on launch to alert servers that cannot be accessed.
+- Checks Github on launch to alert if there is a new version of OsancTools.
 
 ### Changed
 - Fixed the slow react not displaying properly (https://github.com/Waifu/OsancTools/issues/7)

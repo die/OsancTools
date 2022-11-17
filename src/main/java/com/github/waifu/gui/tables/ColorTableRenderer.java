@@ -24,8 +24,7 @@ public class ColorTableRenderer extends DefaultTableCellRenderer {
                                 "#0000cd", "#00ff00", "#00ff7f", "#00bfff", "#f4a460", "#a020f0",
                                 "#f08080", "#adff2f", "#ff6347", "#ff00ff", "#f0e68c", "#ffff54",
                                 "#6495ed", "#dda0dd", "#b0e0e6", "#7b68ee", "#ee82ee", "#98fb98",
-                                "#7fffd4", "#ff69b4");
-
+                                "#7fffd4", "#ff69b4", "#2c2440");
 
     }
 

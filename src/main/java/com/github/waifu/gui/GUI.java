@@ -27,8 +27,6 @@ import java.net.URL;
  */
 public class GUI extends JFrame {
 
-    private final String version = "v1.0.0.4";
-
     public static final int NORMAL_MODE = 0;
     public static final int DEBUG_MODE = 1;
     public static final int LAN_MODE = 2;
@@ -121,7 +119,6 @@ public class GUI extends JFrame {
 
     private void checkRealmeye() {
         try {
-
             if (Main.settings.showAlert()) {
                 JLabel status = RealmeyeRequestHandler.checkRealmeyeStatus();
                 if (status != null) {
@@ -150,6 +147,7 @@ public class GUI extends JFrame {
             JSONArray jsonArray = new JSONArray(tokener);
             String recentVersion = jsonArray.getJSONObject(0).getString("tag_name");
             int parseVersion = parseVersion(recentVersion);
+            String version = "v1.0.0.4";
             int currentVersion = parseVersion(version);
 
             if (currentVersion < parseVersion) {
@@ -167,7 +165,7 @@ public class GUI extends JFrame {
     }
 
     private int getGithubRateLimit() {
-        JSONObject jsonObject = null;
+        JSONObject jsonObject;
         try {
             URL url = new URL("https://api.github.com/rate_limit");
             JSONTokener tokener = new JSONTokener(url.openStream());

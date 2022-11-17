@@ -6,6 +6,17 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleased]
 
+## [1.0.0.4] - 2022-11-16
+### Added
+- Added a new color to the list for displaying alt accounts.
+- Added images for new ST sets.
+
+### Changed
+- Fixed the slow react not displaying properly (https://github.com/Waifu/OsancTools/issues/7)
+- Fixed parsed inventory carrying over to other reacts. (https://github.com/Waifu/OsancTools/issues/8)
+- Limit description of the raid so that the application doesn't stretch.
+- Character metadata is now stored properly (Level/Last Seen/etc).
+
 ## [1.0.0.3] - 2022-11-05
 ### Changed
 - Fixed slow items from not being parsed properly

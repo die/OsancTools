@@ -47,6 +47,29 @@ public class Character {
      * Constructs a Character with all information.
      *
      * @param type class of the Character.
+     * @param inventory Inventory of the Character.
+     */
+    public Character(String type, Inventory inventory) {
+        this.type = type;
+        this.skin = "";
+        this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/" + type + ".png"));
+        this.level = "";
+        this.cqc = "";
+        this.fame = "";
+        this.exp = "";
+        this.place = "";
+        this.stats = "";
+        this.lastSeen = "";
+        this.server = "";
+        this.inventory = inventory;
+    }
+
+    /**
+     * Character method.
+     *
+     * Constructs a Character with all information.
+     *
+     * @param type class of the Character.
      * @param skin skin the Character has equipped.
      * @param level level of the Character.
      * @param cqc number of class quests completed the Character has.

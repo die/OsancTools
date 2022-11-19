@@ -72,6 +72,37 @@ public class SetTable extends JFrame {
      * @param accountInventoryMap Map containing an Account object as the key
      *                            and its Inventory as the value.
      */
+    private void createTableSniffer(List<Raider> accountInventoryMap) {
+        DefaultTableModel tableModel = new SetTableModel();
+        int width = 0;
+        for (Raider raider : accountInventoryMap) {
+                Account account = raider.getAccounts().get(0);
+                Inventory inventory = account.getCharacters().get(0).getInventory();
+                Object[] array = new Object[6];
+                ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
+                result.setDescription(inventory.printInventory());
+                width = result.getIconWidth();
+                array[0] = inventory.getIssue().getProblem().getProblem();
+                array[1] = account.getName();
+                array[2] = result;
+                array[3] = false;
+                tableModel.addRow(array);
+        }
+        setsTable.setDefaultRenderer(Object.class, new ColorTableRenderer(accountInventoryMap));
+        sorter = new TableRowSorter<>(tableModel);
+        setsTable.setRowSorter(sorter);
+        setsTable.setModel(tableModel);
+        setsTable.getColumnModel().getColumn(2).setMinWidth(width);
+    }
+
+    /**
+     * createTable method.
+     * <p>
+     * Creates the table model, adds rows to the model, and applies the model to the table.
+     *
+     * @param accountInventoryMap Map containing an Account object as the key
+     *                            and its Inventory as the value.
+     */
     private void createTable(List<Raider> accountInventoryMap) {
         DefaultTableModel tableModel = new SetTableModel();
         int width = 0;

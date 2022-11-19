@@ -60,6 +60,27 @@ public class Account {
     }
 
     /**
+     * Account Constructor
+     *
+     * Constructs an Account with information by the Update Packet
+     *
+     * @param name = name
+     *
+     */
+    public Account(String name, List<Character> characters, int stars, int fame, String guildName, String guildRank) {
+        this.name = name;
+        this.stars = String.valueOf(stars);
+        this.skins = "";
+        this.exaltations = "";
+        this.accountFame = String.valueOf(fame);
+        this.guild = guildName;
+        this.guildRank = guildRank;
+        this.creationDate = "";
+        this.lastSeen = "";
+        this.characters = characters;
+    }
+
+    /**
      * Account Constructor.
      *
      * Constructs an Account with all information.

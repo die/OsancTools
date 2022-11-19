@@ -17,7 +17,8 @@ public enum Problem {
     UNDER_REQS("Under Reqs", 1, Color.RED),
     BANNED_ITEM("Banned Item", 2, Color.RED),
     SWAPOUT_ITEM("Swapout Item", 3, Color.YELLOW),
-    NONE("None", 4, Color.GREEN);
+    NONE("None", 4, Color.GREEN),
+    ERROR("Error", 0, Color.RED);
 
     private final String problem;
     private final int level;

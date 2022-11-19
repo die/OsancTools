@@ -2,6 +2,7 @@ package com.github.waifu.gui.actions;
 
 import com.github.waifu.entities.*;
 import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.Main;
 import com.github.waifu.gui.tables.SetTable;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
 import javax.swing.*;
@@ -9,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.*;
+
+import static com.github.waifu.gui.Main.packetProcessor;
 
 /**
  *
@@ -41,11 +44,13 @@ public class ParseWebAppSetsAction implements ActionListener {
                     if (GUI.checkProcessRunning()) {
                         return null;
                     } else if (RealmeyeRequestHandler.checkDirectConnect()) {
+                        packetProcessor.stopSniffer();
                         stopButton.setText("Stop Process");
                         GUI.setWorker(this);
                         progressBar.setValue(0);
                         GUI.setProcessRunning(true);
-                        List<Raider> sets = getSets(GUI.raid, progressBar);
+                        List<Raider> sets = Main.accountsToRaiders();
+                        //List<Raider> sets = getSets(GUI.raid, progressBar);
                         if (sets != null) {
                             new SetTable(sets);
                         }

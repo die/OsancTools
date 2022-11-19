@@ -127,6 +127,7 @@ public class Inventory {
                     issue.setProblem(Problem.EMPTY_SLOT);
                     issue.setMessage("");
                     issue.setWhisper(name);
+                    i.setImage(Utilities.markImage(i.getImage(), Problem.EMPTY_SLOT.getColor()));
                 } else if (name.endsWith("UT") || name.endsWith("ST")) {
                     JSONObject bannedItems = Utilities.json.getJSONObject("bannedItems");
                     JSONArray jsonArray = bannedItems.getJSONArray(i.getType());
@@ -170,27 +171,34 @@ public class Inventory {
                         i.setImage(Utilities.markImage(i.getImage(), Problem.SWAPOUT_ITEM.getColor()));
                     }
                 } else {
-                    int item;
-                    String tier = name.substring(name.length() - 2);
-                    if (tier.contains("T")) {
-                        item = Integer.parseInt(name.substring(name.length() - 1));
-                    } else {
-                        item = Integer.parseInt(tier);
-                    }
-                    if (type.equals("ability") || type.equals("ring")) {
-                        if (item < 4) {
-                            issue.setProblem(Problem.UNDER_REQS);
-                            issue.setMessage(name);
-                            issue.setWhisper(name);
-                            i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
+                    try {
+                        int item;
+                        String tier = name.substring(name.length() - 2);
+                        if (tier.contains("T")) {
+                            item = Integer.parseInt(name.substring(name.length() - 1));
+                        } else {
+                            item = Integer.parseInt(tier);
                         }
-                    } else if (type.equals("weapon") || type.equals("armor")) {
-                        if (item < 12) {
-                            issue.setProblem(Problem.UNDER_REQS);
-                            issue.setMessage(name);
-                            issue.setWhisper(name);
-                            i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
+                        if (type.equals("ability") || type.equals("ring")) {
+                            if (item < 4) {
+                                issue.setProblem(Problem.UNDER_REQS);
+                                issue.setMessage(name);
+                                issue.setWhisper(name);
+                                i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
+                            }
+                        } else if (type.equals("weapon") || type.equals("armor")) {
+                            if (item < 12) {
+                                issue.setProblem(Problem.UNDER_REQS);
+                                issue.setMessage(name);
+                                issue.setWhisper(name);
+                                i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
+                            }
                         }
+                    } catch (Exception e) {
+                        issue.setProblem(Problem.ERROR);
+                        issue.setMessage(name);
+                        issue.setWhisper(name);
+                        i.setImage(Utilities.markImage(i.getImage(), Problem.ERROR.getColor()));
                     }
                 }
             }

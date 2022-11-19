@@ -21,6 +21,12 @@ public class Character {
     private final String server;
     private final Inventory inventory;
 
+    private boolean maxedHP;
+    private boolean maxedMP;
+    private String exaltedHP;
+    private String exaltedMP;
+    private String dexterity;
+
     /**
      * Character method.
      *
@@ -62,6 +68,34 @@ public class Character {
         this.lastSeen = "";
         this.server = "";
         this.inventory = inventory;
+    }
+
+    /**
+     * Character method.
+     *
+     * Constructs a Character with information by the Update Packet
+     * @param maxedHP = true if maxed in hp
+     * @param dexterity = dexterity stat value
+     *
+     */
+    public Character(Inventory inventory, int level, int currentFame, boolean maxedHP, boolean maxedMP, int dexterity, int exaltedHP, int exaltedMP) {
+        this.type = "Wizard";
+        this.skin = "";
+        this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/Wizard.png"));
+        this.level = String.valueOf(level);;
+        this.cqc = "";
+        this.fame = String.valueOf(currentFame);
+        this.exp = "";
+        this.place = "";
+        this.stats = "";
+        this.lastSeen = "";
+        this.server = "";
+        this.inventory = inventory;
+        this.maxedHP = maxedHP;
+        this.maxedMP = maxedMP;
+        this.exaltedHP = String.valueOf(exaltedHP);
+        this.exaltedMP = String.valueOf(exaltedMP);
+        this.dexterity = String.valueOf(dexterity);
     }
 
     /**

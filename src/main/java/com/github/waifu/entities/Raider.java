@@ -45,6 +45,21 @@ public class Raider {
         this.accounts = new ArrayList<>();
     }
 
+    public Raider(Account account) {
+        this.id = "";
+        this.serverNickname = "";
+        this.timestampJoined = "";
+        this.avatar = null;
+        this.gotPriority = false;
+        this.gotEarlyLocation = false;
+        this.inWaitingList = false;
+        this.inVC = false;
+        this.roles = null;
+        this.reacts = null;
+        this.accounts = new ArrayList<>();
+        accounts.add(account);
+    }
+
     public Raider(String id, String avatar, String serverNickname) {
         this.id = id;
         this.avatar = setAvatar(avatar);
@@ -165,6 +180,15 @@ public class Raider {
                 return icon;
             } catch (Exception e) {
                 return null;
+            }
+        }
+        return null;
+    }
+
+    public Account findAccount(String username) {
+        for (Account a : accounts) {
+            if (a.getName().equals(username)) {
+                return a;
             }
         }
         return null;

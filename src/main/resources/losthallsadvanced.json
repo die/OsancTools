@@ -1,0 +1,352 @@
+{
+    "items":{
+        "1":{
+            "weapon":[
+                "Barnacle Basher",
+                "Gravelord's Flail",
+                "Sword of Splendor",
+                "Sword of the Unending Chaos",
+                "Cheerful Chipper",
+                "Blade of the Assailant",
+                "Doku No Ken",
+                "Kiritsukeru",
+                "Fiery Katana",
+                "Staff of the Vital Unity",
+                "Spellblade of the Heavens Light",
+                "Tideturner Trident",
+                "Wand of Evocation",
+                "Beekeeper's Flamethrower",
+                "Toxin Tooth",
+                "Dagger of Sinister Deeds",
+                "Moonstone Blades",
+                "Archangel's Judgement",
+                "Longbow of the Midnight Diamond",
+                "Thousand Shot",
+                "Deathless Crossbow",
+                "Bergenia Bow"
+            ],
+            "ability":[
+                "Vanguard's Visage",
+                "Helm of Draconic Dominance",
+                "Hivemaster Helm",
+                "Seal of the Battle God",
+                "Marble Seal",
+                "Abyssal Insignia",
+                "Irradiance Sheath",
+                "Shield of Orcish Regalia",
+                "Brutal Buckler",
+                "Shadow Serpent Sidearm",
+                "Wakizashi of Eastern Winds",
+                "Royal Wakizashi",
+                "Watarimono",
+                "Kaiken",
+                "Kageboshi",
+                "Crystalline Kunai",
+                "Rage Claws",
+                "Necrofish Poison",
+                "Murky Toxin",
+                "Cloak of Nightmares",
+                "Daevite Progenitor",
+                "Prism of Dancing Swords",
+                "Lifebringing Lotus",
+                "Consecrated Trap",
+                "Depthchaser Trap",
+                "Trap of the Vile Spirit",
+                "Quiver of Elvish Mastery",
+                "Coalbearing Quiver",
+                "Quiver of Thunder",
+                "Quiver of Dazing Love",
+                "Nebular Lute",
+                "Ancient Eminence",
+                "Spectral Spell",
+                "Penetrating Blast Spell",
+                "Tablet of the King's Avatar",
+                "Recurring Terror Spell",
+                "Memento Mori",
+                "Hooded Skull",
+                "Demon Lord's Skull",
+                "Skull of Corrupted Souls",
+                "Cubic Frame",
+                "Ritual Skull",
+                "Orb of Conflict",
+                "Orb of Terror",
+                "Orb of Conquest",
+                "Dimensiongate Orb",
+                "Orb of Aether",
+                "Scorchium Stone",
+                "Scepter of Devastation",
+                "Scepter of the Firmament",
+                "Scepter of Storms",
+                "Scepter of Sainthood",
+                "Scepter of Fulmination",
+                "Storm Caller",
+                "Mechanical Mace",
+                "Grandmaster Mace",
+                "Sovereign Mace",
+                "Mace of the North Pole",
+                "Hivemind Mace"
+            ],
+            "armor":[
+                "Flame Guard",
+                "Kamishimo",
+                "Fire Dragon Battle Armor",
+                "Eggre Battle Armor",
+                "Anointed Robe",
+                "Garb of the Ordained",
+                "Robe of the Ancient Intellect",
+                "Water Dragon Silk Robe",
+                "Ragged Robes",
+                "Hollyhock Hide",
+                "Metal-plated Corset",
+                "Leviathan Armor",
+                "Golem Garments",
+                "Withered Poncho",
+                "Rags of the Host"  
+            ],
+            "ring":[
+                "Exalted God's Horn",
+                "Collector's Monocle",
+                "Magical Lodestone",
+                "The Forgotten Crown",
+                "Ice Crown",
+                "Chancellor's Cranium",
+                "Omnipotence Ring",
+                "Divine Coronation",
+                "Esben's Wedding Ring"  
+            ]
+        },
+        "2":{
+            "weapon":[
+                "Divinity",
+                "Sword of the Colossus",
+                "Sword of Majesty",
+                "Soul's Guidance",
+                "Wand of Retribution",
+                "Staff of the Fundamental Core",
+                "Spellblade of the Everlasting Death",
+                "Corruption Tether",
+                "Crystallized Worm Spellblade",
+                "Shaman's Staff",
+                "Valor",
+                "Celestial Blade",
+                "Kusanagi",
+                "Godslayer Tachi",
+                "Toxic Toad",
+                "Dagger of Dire Hatred",
+                "Soulforged Blades",
+                "Harmonious Harp",
+                "Nectar Crossfire",
+                "Leaf Bow"
+            ],
+            "ability":[
+                "Oryx's Escutcheon",
+                "Polarity Poison",
+                "Amaterasu",
+                "Virtuous Wakizashi",
+                "Genesis Spell",
+                "Primal Arcana",
+                "Incubation Mace",
+                "Peacekeeper",
+                "Cave Dweller Trap",
+                "Gambler's Fate",
+                "Prism of Shattered Light",
+                "Yellow Beehemoth Quiver",
+                "Red Beehemoth Quiver",
+                "Blue Beehemoth Quiver",
+                "Freezing Quiver",
+                "Mad Javelin",
+                "Quiver of the Autumn King",
+                "Quiver of the Shadows",
+                "Wavecrest Concertina"
+            ],
+            "armor":[
+                "Mercy's Bane",
+                "Gladiator Guard",
+                "Aegis Armor",
+                "Hirejou Tenne",
+                "Centaur's Shielding",
+                "Diplomatic Robe"
+            ],
+            "Killbilly Warrior": {
+                "slot": [
+                    "armor",
+                    "ring"
+                ],
+                "items": [
+                  "Overalls of Endurance",
+                  "Headless Ted"
+                ]
+            },
+            "Treasurer Trickster": {
+                "class":[
+                    "rogue"
+                ],
+                "slot": [
+                    "ring"
+                ],
+                "items": [
+                  "Collector's Monocle"
+                ]
+            }
+
+        },
+        "3":{
+            "weapon":[
+                "Warmonger",
+                "Bow of the Void",
+                "Hama Yumi",
+                "Bow of Deep Enchantment",
+                "Avarice",
+                "Dirk of Cronus",
+                "Phantasm Dirk",
+                "Conducting Wand",
+                "Dusky Catalyst",
+                "Theurgy Wand",
+                "Holy Artifact",
+                "Wand of the Fallen",
+                "Snowblind Wand",
+                "Abomination's Wrath"
+            ],
+            "ability":[
+                "Noble Mandolin",
+                "Sentinel's Sidearm",
+                "Shield of Ogmur",
+                "Chaotic Scripture",
+                "Ceremonial Merlot",
+                "Tome of Holy Furor"
+            ],
+            "armor":[
+                "Vesture of Duality"
+            ],
+            "Alchemist Assassin": {
+                "slot": [
+                    "weapon",
+                    "ring"
+                ],
+                "items": [
+                  "Toxic Toad",
+                  "Protective Gloves"
+                ]
+            }
+        },
+        "4":{
+            "weapon":[
+                "Enforcer"
+            ],
+            "ability":[
+                "Crystallised Fang's Venom"
+            ]
+        },
+        "5":{
+            "weapon":[
+                "Lumiaire"
+            ],
+            "ability":[
+                "Tome of the Mushroom Tribes"
+            ]
+        },
+        "allowedSTSets":{
+            "Fiery Kensei":{
+                "total": 4,
+                "items": [
+                    "Fiery Katana",
+                    "Pyro Sheath",
+                    "Flame Guard",
+                    "Firelight Necklace"
+                ]
+            },
+            "Cuboid Necromancer":{
+                "total": 4,
+                "items": [
+                    "Squaroid Staff",
+                    "Cubic Frame",
+                    "Polygonal Garbs",
+                    "Cuband"
+                ]
+            },
+            "Hollow King Necromancer":{
+                "total": 4,
+                "items": [
+                    "Edictum Praetoris",
+                    "Memento Mori",
+                    "Toga Picta",
+                    "Interregnum"
+                ]
+            },
+            "Reaper Necromancer":{
+                "total": 4,
+                "items": [
+                    "Gravekeeper's Scythe",
+                    "Hooded Skull",
+                    "Executioner's Garb",
+                    "Grim Goblet"
+                ]
+            },
+            "Court Magician Sorcerer":{
+                "total": 4,
+                "items": [
+                    "Magic Wand",
+                    "Lightshow Scepter",
+                    "Magician's Robe",
+                    "Performer's Hat"
+                ]
+            },
+            "Angelic Bard":{
+                "total": 4,
+                "items": [
+                    "Harmonious Harp",
+                    "Angel's Fanfare",
+                    "Wings of Sanctity",
+                    "Heavenly Halo"
+                ]
+            },
+            "Horticultural Huntress":{
+                "total": 4,
+                "items": [
+                    "Bergenia Bow",
+                    "Lifebringing Lotus",
+                    "Hollyhock Hide",
+                    "Chrysanthemum Corsage"
+                ]
+            },
+            "Cursed Cursebreaker Huntress":{
+                "total": 4,
+                "items": [
+                    "Silver Revolvers",
+                    "Consecrated Trap",
+                    "Metal-plated Corset",
+                    "Vial of Sustenance"
+                ]
+            },
+            "Swarming Huntress":{
+                "total": 4,
+                "items": [
+                    "Nectar Crossfire",
+                    "Honeytomb Snare",
+                    "Apiary Armor",
+                    "Honey Circlet"
+                ]
+            }
+        },
+        "required points":{
+            "Rogue":4,
+            "Archer":4,
+            "Wizard":2,
+            "Priest":5,
+            "Warrior":0,
+            "Knight":2,
+            "Paladin":1,
+            "Assassin":3,
+            "Necromancer":3,
+            "Huntress":4,
+            "Mystic":2,
+            "Trickster":2,
+            "Sorcerer":3,
+            "Ninja":2,
+            "Samurai":3,
+            "Bard":4,
+            "Summoner":3,
+            "Kensei":3
+        }
+    }
+}

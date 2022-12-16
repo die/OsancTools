@@ -127,6 +127,10 @@ public class Raider {
         return inVC;
     }
 
+    public JSONArray getRoles() {
+        return this.roles;
+    }
+
     public JSONArray getReacts() {
         return this.reacts;
     }

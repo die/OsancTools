@@ -138,6 +138,7 @@ public class RealmeyeRequestHandler {
                 List<String> characterData = Jsoup.parse(doc.html()).select("table[class=table table-striped tablesorter] tr").eachText();
                 List<String> characterSkinData = Jsoup.parse(doc.html()).select("a.character").eachAttr("data-skin");
                 List<String> itemData = Jsoup.parse(doc.html()).select("span.item").eachAttr("title");
+                List<String> itemImageData = Jsoup.parse(doc.html()).select("span.item").eachAttr("style");
                 List<Character> characters = new ArrayList<>();
                 String headers = characterData.get(0);
                 for (int i = 1; i < characterData.size(); i++) {
@@ -151,7 +152,7 @@ public class RealmeyeRequestHandler {
                     String stats = getElementFromCharacterTable(metadata, headers, "Stats");
                     String skin = characterSkinData.get(i-1);
                     List<String> items = itemData.subList(4 * i - 4, 4 * i);
-                    //List<String> itemsImage = itemImageData.subList(4 * i - 4, 4 * i);
+                    List<String> itemsImage = itemImageData.subList(4 * i - 4, 4 * i);
                     String characterLastSeen = getElementFromCharacterTable(metadata, headers, "Last seen");
                     String server = getElementFromCharacterTable(metadata, headers, "Srv.");
                     List<Item> inventory = new ArrayList<>();
@@ -163,13 +164,19 @@ public class RealmeyeRequestHandler {
                             case 3 -> "ring";
                             default -> "";
                         };
-                        inventory.add(new Item(items.get(j), itemType, type));
+                        String[] positions = itemsImage.get(j).replace("background-position:", "").replace("px", "").split(" ");
+                        int x = Math.abs(Integer.parseInt(positions[0]));
+                        int y = Math.abs(Integer.parseInt(positions[1]));
+                        System.out.println(x + " " + y);
+                        inventory.add(new Item(items.get(j), itemType, type, x, y));
                     }
                     Character character = new Character(type, skin, level, cqc, fame, exp, place, stats, characterLastSeen, server, new Inventory(inventory));
                     characters.add(character);
                 }
                 return new Account(username, stars, numberOfSkins, exaltations, accountFame, guild, guildRank, creationDate, lastSeen, characters);
             } catch (Exception e) {
+                System.out.println(username);
+                e.printStackTrace();
                 return getPrivateAccount(username);
             }
         }

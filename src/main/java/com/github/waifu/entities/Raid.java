@@ -3,6 +3,7 @@ package com.github.waifu.entities;
 import com.github.waifu.util.Utilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +31,51 @@ public class Raid {
         this.id = String.valueOf(json.getInt("id"));
         this.status = json.getString("status");
         this.raiders = new ArrayList<>();
-        addRaiders(json);
+        addWebAppRaiders(json);
+    }
+
+    public Raid() {
+        this.json = null;
+        this.type = "";
+        this.description = "";
+        this.maxMembers = -1;
+        this.raidLeader = null;
+        this.location = "";
+        this.name = "";
+        this.id = "";
+        this.status = "";
+        this.raiders = new ArrayList<>();
+    }
+
+    public void deepCopy(JSONObject json) {
+        this.json = json;
+        this.type = json.getString("raid_type");
+        this.description = String.valueOf(json.get("description"));
+        this.maxMembers = json.getInt("max_members");
+        this.raidLeader = createRaidLeader(json.getJSONObject("creator"));
+        this.location = String.valueOf(json.get("location"));
+        this.name = json.getString("name");
+        this.id = String.valueOf(json.getInt("id"));
+        this.status = json.getString("status");
+        addWebAppRaiders(json);
     }
 
     private Raider createRaidLeader(JSONObject creator) {
         return new Raider(creator.getString("id"), creator.getString("avatar"), creator.getString("server_nickname"));
     }
 
-    public void addRaiders(JSONObject json) {
+    public void addSnifferAccount(Account account) {
+        Pair<Integer, Integer> pair = findRaiderAccountByUsername(account.getName());
+        if (pair == null) {
+            if (json == null) {
+                raiders.add(new Raider(account));
+            }
+        } else {
+            raiders.get(pair.left()).getAccounts().set(pair.right(), account);
+        }
+    }
+
+    public void addWebAppRaiders(JSONObject json) {
         JSONArray members = json.getJSONArray("members");
 
         for (int i = 0; i < members.length(); i++) {
@@ -144,11 +182,30 @@ public class Raid {
         return null;
     }
 
+    public Pair<Integer, Integer> findRaiderAccountByUsername(String username) {
+        for (Raider r : raiders) {
+            for (Account a : r.getAccounts()) {
+                if (a.getName().equals(username)) {
+                    return new Pair<>(raiders.indexOf(r), r.getAccounts().indexOf(a));
+                }
+            }
+        }
+        return null;
+    }
+
     public int getNumberOfAccounts() {
         int accounts = 0;
         for (Raider r : raiders) {
             accounts += r.getAccounts().size();
         }
         return accounts;
+    }
+
+    public boolean sniffed() {
+        return !this.getRaiders().stream().allMatch(raider -> raider.getAccounts().stream().allMatch(account -> account.getCharacters() == null));
+    }
+
+    public boolean isWebAppRaid() {
+        return json != null;
     }
 }

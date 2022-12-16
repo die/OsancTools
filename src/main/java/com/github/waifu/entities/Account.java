@@ -16,7 +16,7 @@ public class Account {
     private final String guildRank;
     private final String creationDate;
     private final String lastSeen;
-    private final List<Character> characters;
+    private List<Character> characters;
 
     /**
      * Account Constructor
@@ -250,6 +250,10 @@ public class Account {
      */
     public List<Character> getCharacters() {
         return this.characters;
+    }
+
+    public void setCharacters(List<Character> characters) {
+        this.characters = characters;
     }
 
     /**

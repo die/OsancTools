@@ -20,6 +20,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.util.List;
 
 
 /**
@@ -83,6 +84,8 @@ public class GUI extends JFrame {
     private JTextField requirementInput;
     private JButton requirementButton;
     private JPanel exaltsSelection;
+    private JComboBox requirementSheetComboBox;
+    private JCheckBox showRealmeyeAlertCheckBox;
     private TitledBorder border;
     private static JSONObject json;
     public static Raid raid;
@@ -193,9 +196,9 @@ public class GUI extends JFrame {
             acceptFilePanel.setLocationRelativeTo(this);
         });
 
-        parseReactsButton.addActionListener(new ParseWebAppReactsAction(progressBar, stopButton));
+        parseReactsButton.addActionListener(new ParseWebAppReactsAction(progressBar, stopButton, parseReactsButton));
 
-        parseSetsButton.addActionListener(new ParseWebAppSetsAction(progressBar, stopButton));
+        parseSetsButton.addActionListener(new ParseWebAppSetsAction(progressBar, stopButton, parseSetsButton));
 
         stopButton.addActionListener(e -> {
             if (worker != null && !worker.isDone() && !worker.isCancelled()) {
@@ -223,6 +226,15 @@ public class GUI extends JFrame {
         vitalityRadioButton.addActionListener(new StoreStatIndexAction(Stat.VITALITY));
 
         wisdomRadioButton.addActionListener(new StoreStatIndexAction(Stat.WISDOM));
+
+        showRealmeyeAlertCheckBox.addActionListener(e -> {
+            Main.settings.setShowAlert(showRealmeyeAlertCheckBox.isSelected());
+        });
+
+        requirementSheetComboBox.addActionListener(e -> {
+            JComboBox comboBox = (JComboBox) e.getSource();
+            Main.settings.setRequirementSheetName(String.valueOf(comboBox.getSelectedItem()));
+        });
 
         clearSettingsButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(main,
@@ -448,7 +460,7 @@ public class GUI extends JFrame {
         label3.setVerticalAlignment(0);
         panel1.add(label3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         options = new JPanel();
-        options.setLayout(new GridLayoutManager(6, 5, new Insets(5, 5, 5, 5), -1, -1));
+        options.setLayout(new GridLayoutManager(7, 5, new Insets(5, 5, 5, 5), -1, -1));
         tabbedPane.addTab("Options", options);
         tokenField = new JPasswordField();
         tokenField.putClientProperty("JPasswordField.cutCopyAllowed", Boolean.TRUE);
@@ -480,6 +492,11 @@ public class GUI extends JFrame {
         final JLabel label5 = new JLabel();
         label5.setText("Theme (Requires Restart)");
         options.add(label5, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        requirementSheetComboBox = new JComboBox();
+        options.add(requirementSheetComboBox, new GridConstraints(6, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showRealmeyeAlertCheckBox = new JCheckBox();
+        showRealmeyeAlertCheckBox.setText("Show Realmeye Alert");
+        options.add(showRealmeyeAlertCheckBox, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         creditsPanel = new JPanel();
         creditsPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Credits", creditsPanel);
@@ -589,9 +606,19 @@ public class GUI extends JFrame {
         border.setTitleColor(Color.red);
         connected.setBorder(border);
         raidPanel.setOpaque(false);
+        showRealmeyeAlertCheckBox.setSelected(Main.settings.showAlert());
         tokenField.setText(Main.settings.getToken());
         betaTokenField.setText(Main.settings.getBetaToken());
         creditsPanel.addKeyListener(new KeyListener());
+
+        List<String> requirementSheets = Main.settings.getRequirementSheets();
+        String selectedSheet = Main.settings.getRequirementSheetName();
+        for (String s : requirementSheets) {
+            requirementSheetComboBox.addItem(s);
+            if (selectedSheet.equals(s)) {
+                requirementSheetComboBox.setSelectedIndex(requirementSheets.indexOf(s));
+            }
+        }
     }
 
     /**

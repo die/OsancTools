@@ -179,20 +179,12 @@ public class Inventory {
                         } else {
                             item = Integer.parseInt(tier);
                         }
-                        if (type.equals("ability") || type.equals("ring")) {
-                            if (item < 4) {
-                                issue.setProblem(Problem.UNDER_REQS);
-                                issue.setMessage(name);
-                                issue.setWhisper(name);
-                                i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
-                            }
-                        } else if (type.equals("weapon") || type.equals("armor")) {
-                            if (item < 12) {
-                                issue.setProblem(Problem.UNDER_REQS);
-                                issue.setMessage(name);
-                                issue.setWhisper(name);
-                                i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
-                            }
+
+                        if (item < Utilities.json.getInt(type)) {
+                            issue.setProblem(Problem.UNDER_REQS);
+                            issue.setMessage(name);
+                            issue.setWhisper(name);
+                            i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
                         }
                     } catch (Exception e) {
                         issue.setProblem(Problem.ERROR);

@@ -395,7 +395,7 @@
               </component>
             </children>
           </grid>
-          <grid id="a366e" binding="options" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="a366e" binding="options" layout-manager="GridLayoutManager" row-count="7" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <tabbedpane title="Options"/>
@@ -487,6 +487,20 @@
                 </constraints>
                 <properties>
                   <text value="Theme (Requires Restart)"/>
+                </properties>
+              </component>
+              <component id="99bd" class="javax.swing.JComboBox" binding="requirementSheetComboBox">
+                <constraints>
+                  <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="cbd68" class="javax.swing.JCheckBox" binding="showRealmeyeAlertCheckBox" default-binding="true">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Show Realmeye Alert"/>
                 </properties>
               </component>
             </children>

@@ -24,15 +24,18 @@ public class ParseWebAppReactsAction implements ActionListener {
 
     private final JProgressBar progressBar;
     private final JButton stopButton;
+    private final JButton parseReactsButton;
+
 
     /**
      *
      * @param progressBar
      * @param stopButton
      */
-    public ParseWebAppReactsAction(JProgressBar progressBar, JButton stopButton) {
+    public ParseWebAppReactsAction(JProgressBar progressBar, JButton stopButton, JButton parseReactsButton) {
         this.progressBar = progressBar;
         this.stopButton = stopButton;
+        this.parseReactsButton = parseReactsButton;
     }
 
     /**
@@ -46,18 +49,20 @@ public class ParseWebAppReactsAction implements ActionListener {
             protected Void doInBackground() {
                 try {
                     if (GUI.checkProcessRunning()) {
-                       return null;
-                    } else if (RealmeyeRequestHandler.checkDirectConnect()){
-                        stopButton.setText("Stop Process");
-                        GUI.setWorker(this);
-                        progressBar.setValue(0);
-                        GUI.setProcessRunning(true);
-                        List<React> reacts = getReacts(GUI.raid, progressBar);
-                        if (reacts != null) {
-                            new ReactTable(reacts);
+                        return null;
+                    } else if (GUI.raid != null && GUI.raid.isWebAppRaid()) { // webapp
+                         if (RealmeyeRequestHandler.checkDirectConnect()){
+                            stopButton.setText("Stop Process");
+                            GUI.setWorker(this);
+                            progressBar.setValue(0);
+                            GUI.setProcessRunning(true);
+                            List<React> reacts = getRealmeyeReacts(GUI.raid, progressBar);
+                            if (reacts != null) {
+                                new ReactTable(reacts);
+                            }
+                            GUI.setProcessRunning(false);
+                            stopButton.setText("Finished");
                         }
-                        GUI.setProcessRunning(false);
-                        stopButton.setText("Finished");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -78,7 +83,7 @@ public class ParseWebAppReactsAction implements ActionListener {
      * @param raid JSONObject returned from the WebApp.
      * @param bar  progress bar to be updated over time.
      */
-    private List<React> getReacts(Raid raid, JProgressBar bar) throws InterruptedException, IOException {
+    private List<React> getRealmeyeReacts(Raid raid, JProgressBar bar) throws InterruptedException, IOException {
         if (raid.getRaiders().isEmpty()) {
             return null;
         } else {

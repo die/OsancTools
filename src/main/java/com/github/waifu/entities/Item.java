@@ -1,7 +1,11 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.util.Utilities;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * Item class to store item data.
@@ -38,6 +42,25 @@ public class Item {
         this.type = type;
         this.itemClass = itemClass;
         createImage();
+    }
+
+    /**
+     * Item method.
+     *
+     * Constructs an Item.
+     *
+     * @param name name of the Item.
+     * @param type type of Item (Weapon/Ability/Armor/Ring).
+     * @param itemClass class that can use the Item (Wizard/etc).
+     */
+    public Item(String name, String type, String itemClass, int x, int y) throws IOException {
+        this.name = name.replace(":", "");
+        this.type = type;
+        this.itemClass = itemClass;
+        BufferedImage image = ImageIO.read(Utilities.getImageResource("images/items/renders.png"));
+        BufferedImage image1 = image.getSubimage(x, y, 46, 46);
+        System.out.println("obtained image");
+        this.image = new ImageIcon(image1);
     }
 
     /**

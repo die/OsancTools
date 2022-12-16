@@ -8,15 +8,25 @@ public class Settings {
 
     private final Preferences preferences;
     private final List<String> settings;
+    private final List<String> requirementSheets;
 
     public Settings() {
         preferences = Preferences.userRoot();
-        settings = Arrays.asList("token",
+        settings = Arrays.asList(
+                "token",
                 "betaToken",
                 "theme",
                 "stat",
                 "requirement",
-                "showAlert");
+                "requirementSheetName",
+                "showAlert"
+        );
+
+        requirementSheets = Arrays.asList(
+                "osanc",
+                "losthalls",
+                "losthallsadvanced"
+        );
     }
 
     public String getToken() {
@@ -65,6 +75,18 @@ public class Settings {
 
     public void setShowAlert(boolean showAlert) {
         preferences.putBoolean("showAlert", showAlert);
+    }
+
+    public String getRequirementSheetName() {
+        return preferences.get("requirementSheetName", requirementSheets.get(0));
+    }
+
+    public void setRequirementSheetName(String name) {
+        preferences.put("requirementSheetName", name);
+    }
+
+    public List<String> getRequirementSheets() {
+        return requirementSheets;
     }
 
     public void clearSettings() {

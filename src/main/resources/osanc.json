@@ -1,4 +1,11 @@
 {
+  "metric": "name",
+  "tier": {
+    "weapon": 12,
+    "ability": 4,
+    "armor": 12,
+    "ring": 4
+  },
   "bannedItems": {
     "weapon": [
       "Toy Knife",

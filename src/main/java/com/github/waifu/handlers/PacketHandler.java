@@ -3,14 +3,11 @@ package com.github.waifu.handlers;
 import com.github.waifu.entities.*;
 import com.github.waifu.entities.Character;
 import com.github.waifu.gui.GUI;
-import com.github.waifu.gui.Main;
 import com.github.waifu.util.Utilities;
-import packets.data.enums.StatType;
 import packets.incoming.*;
 import packets.Packet;
 import packets.data.StatData;
 import util.IdToName;
-
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -18,26 +15,18 @@ import java.util.*;
 
 public class PacketHandler {
 
-    public static void testPacket(Packet packet) {
-        UpdatePacket updatePacket = (UpdatePacket) packet;
-
-
-        /**CLASS NAME
-         *
-         */
-
-        for (int i = 0; i < updatePacket.newObjects.length; i++) {
-            StatData[] stats = updatePacket.newObjects[i].status.stats;
-
-            for (int k = 0; k < stats.length; k++){
-                if(stats[k].statType == StatType.PLAYER_ID)
-                    System.out.println(IdToName.objectName(updatePacket.newObjects[i].objectType));
-
+    public static void test(Packet packet) {
+        NewTickPacket newTickPacket = (NewTickPacket) packet;
+        for (int i = 0; i < newTickPacket.status.length; i++) {
+            String username = "";
+            String weapon = "";
+            for (StatData stat : newTickPacket.status[i].stats) {
+                switch (stat.statType) {
+                    case NAME_STAT -> username = IdToName.objectName(stat.statValue);
+                    case INVENTORY_0_STAT -> weapon = IdToName.objectName(stat.statValue);
+                }
             }
-
-
-            /*for (int k = 0; k < objects.length; k++) {
-            }*/
+            System.out.println(username + " : " + weapon);
         }
     }
 
@@ -52,6 +41,7 @@ public class PacketHandler {
         int currentMPValue=0;
         int stars = 0;
         int level = 0;
+        String charClass = "";
         String weapon="";
         String ability="";
         String armor="";
@@ -65,49 +55,49 @@ public class PacketHandler {
         int exaltedMP = 0;
         int dexterity = 0;
 
-
-
         for (int i=0; i < updatePacket.newObjects.length; i++){
             StatData[] stats = updatePacket.newObjects[i].status.stats;
 
-            for(int k=0; k < stats.length; k++){
-                switch(stats[k].statType){
-                    case MAX_MP_STAT -> maxMPValue = stats[k].statValue;
-                    case MP_STAT -> currentMPValue = stats[k].statValue;
-                    case NUM_STARS_STAT -> stars = stats[k].statValue;
-                    case MAX_HP_STAT -> maxHPValue = stats[k].statValue;
-                    case HP_STAT -> currentHPValue = stats[k].statValue;
-                    case LEVEL_STAT -> level = stats[k].statValue;
-                    case INVENTORY_0_STAT -> weapon = getItemLabel(IdToName.objectName(stats[k].statValue));
-                    case INVENTORY_1_STAT -> ability = getItemLabel(IdToName.objectName(stats[k].statValue));
-                    case INVENTORY_2_STAT -> armor = getItemLabel(IdToName.objectName(stats[k].statValue));
-                    case INVENTORY_3_STAT -> ring = getItemLabel(IdToName.objectName(stats[k].statValue));
-                    case NAME_STAT -> userName = stats[k].stringStatValue;
-                    case GUILD_NAME_STAT -> guildName = stats[k].stringStatValue;
-                    case GUILD_RANK_STAT -> guildRank = stats[k].stringStatValue;
-                    case FAME_STAT -> fame = stats[k].statValue;
-                    case CURR_FAME_STAT -> currentFame = stats[k].statValue;
-                    case EXALTED_HP -> exaltedHP = stats[k].statValue;
-                    case EXALTED_MP -> exaltedMP = stats[k].statValue;
-                    case DEXTERITY_STAT -> dexterity = stats[k].statValue;
+            for (StatData stat : stats) {
+                switch (stat.statType) {
+                    case MAX_MP_STAT -> maxMPValue = stat.statValue;
+                    case MP_STAT -> currentMPValue = stat.statValue;
+                    case NUM_STARS_STAT -> stars = stat.statValue;
+                    case MAX_HP_STAT -> maxHPValue = stat.statValue;
+                    case HP_STAT -> currentHPValue = stat.statValue;
+                    case LEVEL_STAT -> level = stat.statValue;
+                    case PLAYER_ID -> charClass = IdToName.objectName(updatePacket.newObjects[i].objectType);
+                    case INVENTORY_0_STAT -> weapon = getItemLabel(IdToName.objectName(stat.statValue));
+                    case INVENTORY_1_STAT -> ability = getItemLabel(IdToName.objectName(stat.statValue));
+                    case INVENTORY_2_STAT -> armor = getItemLabel(IdToName.objectName(stat.statValue));
+                    case INVENTORY_3_STAT -> ring = getItemLabel(IdToName.objectName(stat.statValue));
+                    case NAME_STAT -> userName = stat.stringStatValue;
+                    case GUILD_NAME_STAT -> guildName = stat.stringStatValue;
+                    case GUILD_RANK_STAT -> guildRank = stat.stringStatValue;
+                    case FAME_STAT -> fame = stat.statValue;
+                    case CURR_FAME_STAT -> currentFame = stat.statValue;
+                    case EXALTED_HP -> exaltedHP = stat.statValue;
+                    case EXALTED_MP -> exaltedMP = stat.statValue;
+                    case DEXTERITY_STAT -> dexterity = stat.statValue;
                 }
             }
         }
         if (userName.equals("") || weapon.equals("")) return;
-        if(maxHPValue!=0 || maxHPValue==currentHPValue)
-            maxedHP=true;
-        if(maxMPValue!=0 || maxMPValue==currentMPValue)
-            maxedMP=true;
-        //todo: get weapon type and item class
-        Item weaponItem = new Item(weapon, "weapon", "Wizard");
-        Item abilityItem = new Item(ability, "ability", "Wizard");
-        Item armorItem = new Item(armor, "armor", "Wizard");
-        Item ringItem = new Item(ring, "ring", "Wizard");
+        if(maxHPValue!=0 || maxHPValue==currentHPValue) {
+            maxedHP = true;
+        }
+        if(maxMPValue!=0 || maxMPValue==currentMPValue) {
+            maxedMP = true;
+        }
+        Item weaponItem = new Item(weapon, "weapon", charClass);
+        Item abilityItem = new Item(ability, "ability", charClass);
+        Item armorItem = new Item(armor, "armor", charClass);
+        Item ringItem = new Item(ring, "ring", charClass);
         List<Item> items = new ArrayList<>();
         Collections.addAll(items, weaponItem, abilityItem, armorItem, ringItem);
         Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, maxedMP, maxedHP, currentFame, exaltedHP, exaltedMP, dexterity);
         System.out.println(account.getName() + " : " + account.getRecentCharacter().getInventory().printInventory());
-        Main.addAccount(account);
+        GUI.raid.addSnifferAccount(account);
     }
 
     public static String getItemLabel(String name) {
@@ -145,24 +135,4 @@ public class PacketHandler {
 
         return new Account(userName, characterlist, stars, fame, guildName, guildRank);
     }
-
-
 }
-
-        /*if(userName!="") {
-            System.out.println("stars: " + stars);
-            System.out.println("level: " + level);
-            System.out.println("weapon: " + weapon);
-            System.out.println("ability: " + ability);
-            System.out.println("armor: " + armor);
-            System.out.println("ring: " + ring);
-            System.out.println("username: " + userName);
-            System.out.println("guildname: " + guildName);
-            System.out.println("guildrank: " + guildRank);
-            System.out.println("fame: " + fame);
-            System.out.println("current fame: " + currentFame);
-            System.out.println("exalted hp: " + exaltedHP);
-            System.out.println("exalted mp " + exaltedMP);
-            System.out.println("dex: " + dexterity);
-            System.out.println("");
-        }*/

@@ -131,6 +131,7 @@ public class Inventory {
                 } else if (name.endsWith("UT") || name.endsWith("ST")) {
                     JSONObject bannedItems = Utilities.json.getJSONObject("bannedItems");
                     JSONArray jsonArray = bannedItems.getJSONArray(i.getType());
+                    // TODO: deal with no swapouts in json
                     JSONArray swapouts = Utilities.json.getJSONArray("swapoutItems");
                     String substring = name.substring(0, name.length() - 3);
                     boolean foundSTSet = false;
@@ -180,13 +181,14 @@ public class Inventory {
                             item = Integer.parseInt(tier);
                         }
 
-                        if (item < Utilities.json.getInt(type)) {
+                        if (item < Utilities.json.getJSONObject("tier").getInt(type)) {
                             issue.setProblem(Problem.UNDER_REQS);
                             issue.setMessage(name);
                             issue.setWhisper(name);
                             i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         issue.setProblem(Problem.ERROR);
                         issue.setMessage(name);
                         issue.setWhisper(name);

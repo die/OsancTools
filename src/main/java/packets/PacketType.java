@@ -11,7 +11,8 @@ import static packets.PacketType.Direction.Incoming;
  * Packet are matched with the packet index sent as a header of packets and returned.
  */
 public enum PacketType {
-                              TEXT( 44, Incoming, TextPacket::new),
+                            NEWTICK(  9, Incoming, NewTickPacket::new),
+                            TEXT( 44, Incoming, TextPacket::new),
                             UPDATE( 62, Incoming, UpdatePacket::new),
                       NOTIFICATION( 67, Incoming, NotificationPacket::new),
                REALM_HERO_LEFT_MSG( 84, Incoming, RealmHeroesLeftPacket::new),

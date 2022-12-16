@@ -64,7 +64,7 @@ public class ParseWebAppSetsAction implements ActionListener {
                         GUI.setWorker(this);
                         progressBar.setValue(0);
                         GUI.raid = new Raid();
-                        Register.INSTANCE.register(PacketType.NEWTICK, System.out::println);
+                        Register.INSTANCE.register(PacketType.UPDATE, PacketHandler::handlePacket);
                         packetProcessor = new PacketProcessor();
                         packetProcessor.start();
                     } else if (GUI.raid.isWebAppRaid()) { // webapp

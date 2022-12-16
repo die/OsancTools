@@ -15,21 +15,6 @@ import java.util.*;
 
 public class PacketHandler {
 
-    public static void test(Packet packet) {
-        NewTickPacket newTickPacket = (NewTickPacket) packet;
-        for (int i = 0; i < newTickPacket.status.length; i++) {
-            String username = "";
-            String weapon = "";
-            for (StatData stat : newTickPacket.status[i].stats) {
-                switch (stat.statType) {
-                    case NAME_STAT -> username = IdToName.objectName(stat.statValue);
-                    case INVENTORY_0_STAT -> weapon = IdToName.objectName(stat.statValue);
-                }
-            }
-            System.out.println(username + " : " + weapon);
-        }
-    }
-
     public static void handlePacket(Packet packet) {
         UpdatePacket updatePacket = (UpdatePacket) packet;
 

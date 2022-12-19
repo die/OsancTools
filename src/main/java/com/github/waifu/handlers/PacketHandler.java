@@ -4,38 +4,28 @@ import com.github.waifu.entities.*;
 import com.github.waifu.entities.Character;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.Main;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import packets.incoming.*;
 import packets.Packet;
 import packets.data.StatData;
 
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import org.w3c.dom.Document;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 
 public class PacketHandler {
 
-    private static Map<String, String> equipmentData;
-
-    public static void loadEquipmentData() {
-        equipmentData = new HashMap<>();
-
-        Scanner scanner = new Scanner (Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("Equipment.txt")), StandardCharsets.UTF_8);
-        scanner.useDelimiter(":");
-        String line;
-        while (scanner.hasNext()) {
-            line = scanner.nextLine();
-            String[] parsed = line.split(":");
-            switch (parsed.length) {
-                case 2 -> equipmentData.put(parsed[0], parsed[1]);
-                case 3 -> equipmentData.put(parsed[0], parsed[1] + " " + parsed[2]);
-                default -> {
-
-                }
-            }
-        }
-        scanner.close();
-
-    }
+    private static Document equipmentData;
+    private static Document classData;
 
     public static void handlePacket(Packet packet) {
         UpdatePacket updatePacket = (UpdatePacket) packet;
@@ -108,17 +98,91 @@ public class PacketHandler {
     }
 
     public static String getClassName(String id ) {
-        return Objects.requireNonNullElse(equipmentData.get(id), "Wizard");
+        NodeList nodeList = classData.getElementsByTagName("Object");
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node nNode = nodeList.item(i);
+
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                if (eElement.getElementsByTagName("Class").item(0) != null) {
+                    long foundId = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
+                    if (String.valueOf(foundId).equals(id)) {
+                        return eElement.getAttribute("id");
+                    }
+                }
+            }
+        }
+        return "Wizard";
     }
 
     public static String getItemName(String id) {
         if (id.equals("-1")) {
             return "Empty slot";
         } else {
-            return Objects.requireNonNullElse(equipmentData.get(id), "Failed To Parse Item UT");
+            NodeList nodeList = equipmentData.getElementsByTagName("Object");
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node nNode = nodeList.item(i);
+
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    String label = "";
+                    Element eElement = (Element) nNode;
+
+                    long found_id = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
+
+                    if (String.valueOf(found_id).equals(id)) {
+                        String name = "";
+
+                        if (eElement.getElementsByTagName("DisplayId").item(0) != null) {
+                            name = eElement.getElementsByTagName("DisplayId").item(0).getTextContent();
+                        } else {
+                            name = eElement.getAttribute("id");
+                        }
+
+                        NodeList tiers = eElement.getElementsByTagName("Tier");
+                        if (tiers.item(0) != null) {
+                            label = "T" + tiers.item(0).getTextContent();
+                        }
+
+                        NodeList labels = eElement.getElementsByTagName("Labels");
+                        if (labels.item(0) != null) {
+                            List<String> labelsList = Arrays.stream(labels.item(0).getTextContent().split(",")).toList();
+
+                            if (labelsList.contains("ST")) {
+                                label = "ST";
+                            } else if (labelsList.contains("UT")) {
+                                label = "UT";
+                            }
+                        }
+
+                        if (!label.equals("")) {
+                           return name + " " + label;
+                        }
+                    }
+                }
+            }
+            return "Failed To Parse Item UT";
         }
     }
 
+    /**
+     *
+     * @param userName
+     * @param stars
+     * @param fame
+     * @param guildName
+     * @param guildRank
+     * @param items
+     * @param level
+     * @param maxedMP
+     * @param maxedHP
+     * @param currentFame
+     * @param exaltedHP
+     * @param exaltedMP
+     * @param dexterity
+     * @return
+     */
     public static Account createAccount(String userName, int stars, int fame, String guildName, String guildRank, List<Item> items, int level,boolean maxedMP, boolean maxedHP, int currentFame, int exaltedHP, int exaltedMP, int dexterity) {
 
         Inventory inventory = new Inventory(items);
@@ -128,5 +192,98 @@ public class PacketHandler {
         characterlist.add(character);
 
         return new Account(userName, characterlist, stars, fame, guildName, guildRank);
+    }
+
+    /**
+     *
+     */
+    public static boolean loadXML() {
+        File file = new File(Main.settings.getResourceDir());
+
+        if (!file.getName().equals("resources.assets")) {
+            JOptionPane.showMessageDialog(GUI.getFrames()[0], "Make sure you select the correct resources file!");
+            return false;
+        }
+
+        StringBuilder equipXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        StringBuilder classXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.toURL().openStream()))) {
+            String line;
+            boolean writeEquip = false;
+            boolean writeClass = false;
+            boolean checkEquip = true;
+            boolean checkClass = true;
+            while ((line = br.readLine()) != null) {
+                if (writeEquip) {
+                    if (line.contains("</Objects>")) {
+                        equipXml.append("</Objects>");
+                        writeEquip = false;
+                        checkEquip = false;
+                    }
+                    if (writeEquip) {
+                        equipXml.append(line + "\n");
+                    }
+                } else if (checkEquip){
+                    if (line.contains("equip") && line.contains("<?xml version=\"1.0\" encoding=\"utf-8\"?>")) {
+                        byte[] bytes = line.getBytes(StandardCharsets.UTF_8);
+                        for (int i = 0; i < bytes.length; i++) {
+                            // check for equip
+                            if (bytes[i] == 101 && bytes[i + 1] == 113) {
+                                if (bytes[i + 5] == 0) {
+                                    writeEquip = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (writeClass) {
+                    if (line.contains("</Objects>")) {
+                        classXml.append("</Objects>");
+                        writeClass = false;
+                        checkClass = false;
+                    }
+                    if (writeClass) {
+                        classXml.append(line + "\n");
+                    }
+                } else if (checkClass){
+                    if (line.contains("player") && line.contains("<?xml version=\"1.0\" encoding=\"utf-8\"?>")) {
+                        byte[] bytes = line.getBytes(StandardCharsets.UTF_8);
+                        for (int i = 0; i < bytes.length; i++) {
+                            // check for player
+                            if (bytes[i] == 112 && bytes[i + 1] == 108) {
+                                if (bytes[i + 7] == 0) {
+                                    writeClass = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        try {
+            // ignore fatal error: premature end of file
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(equipXml.toString()));
+            equipmentData = builder.parse(is);
+            InputSource is1 = new InputSource(new StringReader(classXml.toString()));
+            classData = builder.parse(is1);
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(GUI.getFrames()[0], "Select the resources.assets in your Documents folder!");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static boolean isXMLNull() {
+        return equipmentData == null || classData == null;
     }
 }

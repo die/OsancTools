@@ -63,6 +63,14 @@ public class ParseWebAppSetsAction implements ActionListener {
                     } else if (GUI.checkProcessRunning()) {
                         return null;
                     } else if (GUI.raid == null) {
+                        parseSetsButton.setEnabled(false);
+                        if (PacketHandler.isXMLNull()) {
+                            if (!PacketHandler.loadXML()) {
+                                parseSetsButton.setEnabled(true);
+                                return null;
+                            }
+                        }
+                        parseSetsButton.setEnabled(true);
                         parseSetsButton.setText("Stop Sniffer");
                         GUI.setWorker(this);
                         progressBar.setValue(0);

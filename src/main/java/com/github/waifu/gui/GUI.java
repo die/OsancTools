@@ -15,10 +15,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -86,6 +91,7 @@ public class GUI extends JFrame {
     private JPanel exaltsSelection;
     private JComboBox requirementSheetComboBox;
     private JCheckBox showRealmeyeAlertCheckBox;
+    private JButton setResourceDirButton;
     private TitledBorder border;
     private static JSONObject json;
     public static Raid raid;
@@ -226,6 +232,19 @@ public class GUI extends JFrame {
         vitalityRadioButton.addActionListener(new StoreStatIndexAction(Stat.VITALITY));
 
         wisdomRadioButton.addActionListener(new StoreStatIndexAction(Stat.WISDOM));
+
+        setResourceDirButton.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser();
+            FileFilter filter = new FileNameExtensionFilter("Assets (*.assets)", "assets");
+
+            fc.setFileFilter(filter);
+            int returnVal = fc.showOpenDialog(main);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                Main.settings.setResourceDir(fc.getSelectedFile().getAbsolutePath());
+                System.out.println(fc.getSelectedFile().getAbsolutePath());
+            }
+        });
 
         showRealmeyeAlertCheckBox.addActionListener(e -> {
             Main.settings.setShowAlert(showRealmeyeAlertCheckBox.isSelected());
@@ -497,6 +516,9 @@ public class GUI extends JFrame {
         showRealmeyeAlertCheckBox = new JCheckBox();
         showRealmeyeAlertCheckBox.setText("Show Realmeye Alert");
         options.add(showRealmeyeAlertCheckBox, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        setResourceDirButton = new JButton();
+        setResourceDirButton.setText("Set Resource Dir");
+        options.add(setResourceDirButton, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         creditsPanel = new JPanel();
         creditsPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Credits", creditsPanel);

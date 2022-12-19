@@ -19,14 +19,15 @@ public class Settings {
                 "stat",
                 "requirement",
                 "requirementSheetName",
-                "showAlert"
+                "showAlert",
+                "resourceDir"
         );
 
         requirementSheets = Arrays.asList(
-                "Oryx Sanctuary",
-                "Pub Halls Advanced",
-                "Pub Halls Exalt",
-                "Pub Halls Misc"
+                "OryxSanctuary",
+                "PubHallsAdvanced",
+                "PubHallsExalt",
+                "PubHallsMisc"
         );
     }
 
@@ -76,6 +77,14 @@ public class Settings {
 
     public void setShowAlert(boolean showAlert) {
         preferences.putBoolean("showAlert", showAlert);
+    }
+
+    public String getResourceDir() {
+        return preferences.get("resourceDir", "");
+    }
+
+    public void setResourceDir(String resourceDir) {
+        preferences.put("resourceDir", resourceDir);
     }
 
     public String getRequirementSheetName() {

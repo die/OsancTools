@@ -1,7 +1,6 @@
 package packets.data;
 
 import packets.reader.BufferReader;
-import util.IdToName;
 
 public class ObjectData {
     /**
@@ -24,12 +23,5 @@ public class ObjectData {
         status = new ObjectStatusData().deserialize(buffer);
 
         return this;
-    }
-
-    @Override
-    public String toString() {
-        String name = IdToName.objectName(objectType);
-        return "\n    " + (name.equals("") ? ("objectType=" + objectType) : ("objectType=" + objectType + " " + name)) +
-                status;
     }
 }

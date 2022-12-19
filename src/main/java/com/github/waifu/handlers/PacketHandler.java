@@ -3,17 +3,39 @@ package com.github.waifu.handlers;
 import com.github.waifu.entities.*;
 import com.github.waifu.entities.Character;
 import com.github.waifu.gui.GUI;
-import com.github.waifu.util.Utilities;
+import com.github.waifu.gui.Main;
 import packets.incoming.*;
 import packets.Packet;
 import packets.data.StatData;
-import util.IdToName;
-import java.io.File;
-import java.net.URL;
+
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
 public class PacketHandler {
+
+    private static Map<String, String> equipmentData;
+
+    public static void loadEquipmentData() {
+        equipmentData = new HashMap<>();
+
+        Scanner scanner = new Scanner (Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("Equipment.txt")), StandardCharsets.UTF_8);
+        scanner.useDelimiter(":");
+        String line;
+        while (scanner.hasNext()) {
+            line = scanner.nextLine();
+            String[] parsed = line.split(":");
+            switch (parsed.length) {
+                case 2 -> equipmentData.put(parsed[0], parsed[1]);
+                case 3 -> equipmentData.put(parsed[0], parsed[1] + " " + parsed[2]);
+                default -> {
+
+                }
+            }
+        }
+        scanner.close();
+
+    }
 
     public static void handlePacket(Packet packet) {
         UpdatePacket updatePacket = (UpdatePacket) packet;
@@ -51,11 +73,11 @@ public class PacketHandler {
                     case MAX_HP_STAT -> maxHPValue = stat.statValue;
                     case HP_STAT -> currentHPValue = stat.statValue;
                     case LEVEL_STAT -> level = stat.statValue;
-                    case PLAYER_ID -> charClass = IdToName.objectName(updatePacket.newObjects[i].objectType);
-                    case INVENTORY_0_STAT -> weapon = getItemLabel(IdToName.objectName(stat.statValue));
-                    case INVENTORY_1_STAT -> ability = getItemLabel(IdToName.objectName(stat.statValue));
-                    case INVENTORY_2_STAT -> armor = getItemLabel(IdToName.objectName(stat.statValue));
-                    case INVENTORY_3_STAT -> ring = getItemLabel(IdToName.objectName(stat.statValue));
+                    case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.newObjects[i].objectType));
+                    case INVENTORY_0_STAT -> weapon =  getItemName(String.valueOf(stat.statValue));
+                    case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.statValue));
+                    case INVENTORY_2_STAT -> armor =  getItemName(String.valueOf(stat.statValue));
+                    case INVENTORY_3_STAT -> ring =  getItemName(String.valueOf(stat.statValue));
                     case NAME_STAT -> userName = stat.stringStatValue;
                     case GUILD_NAME_STAT -> guildName = stat.stringStatValue;
                     case GUILD_RANK_STAT -> guildRank = stat.stringStatValue;
@@ -85,29 +107,16 @@ public class PacketHandler {
         GUI.raid.addSnifferAccount(account);
     }
 
-    public static String getItemLabel(String name) {
-        if (name.equals("Unloaded")) {
+    public static String getClassName(String id ) {
+        return Objects.requireNonNullElse(equipmentData.get(id), "Wizard");
+    }
+
+    public static String getItemName(String id) {
+        if (id.equals("-1")) {
             return "Empty slot";
         } else {
-            try {
-                URL url = Utilities.getImageResource("images/items/");
-                File file = new File(url.getFile());
-                for (String s : Objects.requireNonNull(file.list())) {
-                    s = s.replace(".png", "");
-                    String[] split = s.split(" ");
-                    String label = split[split.length - 1];
-                    String nameFromImage = s.replace(" " + label, "");
-                    String result;
-                    if (nameFromImage.equals(name)) {
-                        result = name + " " + label;
-                        return result;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            return Objects.requireNonNullElse(equipmentData.get(id), "Failed To Parse Item UT");
         }
-        return name;
     }
 
     public static Account createAccount(String userName, int stars, int fame, String guildName, String guildRank, List<Item> items, int level,boolean maxedMP, boolean maxedHP, int currentFame, int exaltedHP, int exaltedMP, int dexterity) {

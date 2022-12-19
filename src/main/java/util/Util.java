@@ -11,8 +11,6 @@ import java.util.HashMap;
  */
 public class Util {
 
-    public static boolean saveLogs = true;
-    private static HashMap<String, PrintWriter> printWriter = new HashMap<>();
 
     /**
      * Fast method to return an integer from the first 4 bytes of a byte array.
@@ -51,15 +49,5 @@ public class Util {
             sb.append(o);
         }
         return sb.toString();
-    }
-
-    /**
-     * Returns the resource file as stream in the resource's folder.
-     *
-     * @param fileName Name of resource file.
-     * @return The resource file as stream.
-     */
-    public static InputStream resourceFilePath(String fileName) throws URISyntaxException {
-        return IdToName.class.getClassLoader().getResourceAsStream(fileName);
     }
 }

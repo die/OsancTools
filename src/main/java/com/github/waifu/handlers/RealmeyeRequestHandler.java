@@ -152,7 +152,7 @@ public class RealmeyeRequestHandler {
                     String stats = getElementFromCharacterTable(metadata, headers, "Stats");
                     String skin = characterSkinData.get(i-1);
                     List<String> items = itemData.subList(4 * i - 4, 4 * i);
-                    List<String> itemsImage = itemImageData.subList(4 * i - 4, 4 * i);
+                    //List<String> itemsImage = itemImageData.subList(4 * i - 4, 4 * i);
                     String characterLastSeen = getElementFromCharacterTable(metadata, headers, "Last seen");
                     String server = getElementFromCharacterTable(metadata, headers, "Srv.");
                     List<Item> inventory = new ArrayList<>();
@@ -164,11 +164,11 @@ public class RealmeyeRequestHandler {
                             case 3 -> "ring";
                             default -> "";
                         };
-                        String[] positions = itemsImage.get(j).replace("background-position:", "").replace("px", "").split(" ");
-                        int x = Math.abs(Integer.parseInt(positions[0]));
-                        int y = Math.abs(Integer.parseInt(positions[1]));
-                        System.out.println(x + " " + y);
-                        inventory.add(new Item(items.get(j), itemType, type, x, y));
+                       // String[] positions = itemsImage.get(j).replace("background-position:", "").replace("px", "").split(" ");
+                       // int x = Math.abs(Integer.parseInt(positions[0]));
+                        //int y = Math.abs(Integer.parseInt(positions[1]));
+                       // System.out.println(x + " " + y);
+                        inventory.add(new Item(items.get(j), itemType, type));
                     }
                     Character character = new Character(type, skin, level, cqc, fame, exp, place, stats, characterLastSeen, server, new Inventory(inventory));
                     characters.add(character);

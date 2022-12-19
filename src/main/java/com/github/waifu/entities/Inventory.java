@@ -4,12 +4,16 @@ import com.github.waifu.enums.InventorySlots;
 import com.github.waifu.enums.Problem;
 import com.github.waifu.util.Utilities;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import util.Util;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -114,90 +118,249 @@ public class Inventory {
      * Returns the Inventory after parsing each item.
      */
     public Inventory parseInventory() {
-
         if (items.stream().allMatch(item -> item.getName().equals("Empty slot"))) {
             issue.setProblem(Problem.PRIVATE_PROFILE);
             issue.setMessage("");
             issue.setWhisper("");
         } else {
-            for (Item i : items) {
-                String name = i.getName();
-                String type = i.getType();
-                if (name.equals("Empty slot")) {
-                    issue.setProblem(Problem.EMPTY_SLOT);
-                    issue.setMessage("");
-                    issue.setWhisper(name);
-                    i.setImage(Utilities.markImage(i.getImage(), Problem.EMPTY_SLOT.getColor()));
-                } else if (name.endsWith("UT") || name.endsWith("ST")) {
-                    JSONObject bannedItems = Utilities.json.getJSONObject("bannedItems");
-                    JSONArray jsonArray = bannedItems.getJSONArray(i.getType());
-                    // TODO: deal with no swapouts in json
-                    JSONArray swapouts = Utilities.json.getJSONArray("swapoutItems");
-                    String substring = name.substring(0, name.length() - 3);
-                    boolean foundSTSet = false;
-                    if (jsonArray.toList().contains(substring)) {
-                        JSONObject allowedSts = Utilities.json.getJSONObject("allowedSTSets");
-                        for (String keys : allowedSts.keySet()) {
-                            JSONObject set = (JSONObject) allowedSts.get(keys);
-                            JSONArray stItems = set.getJSONArray("items");
-                            if (stItems.toList().contains(substring)) {
-                                foundSTSet = true;
-                                int total = set.getInt("total");
-                                int count = 0;
-                                for (Item item : items) {
-                                    String substring1 = item.getName().substring(0, item.getName().length() - 3);
-                                    if (stItems.toList().contains(substring1)) {
-                                        count++;
-                                    }
+            String metric = Utilities.json.getString("metric");
+
+            switch (metric) {
+                case "points" -> {
+                    int points = 0;
+
+                    for (Item i : items) {
+                        if (i.getName().equals("Empty slot")) {
+                            issue.setProblem(Problem.EMPTY_SLOT);
+                            i.setImage(Utilities.markImage(i.getImage(), Problem.EMPTY_SLOT.getColor()));
+                            i.getImage().setDescription("marked");
+                        } else {
+                            switch (i.getLabel()) {
+                                case "UT", "ST" -> {
+                                    checkSwapout(i);
+                                    checkBannedItem(i);
                                 }
-                                if (count < total) {
-                                    issue.setProblem(Problem.BANNED_ITEM);
-                                    i.setImage(Utilities.markImage(i.getImage(), Problem.BANNED_ITEM.getColor()));
+                                default -> {
+                                    checkTier(i);
                                 }
-                                break;
                             }
                         }
-                        if (foundSTSet) {
-                            break;
-                        } else {
-                            issue.setProblem(Problem.BANNED_ITEM);
-                            issue.setMessage(name);
-                            issue.setWhisper(name);
-                            i.setImage(Utilities.markImage(i.getImage(), Problem.BANNED_ITEM.getColor()));
-                        }
-                    } else if (swapouts.toList().contains(substring)) {
-                        issue.setProblem(Problem.SWAPOUT_ITEM);
-                        issue.setMessage(name);
-                        issue.setWhisper(name);
-                        i.setImage(Utilities.markImage(i.getImage(), Problem.SWAPOUT_ITEM.getColor()));
-                    }
-                } else {
-                    try {
-                        int item;
-                        String tier = name.substring(name.length() - 2);
-                        if (tier.contains("T")) {
-                            item = Integer.parseInt(name.substring(name.length() - 1));
-                        } else {
-                            item = Integer.parseInt(tier);
-                        }
+                        int calculatedPoints = calculatePoints(i);
 
-                        if (item < Utilities.json.getJSONObject("tier").getInt(type)) {
-                            issue.setProblem(Problem.UNDER_REQS);
-                            issue.setMessage(name);
-                            issue.setWhisper(name);
-                            i.setImage(Utilities.markImage(i.getImage(), Problem.UNDER_REQS.getColor()));
+                        if (!i.getImage().getDescription().equals("marked")) {
+                            /* mark if not points? */
+                            if (calculatedPoints <= 0) {
+                               // i.setImage(Utilities.markImage(i.getImage(), Problem.POINTS.getColor()));
+                                //i.getImage().setDescription("marked");
+                            } else {
+                                i.setImage(Utilities.markImage(i.getImage(), Color.CYAN));
+                                i.getImage().setDescription("marked");
+                            }
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        issue.setProblem(Problem.ERROR);
-                        issue.setMessage(name);
-                        issue.setWhisper(name);
-                        i.setImage(Utilities.markImage(i.getImage(), Problem.ERROR.getColor()));
+                        points += calculatedPoints;
+                    }
+
+                    int required = Utilities.json.getJSONObject("required points").getInt(items.get(0).getItemClass());
+                    if (points < required) {
+                        issue.setProblem(Problem.POINTS);
+                    }
+                }
+
+                case "name" -> {
+                    for (Item i : items) {
+                        if (i.getName().equals("Empty slot")) {
+                            issue.setProblem(Problem.EMPTY_SLOT);
+                            i.setImage(Utilities.markImage(i.getImage(), Problem.EMPTY_SLOT.getColor()));
+                            i.getImage().setDescription("marked");
+                        } else {
+                            switch (i.getLabel()) {
+                                case "UT", "ST" -> {
+                                    checkSwapout(i);
+                                    checkBannedItem(i);
+                                }
+                                default -> {
+                                    checkTier(i);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
         return this;
+    }
+
+
+    /**
+     *
+     * @param item
+     * @return
+     */
+    private int calculatePoints(Item item) {
+
+        int tier = item.getTier();
+        if (tier == 11) {
+            return -1;
+        }
+
+        if (item.getType().equals("weapon") && checkAllowedSTSet(item)) {
+            return Utilities.json.getJSONObject("required points").getInt(item.getItemClass());
+        } else {
+            JSONObject jsonObject = Utilities.json.getJSONObject("items");
+
+            for (String keys : jsonObject.keySet()) {
+                JSONObject pointObject = jsonObject.getJSONObject(keys);
+                if (pointObject.has(item.getType()) && pointObject.getJSONArray(item.getType()).toList().contains(item.getNameWithoutLabel())) {
+                    return Integer.parseInt(keys);
+                } else {
+                    for (String k : pointObject.keySet()) {
+                        try {
+                            JSONObject combination = pointObject.getJSONObject(k);
+                            if (combination.getJSONArray("items").toList().contains(item.getNameWithoutLabel())) {
+                                for (int i = 0; i < items.indexOf(item); i++) {
+                                    if (combination.getJSONArray("items").toList().contains(items.get(i).getNameWithoutLabel())) {
+                                        return 0;
+                                    }
+                                }
+                                if (combination.has("class")) {
+                                    if (!combination.getJSONArray("class").toList().contains(item.getItemClass())) {
+                                        return 0;
+                                    }
+                                }
+                                JSONArray slots = combination.getJSONArray("slot");
+                                for (int i = 0; i < slots.length(); i++) {
+                                    Item item1 = switch (slots.getString(i)) {
+                                        case "weapon" -> getWeapon();
+                                        case "ability" -> getAbility();
+                                        case "armor" -> getArmor();
+                                        case "ring" -> getRing();
+                                        default -> null;
+                                    };
+                                    if (item1 != null && !combination.getJSONArray("items").toList().contains(item1.getNameWithoutLabel())) {
+                                        return 0;
+                                    }
+                                }
+                                for (int i = 0; i < slots.length(); i++) {
+                                    Item item1 = switch (slots.getString(i)) {
+                                        case "weapon" -> getWeapon();
+                                        case "ability" -> getAbility();
+                                        case "armor" -> getArmor();
+                                        case "ring" -> getRing();
+                                        default -> null;
+                                    };
+                                    item1.setImage(Utilities.markImage(item1.getImage(), Color.CYAN));
+                                    item1.getImage().setDescription("marked");
+                                }
+                                return Integer.parseInt(keys);
+                            }
+                        } catch (JSONException e) {
+                            //e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean checkBannedItem(Item item) {
+        if (Utilities.json.has("bannedItems")) {
+            JSONObject bannedItems = Utilities.json.getJSONObject("bannedItems");
+            JSONArray itemList = bannedItems.getJSONArray(item.getType());
+
+            boolean mark = false;
+            if (itemList.toList().contains(item.getNameWithoutLabel())) {
+                if (item.getLabel().equals("ST")) {
+                    mark = !checkAllowedSTSet(item);
+                } else {
+                    mark = true;
+                }
+            }
+
+            if (mark) {
+                issue.setProblem(Problem.BANNED_ITEM);
+                item.setImage(Utilities.markImage(item.getImage(), Problem.BANNED_ITEM.getColor()));
+                item.getImage().setDescription("marked");
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a banned ST item is part of the allowed set
+     * @param item
+     * @return true if it is part of an allowed ST set that is equipped
+     */
+    public boolean checkAllowedSTSet(Item item) {
+        if (Utilities.json.has("allowedSTSets")) {
+            JSONObject allowedSts = Utilities.json.getJSONObject("allowedSTSets");
+
+            for (String keys : allowedSts.keySet()) {
+                JSONObject set = (JSONObject) allowedSts.get(keys);
+                JSONArray stItems = set.getJSONArray("items");
+                if (stItems.toList().contains(item.getNameWithoutLabel())) {
+                    int total = set.getInt("total");
+                    int count = 0;
+                    for (Item i : items) {
+                        if (stItems.toList().contains(i.getNameWithoutLabel())) {
+                            count++;
+                        }
+                    }
+                    if (count >= total) {
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkSwapout(Item item) {
+        if (Utilities.json.has("swapoutItems")) {
+            JSONArray swapouts = Utilities.json.getJSONArray("swapoutItems");
+            if (swapouts.toList().contains(item.getNameWithoutLabel())) {
+                issue.setProblem(Problem.SWAPOUT_ITEM);
+                item.setImage(Utilities.markImage(item.getImage(), Problem.SWAPOUT_ITEM.getColor()));
+                item.getImage().setDescription("marked");
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private void checkTier(Item item) {
+        try {
+            String label = item.getLabel().substring(item.getLabel().length() - 2);
+            int tier;
+            if (label.contains("T")) {
+                tier = Integer.parseInt(label.substring(label.length() - 1));
+            } else {
+                tier = Integer.parseInt(label);
+            }
+
+            if (tier < Utilities.json.getJSONObject("tier").getInt(item.getType())) {
+                issue.setProblem(Problem.UNDER_REQS);
+                item.setImage(Utilities.markImage(item.getImage(), Problem.UNDER_REQS.getColor()));
+                item.getImage().setDescription("marked");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            issue.setProblem(Problem.ERROR);
+            item.setImage(Utilities.markImage(item.getImage(), Problem.ERROR.getColor()));
+            item.getImage().setDescription("marked");
+        }
     }
 
     /**

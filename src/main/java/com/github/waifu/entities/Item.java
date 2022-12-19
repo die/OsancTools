@@ -72,11 +72,57 @@ public class Item {
     }
 
     /**
+     * Gets the item's label (UT/ST/T1/T12)
+     * @return
+     */
+    public String getLabel() {
+        String label = name.substring(name.length() - 2);
+        if (label.contains("T")) {
+            return label;
+        } else {
+            return name.substring(name.length() - 3);
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getTier() {
+        if (getLabel().contains("UT") || getLabel().contains("ST") || getName().equals("Empty slot")) return -1;
+
+        String label = getLabel().substring(getLabel().length() - 2);
+        int tier = -1;
+        if (label.contains("T")) {
+            tier = Integer.parseInt(label.substring(label.length() - 1));
+        } else {
+            tier = Integer.parseInt(label);
+        }
+        return tier;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getNameWithoutLabel() {
+        return name.replace(" " + getLabel(), "");
+    }
+
+    /**
      *
      * @return
      */
     public String getType() {
         return this.type;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getItemClass() {
+       return itemClass;
     }
 
     /**

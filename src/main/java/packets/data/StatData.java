@@ -1,10 +1,7 @@
 package packets.data;
 
-import packets.data.enums.ConditionBits;
-import packets.data.enums.ConditionNewBits;
 import packets.data.enums.StatType;
 import packets.reader.BufferReader;
-import util.IdToName;
 
 public class StatData {
     /**
@@ -59,18 +56,5 @@ public class StatData {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        String valueExtended = (statValueTwo == -1 ? "" : " [" + statValueTwo + "]");
-        if (statTypeNum == 29) {
-            valueExtended += " " + ConditionBits.effectsToString(statValue);
-        } else if (statTypeNum == 96) {
-            valueExtended += " " + ConditionNewBits.effectsToString(statValue);
-        } else if (statTypeNum >= 8 && statTypeNum <= 19) {
-            valueExtended += " " + IdToName.objectName(statValue);
-        }
-        return "\n      " + statType + " = " + statValue + valueExtended;
     }
 }

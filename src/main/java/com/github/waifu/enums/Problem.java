@@ -16,8 +16,9 @@ public enum Problem {
     EMPTY_SLOT("Empty Slot", 1, Color.RED),
     UNDER_REQS("Under Reqs", 1, Color.RED),
     BANNED_ITEM("Banned Item", 2, Color.RED),
-    SWAPOUT_ITEM("Swapout Item", 3, Color.YELLOW),
-    NONE("None", 4, Color.GREEN),
+    SWAPOUT_ITEM("Swapout Item", 4, Color.YELLOW),
+    POINTS("Missing Points", 3, Color.ORANGE),
+    NONE("None", 5, Color.GREEN),
     ERROR("Error", 0, Color.RED);
 
     private final String problem;

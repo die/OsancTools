@@ -23,9 +23,10 @@ public class Settings {
         );
 
         requirementSheets = Arrays.asList(
-                "osanc",
-                "losthalls",
-                "losthallsadvanced"
+                "Oryx Sanctuary",
+                "Pub Halls Advanced",
+                "Pub Halls Exalt",
+                "Pub Halls Misc"
         );
     }
 

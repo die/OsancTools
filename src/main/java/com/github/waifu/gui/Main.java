@@ -1,6 +1,7 @@
 package com.github.waifu.gui;
 
 import com.github.waifu.config.Settings;
+import com.github.waifu.handlers.PacketHandler;
 import com.github.waifu.util.Utilities;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -10,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Scanner;
@@ -33,6 +33,8 @@ public final class Main {
      */
     public static void main(final String[] args) throws IOException {
         try {
+            String item = "Lumiare T12";
+            System.out.println(item.substring(item.length()- 2));
             settings.setRequirementSheetName("osanc");
             BufferedImage image = ImageIO.read(Utilities.getImageResource("images/items/renders.png"));
             BufferedImage image1 = image.getSubimage(16698, 230, 46, 46);
@@ -54,12 +56,17 @@ public final class Main {
     /**
      * loadResources method.
      *
-     * Loads osanc.json from the repository.
+     * Loads Oryx Sanctuary.json from the repository.
      */
     public static void loadResources() throws IOException {
-        URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/" + Main.settings.getRequirementSheetName() + ".json");
+        //URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/" + Main.settings.getRequirementSheetName() + ".json");
         //URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/sniffer/src/main/resources/losthalls.json");
-        JSONTokener tokener = new JSONTokener(url.openStream());
+       // Main.class.getClassLoader().getResourceAsStream("Oryx Sanctuary.json")
+        JSONTokener tokener = new JSONTokener(new InputStreamReader(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("Pub Halls Advanced.json")), StandardCharsets.UTF_8));
+
+       /// JSONTokener tokener = new JSONTokener(url.openStream());
         Utilities.json = new JSONObject(tokener);
+        PacketHandler.loadEquipmentData();
+
     }
 }

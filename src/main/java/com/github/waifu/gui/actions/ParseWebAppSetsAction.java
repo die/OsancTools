@@ -52,11 +52,14 @@ public class ParseWebAppSetsAction implements ActionListener {
                         if (GUI.raid.isWebAppRaid() && !GUI.raid.getStatus().equals("RUNNING")) return null;
                         packetProcessor.closeSniffer();
                         packetProcessor = null;
+                        Register.INSTANCE = new Register();
                         List<Raider> sets = getSnifferSets(GUI.raid, progressBar);
                         if (sets != null) {
                             new SetTable(sets);
                         }
+                        GUI.raid = null;
                         parseSetsButton.setText("Parse Sets");
+                        GUI.setProcessRunning(false);
                     } else if (GUI.checkProcessRunning()) {
                         return null;
                     } else if (GUI.raid == null) {

@@ -38,9 +38,12 @@ public class CalculatePlayerExaltationsAction implements ActionListener {
             String username = exaltsInput.getText();
             List<String[]> collection = null;
             try {
-                if (username != null && !username.equals("") && username.chars().allMatch((Character::isAlphabetic)) && username.length() <= 10) {
+                if (username != null && !username.equals("") && username.chars().allMatch((Character::isAlphabetic)) && username.length() <= 15) {
                     collection = RealmeyeRequestHandler.GETExalts(username);
                     TimeUnit.SECONDS.sleep(1);
+                } else {
+                    exaltsResult.setForeground(Color.yellow);
+                    exaltsResult.setText("Invalid IGN (above 15 characters)");
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

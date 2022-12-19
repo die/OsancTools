@@ -11,7 +11,7 @@ import java.util.HashMap;
  * are received the emit method will send an update and trigger the lambda used.
  */
 public class Register {
-    public static final Register INSTANCE = new Register();
+    public static Register INSTANCE = new Register();
     private final HashMap<Class<? extends Packet>, ArrayList<IPacketListener<Packet>>> packetListeners = new HashMap<>();
 
     /**

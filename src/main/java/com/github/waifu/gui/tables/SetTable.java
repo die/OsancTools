@@ -82,6 +82,7 @@ public class SetTable extends JFrame {
                 ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
                 result.setDescription(inventory.printInventory());
                 width = result.getIconWidth();
+               // array[0] = inventory.getIssue().getWhisper();
                 array[0] = inventory.getIssue().getProblem().getProblem();
                 array[1] = account.getName();
                 array[2] = result;

@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class DropListener implements DropTargetListener {
 
-    private AcceptFilePanel frame;
+    private final AcceptFilePanel frame;
 
     /**
      *

@@ -3,7 +3,7 @@ package com.github.waifu.entities;
 import com.github.waifu.util.Utilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import util.Pair;
+import com.github.waifu.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class Raid {
     private String name;
     private String id;
     private String status;
-    private List<Raider> raiders;
+    private final List<Raider> raiders;
 
     public Raid(JSONObject json) {
         this.json = json;

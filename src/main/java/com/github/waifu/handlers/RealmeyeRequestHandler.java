@@ -47,10 +47,10 @@ public class RealmeyeRequestHandler {
                 TimeUnit.SECONDS.sleep(1);
             }
             if (GUI.getMode() == GUI.DEBUG_MODE) {
-                File file = new File("src/test/resources/raids" + "/" + String.valueOf(GUI.getJson().getJSONObject("raid").getInt("id")) + "/" + "players/" + username + "/data.html");
+                File file = new File("src/test/resources/raids" + "/" + GUI.getJson().getJSONObject("raid").getInt("id") + "/" + "players/" + username + "/data.html");
                 if (!file.exists()) {
                     file.getParentFile().mkdirs();
-                    FileWriter playerHTML = new FileWriter("src/test/resources/raids" + "/" + String.valueOf(GUI.getJson().getJSONObject("raid").getInt("id")) + "/" + "players/" + username + "/data.html");
+                    FileWriter playerHTML = new FileWriter("src/test/resources/raids" + "/" + GUI.getJson().getJSONObject("raid").getInt("id") + "/" + "players/" + username + "/data.html");
                     playerHTML.write(Jsoup.parse(doc.html()).toString());
                     playerHTML.close();
                 }
@@ -59,7 +59,7 @@ public class RealmeyeRequestHandler {
         }
     }
 
-    public static JLabel checkRealmeyeStatus() throws InterruptedException {
+    public static JLabel checkRealmeyeStatus() {
         Document document = null;
         try {
             Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));

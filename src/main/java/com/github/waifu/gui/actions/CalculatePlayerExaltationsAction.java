@@ -15,8 +15,8 @@ import java.util.prefs.Preferences;
  */
 public class CalculatePlayerExaltationsAction implements ActionListener {
 
-    private JTextField exaltsInput;
-    private JLabel exaltsResult;
+    private final JTextField exaltsInput;
+    private final JLabel exaltsResult;
 
     /**
      *

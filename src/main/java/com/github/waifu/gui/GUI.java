@@ -16,16 +16,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -117,7 +116,7 @@ public class GUI extends JFrame {
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
+        setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
         setVisible(true);
@@ -138,7 +137,7 @@ public class GUI extends JFrame {
                     Main.settings.setShowAlert(!checkbox.isSelected());
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -253,6 +252,12 @@ public class GUI extends JFrame {
         requirementSheetComboBox.addActionListener(e -> {
             JComboBox comboBox = (JComboBox) e.getSource();
             Main.settings.setRequirementSheetName(String.valueOf(comboBox.getSelectedItem()));
+            try {
+                Main.loadRequirementSheet();
+                TimeUnit.SECONDS.sleep(1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
 
         clearSettingsButton.addActionListener(e -> {
@@ -603,7 +608,7 @@ public class GUI extends JFrame {
             case "light" -> lightRadioButton.setSelected(true);
             case "dark" -> darkRadioButton.setSelected(true);
         }
-        creditsImage.setIcon(new ImageIcon(Utilities.getImageResource("Gravestone.png")));
+        creditsImage.setIcon(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")));
         lifePotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/life.png")));
         manaPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/mana.png")));
         attackPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/attack.png")));

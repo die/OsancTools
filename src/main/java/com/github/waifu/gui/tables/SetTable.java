@@ -52,7 +52,7 @@ public class SetTable extends JFrame {
         setResizable(false);
         setTitle("OsancTools");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
+        setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
         setVisible(true);
         viewProfileButton.addActionListener(e -> {
             String username = (String) setsTable.getValueAt(setsTable.getSelectedRow(), 1);

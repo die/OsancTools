@@ -82,7 +82,7 @@ public class Character {
         this.type = "Wizard";
         this.skin = "";
         this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/Wizard.png"));
-        this.level = String.valueOf(level);;
+        this.level = String.valueOf(level);
         this.cqc = "";
         this.fame = String.valueOf(currentFame);
         this.exp = "";

@@ -19,7 +19,7 @@ public class Raider {
     private final String id;
     private final String serverNickname;
     private String timestampJoined;
-    private ImageIcon avatar;
+    private final ImageIcon avatar;
     private boolean gotPriority;
     private boolean gotEarlyLocation;
     private boolean inWaitingList;

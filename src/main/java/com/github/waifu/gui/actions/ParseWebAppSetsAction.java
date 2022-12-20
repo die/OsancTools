@@ -6,9 +6,9 @@ import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.tables.SetTable;
 import com.github.waifu.handlers.PacketHandler;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
-import packets.PacketType;
-import packets.packetcapture.PacketProcessor;
-import packets.packetcapture.register.Register;
+import com.github.waifu.packets.PacketType;
+import com.github.waifu.packets.packetcapture.PacketProcessor;
+import com.github.waifu.packets.packetcapture.register.Register;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,42 +79,18 @@ public class ParseWebAppSetsAction implements ActionListener {
                         packetProcessor = new PacketProcessor();
                         packetProcessor.start();
                     } else if (GUI.raid.isWebAppRaid()) { // webapp
-                        String[] options = {"Sniffer", "Realmeye"};
-                        int result = JOptionPane.showOptionDialog(GUI.getFrames()[0], "Do you want to use the sniffer?", "s", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                        if (result == 3) { } // cancel button
-                        stopButton.setText("Stop Process");
-                        GUI.setWorker(this);
-                        progressBar.setValue(0);
-                        if (result == 0) {
-                            if (!GUI.raid.sniffed()) {
-                                parseSetsButton.setText("Stop Sniffer");
-                                GUI.setWorker(this);
-                                progressBar.setValue(0);
-                                Register.INSTANCE.register(PacketType.UPDATE, PacketHandler::handlePacket);
-                                packetProcessor = new PacketProcessor();
-                                packetProcessor.start();
-                            } else {
-                                List<Raider> sets = getSnifferSets(GUI.raid, progressBar);
-                                if (sets != null) {
-                                    new SetTable(sets);
-                                }
-                                parseSetsButton.setText("Parse Sets");
+                        GUI.setProcessRunning(true);
+                        if (RealmeyeRequestHandler.checkDirectConnect()) {
+                            List<Raider> sets = getRealmeyeSets(GUI.raid, progressBar);
+                            if (sets != null) {
+                                new SetTable(sets);
                             }
-
-                        } else if (result == 1) {
-                            GUI.setProcessRunning(true);
-                            if (RealmeyeRequestHandler.checkDirectConnect()) {
-                                List<Raider> sets = getRealmeyeSets(GUI.raid, progressBar);
-                                if (sets != null) {
-                                    new SetTable(sets);
-                                }
-                                GUI.setProcessRunning(false);
-                                stopButton.setText("Finished");
-                            } else {
-                                GUI.setProcessRunning(false);
-                                stopButton.setText("Finished");
-                                return null;
-                            }
+                            GUI.setProcessRunning(false);
+                            stopButton.setText("Finished");
+                        } else {
+                            GUI.setProcessRunning(false);
+                            stopButton.setText("Finished");
+                            return null;
                         }
                     }
                 } catch (Exception ex) {

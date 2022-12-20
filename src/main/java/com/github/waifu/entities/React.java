@@ -15,10 +15,10 @@ import java.util.List;
  */
 public class React {
 
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
     private String type;
-    private String requirement;
+    private final String requirement;
     private ImageIcon image;
     private List<Raider> raiders;
 

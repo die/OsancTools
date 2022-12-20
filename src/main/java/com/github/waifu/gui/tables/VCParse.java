@@ -45,7 +45,7 @@ public class VCParse extends JFrame {
      * @throws TesseractException
      * @throws InterruptedException
      */
-    public VCParse(Image image, List<Raider> raiders) throws IOException, TesseractException, InterruptedException {
+    public VCParse(Image image, List<Raider> raiders) throws TesseractException {
         createTable(image, raiders);
         if (destroy) {
             return;
@@ -54,7 +54,7 @@ public class VCParse extends JFrame {
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
+        setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
         pack();

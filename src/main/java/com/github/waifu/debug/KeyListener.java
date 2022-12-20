@@ -32,7 +32,7 @@ public class KeyListener implements java.awt.event.KeyListener {
         keys.add(e.getKeyChar());
 
         if (keys.equals(gerpep)) {
-            ImageIcon icon = new ImageIcon(new ImageIcon(Utilities.getImageResource("bluecat.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+            ImageIcon icon = new ImageIcon(new ImageIcon(Utilities.getImageResource("images/gui/bluecat.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
             JOptionPane.showMessageDialog(GUI.getFrames()[0], new JLabel("how did you get here?", icon, JLabel.TRAILING));
             keys.clear();
         } else if (keys.size() == gerpep.size() || !gerpep.contains(e.getKeyChar()) || !gerpep.get(index).equals(e.getKeyChar())) {

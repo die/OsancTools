@@ -6,14 +6,12 @@ import com.github.waifu.util.Utilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import util.Util;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -130,11 +128,7 @@ public class Inventory {
                     int points = 0;
 
                     for (Item i : items) {
-                        if (i.getName().equals("Empty slot")) {
-                            issue.setProblem(Problem.EMPTY_SLOT);
-                            i.setImage(Utilities.markImage(i.getImage(), Problem.EMPTY_SLOT.getColor()));
-                            i.getImage().setDescription("marked");
-                        } else {
+                        if (!parseEmptySlot(i)) {
                             switch (i.getLabel()) {
                                 case "UT", "ST" -> {
                                     checkSwapout(i);
@@ -148,11 +142,7 @@ public class Inventory {
                         int calculatedPoints = calculatePoints(i);
 
                         if (!i.getImage().getDescription().equals("marked")) {
-                            /* mark if not points? */
-                            if (calculatedPoints <= 0) {
-                               // i.setImage(Utilities.markImage(i.getImage(), Problem.POINTS.getColor()));
-                                //i.getImage().setDescription("marked");
-                            } else {
+                            if (calculatedPoints > 0) {
                                 i.setImage(Utilities.markImage(i.getImage(), Color.CYAN));
                                 i.getImage().setDescription("marked");
                             }
@@ -168,11 +158,7 @@ public class Inventory {
 
                 case "name" -> {
                     for (Item i : items) {
-                        if (i.getName().equals("Empty slot")) {
-                            issue.setProblem(Problem.EMPTY_SLOT);
-                            i.setImage(Utilities.markImage(i.getImage(), Problem.EMPTY_SLOT.getColor()));
-                            i.getImage().setDescription("marked");
-                        } else {
+                        if (!parseEmptySlot(i)) {
                             switch (i.getLabel()) {
                                 case "UT", "ST" -> {
                                     checkSwapout(i);
@@ -190,6 +176,21 @@ public class Inventory {
         return this;
     }
 
+    /**
+     *
+     * @param item
+     * @return
+     */
+    private boolean parseEmptySlot(Item item) {
+        if (item.getName().equals("Empty slot")) {
+            issue.setProblem(Problem.EMPTY_SLOT);
+            item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor()));
+            item.getImage().setDescription("marked");
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      *

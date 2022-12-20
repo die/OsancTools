@@ -15,7 +15,7 @@ public class AccountView extends JFrame {
     private JLabel Realmeye;
     private JLabel DiscordInfo;
     private JTabbedPane DiscordTab;
-    private Raider raider;
+    private final Raider raider;
 
     /**
      *
@@ -28,7 +28,7 @@ public class AccountView extends JFrame {
         setAlwaysOnTop(true);
         setResizable(false);
         setTitle("OsancTools");
-        setIconImage(new ImageIcon(Utilities.getImageResource("Gravestone.png")).getImage());
+        setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));

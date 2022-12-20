@@ -24,19 +24,9 @@ public final class Main {
      *
      * @param args input arguments that are not used.
      */
-    public static void main(final String[] args) throws IOException {
-        //try {
-           // BufferedImage image = ImageIO.read(Utilities.getImageResource("images/items/renders.png"));
-            //BufferedImage image1 = image.getSubimage(16698, 230, 46, 46);
-           // File outputfile = new File("testimage.png");
-          //  ImageIO.write(image1, "PNG", outputfile);
-            //System.out.println(outputfile.getAbsolutePath());
-       // } catch (Exception exception) {
-          //  exception.printStackTrace();
-       // }
-
+    public static void main(final String[] args) {
         try {
-            loadResources();
+            loadRequirementSheet();
             SwingUtilities.invokeLater(GUI::new);
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,12 +34,12 @@ public final class Main {
     }
 
     /**
-     * loadResources method.
+     * loadRequirementSheet method.
      *
      * Loads Oryx Sanctuary.json from the repository.
      */
-    public static void loadResources() throws IOException {
-        URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/sniffer/src/main/resources/" + Main.settings.getRequirementSheetName() + ".json");
+    public static void loadRequirementSheet() throws IOException {
+        URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/sniffer/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
         JSONTokener tokener = new JSONTokener(url.openStream());
         Utilities.json = new JSONObject(tokener);
 

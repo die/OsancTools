@@ -4,13 +4,13 @@ import com.github.waifu.entities.*;
 import com.github.waifu.entities.Character;
 import com.github.waifu.gui.GUI;
 import com.github.waifu.gui.Main;
+import com.github.waifu.packets.incoming.UpdatePacket;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import packets.incoming.*;
-import packets.Packet;
-import packets.data.StatData;
+import com.github.waifu.packets.Packet;
+import com.github.waifu.packets.data.StatData;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -207,7 +207,7 @@ public class PacketHandler {
 
         StringBuilder equipXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         StringBuilder classXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.toURL().openStream()))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String line;
             boolean writeEquip = false;
             boolean writeClass = false;

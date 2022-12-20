@@ -8,8 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -18,40 +18,51 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- *
+ * Action to grab data from the WebApp.
  */
 public class GetWebAppDataAction implements ActionListener {
 
+  /**
+   * Main GUI panel that shows raid metadata.
+   */
   private final JPanel main;
+  /**
+   * GUI instance.
+   */
   private final GUI gui;
 
   /**
-   * @param main
-   * @param gui
+   * Constructs the WebAppDataAction.
+   *
+   * @param newMain main panel as a JPanel.
+   * @param newGui gui instance as a GUI.
    */
-  public GetWebAppDataAction(JPanel main, GUI gui) {
-    this.main = main;
-    this.gui = gui;
+  public GetWebAppDataAction(final JPanel newMain, final GUI newGui) {
+    this.main = newMain;
+    this.gui = newGui;
   }
 
   /**
-   * @param e
+   * Function fires when the button is pressed.
+   *
+   * @param e ActionEvent object.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
-    if (GUI.checkProcessRunning()) {
-      return;
-    } else {
+  public void actionPerformed(final ActionEvent e) {
+    if (!GUI.checkProcessRunning()) {
       switch (GUI.getMode()) {
         case GUI.NORMAL_MODE, GUI.DEBUG_MODE -> getWebAppDataFromId();
         case GUI.LAN_MODE -> getWebAppDataFromFile();
+        default -> {
+          return;
+        }
       }
       this.gui.updateGUI();
     }
   }
 
   /**
-   *
+   * Gets the WebApp data from a raid id.
    */
   private void getWebAppDataFromId() {
     try {
@@ -78,7 +89,7 @@ public class GetWebAppDataAction implements ActionListener {
   }
 
   /**
-   *
+   * Gets WebApp data by loading a local json.
    */
   private void getWebAppDataFromFile() {
     JFileChooser fc = new JFileChooser();
@@ -87,13 +98,15 @@ public class GetWebAppDataAction implements ActionListener {
     int returnVal = fc.showOpenDialog(rootPane);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       try {
-        JSONObject jsonObject = new JSONObject(new JSONTokener(new InputStreamReader(new FileInputStream(fc.getSelectedFile()), StandardCharsets.UTF_8)));
+        Charset charSet = StandardCharsets.UTF_8;
+        FileInputStream fileIs = new FileInputStream(fc.getSelectedFile());
+        InputStreamReader isr = new InputStreamReader(fileIs, charSet);
+        JSONTokener tokener = new JSONTokener(isr);
+        JSONObject jsonObject = new JSONObject(tokener);
         GUI.setJson(jsonObject);
         GUI.raid = new Raid(jsonObject.getJSONObject("raid"));
-      } catch (FileNotFoundException exception) {
-        System.out.println("Could not find file: " + fc.getSelectedFile().getName());
       } catch (Exception exception) {
-        System.out.println("Could not parse file: " + fc.getSelectedFile().getName());
+        exception.printStackTrace();
       }
     }
   }

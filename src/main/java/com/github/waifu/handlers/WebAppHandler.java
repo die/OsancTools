@@ -15,12 +15,14 @@ public class WebAppHandler {
    * <p>Returns the resulting JSONObject from getData
    *
    * @param raidId raid identification number as an user-input String.
+   * @return JSONObject containing raid data.
    */
-  public static JSONObject getRaid(String raidId) {
+  public static JSONObject getRaid(final String raidId) {
     try {
       int id = Integer.parseInt(raidId);
       /* Oldest Valid ID is 9 */
-      if (id >= 9) {
+      final int minId = 9;
+      if (id >= minId) {
         return getData(id);
       } else {
         return null;
@@ -36,8 +38,9 @@ public class WebAppHandler {
    * <p>Returns a JSONObject of data pertaining to an Oryx Sanctuary raid.
    *
    * @param id raid identification number as an Integer.
+   * @return JSONObject containing raid data.
    */
-  public static JSONObject getData(int id) {
+  public static JSONObject getData(final int id) {
     JSONObject request = new JSONObject();
     String token = Main.settings.getToken();
     if (!token.equals("")) {

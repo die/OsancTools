@@ -4,10 +4,9 @@
  */
 package com.github.waifu.packets.packetcapture.sniff.ardikars;
 
-import pcap.spi.Interface;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import pcap.spi.Interface;
 
 /**
  * Directly extracted out of ardikars library to make edits possible.
@@ -15,29 +14,29 @@ import java.util.NoSuchElementException;
  */
 public class DefaultInterfaceIterator implements Iterator<Interface> {
 
-    private Interface next;
+  private Interface next;
 
-    DefaultInterfaceIterator(Interface next) {
-        this.next = next;
-    }
+  DefaultInterfaceIterator(Interface next) {
+    this.next = next;
+  }
 
-    @Override
-    public boolean hasNext() {
-        return next != null;
-    }
+  @Override
+  public boolean hasNext() {
+    return next != null;
+  }
 
-    @Override
-    public Interface next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
-        }
-        Interface previous = next;
-        next = next.next();
-        return previous;
+  @Override
+  public Interface next() {
+    if (!hasNext()) {
+      throw new NoSuchElementException();
     }
+    Interface previous = next;
+    next = next.next();
+    return previous;
+  }
 
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
 }

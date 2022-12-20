@@ -5,11 +5,11 @@ package com.github.waifu.packets.packetcapture.sniff.assembly;
  */
 public interface PStream {
 
-    /**
-     * Ordered TCP packet method to send the byte stream contained in the payload.
-     *
-     * @param data The stream contained in TCP packet bytes.
-     * @param srcAddr Source IP of the TCP packet.
-     */
-    void stream(byte[] data, byte[] srcAddr);
+  /**
+   * Ordered TCP packet method to send the byte stream contained in the payload.
+   *
+   * @param data    The stream contained in TCP packet bytes.
+   * @param srcAddr Source IP of the TCP packet.
+   */
+  void stream(byte[] data, byte[] srcAddr);
 }

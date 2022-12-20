@@ -4,22 +4,21 @@ import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.reader.BufferReader;
 
 /**
- * Received to tell the client how many heroes are left in the current realm
+ * Received to tell the client how many heroes are left in the current realm.
  */
 public class RealmHeroesLeftPacket extends Packet {
-    /**
-     * The int of heroes remaining.
-     */
-    public int realmHeroesLeft;
+  /**
+   * The int of heroes remaining.
+   */
+  private int realmHeroesLeft;
 
-    @Override
-    public void deserialize(BufferReader buffer) {
-        realmHeroesLeft = buffer.readInt();
-    }
+  @Override
+  public void deserialize(final BufferReader buffer) {
+    realmHeroesLeft = buffer.readInt();
+  }
 
-    @Override
-    public String toString() {
-        return "RealmHeroesLeftPacket{" +
-                "\n   realmHeroesLeft=" + realmHeroesLeft;
-    }
+  @Override
+  public String toString() {
+    return "RealmHeroesLeftPacket{" + "\n   realmHeroesLeft=" + realmHeroesLeft;
+  }
 }

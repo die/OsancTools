@@ -6,8 +6,8 @@ package com.github.waifu.packets.packetcapture.sniff.assembly;
  */
 public interface PReset {
 
-    /**
-     * Method called when a reset packet is received.
-     */
-    void reset();
+  /**
+   * Method called when a reset packet is received.
+   */
+  void reset();
 }

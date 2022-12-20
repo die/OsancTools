@@ -8,5 +8,5 @@ import com.github.waifu.packets.Packet;
  * @param <T>
  */
 public interface IPacketListener<T extends Packet> {
-    void process(T packet);
+  void process(T packet);
 }

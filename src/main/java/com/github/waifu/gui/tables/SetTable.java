@@ -4,7 +4,7 @@ import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.AccountView;
-import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.SetTableModel;
 import com.github.waifu.util.Utilities;
@@ -34,28 +34,64 @@ import javax.swing.table.TableRowSorter;
  */
 public class SetTable extends JFrame {
 
+  /**
+   * To be documented.
+   */
   private JTable setsTable;
+  /**
+   * To be documented.
+   */
   private JPanel main;
+  /**
+   * To be documented.
+   */
   private JCheckBox removeGoodSetsCheckBox;
+  /**
+   * To be documented.
+   */
   private JCheckBox removeBadSetsCheckBox;
+  /**
+   * To be documented.
+   */
   private JCheckBox removePrivateProfilesCheckBox;
+  /**
+   * To be documented.
+   */
   private JCheckBox removeMarkedSetsCheckBox;
+  /**
+   * To be documented.
+   */
   private JButton viewProfileButton;
+  /**
+   * To be documented.
+   */
   private RowFilter<Object, Object> removeGoodSets = RowFilter.regexFilter("");
+  /**
+   * To be documented.
+   */
   private RowFilter<Object, Object> removeBadSets = RowFilter.regexFilter("");
+  /**
+   * To be documented.
+   */
   private RowFilter<Object, Object> privateProfile = RowFilter.regexFilter("");
+  /**
+   * To be documented.
+   */
   private RowFilter<Object, Object> removeMarked = RowFilter.regexFilter("");
+  /**
+   * To be documented.
+   */
   private TableRowSorter<TableModel> sorter;
 
   /**
    * SetTable method.
-   * <p>
-   * Constructs a JFrame to display the set parse.
+   *
+   * <p>Constructs a JFrame to display the set parse.
    *
    * @param accountInventoryMap Map containing an Account object as the key
    *                            and its Inventory as the value.
    */
-  public SetTable(List<Raider> accountInventoryMap) {
+  public SetTable(final List<Raider> accountInventoryMap) {
     $$$setupUI$$$();
     createTable(accountInventoryMap);
     addActionListeners();
@@ -67,8 +103,8 @@ public class SetTable extends JFrame {
     setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
     setVisible(true);
     viewProfileButton.addActionListener(e -> {
-      String username = (String) setsTable.getValueAt(setsTable.getSelectedRow(), 1);
-      Raider r = GUI.raid.findRaiderByUsername(username);
+      final String username = (String) setsTable.getValueAt(setsTable.getSelectedRow(), 1);
+      final Raider r = Gui.getRaid().findRaiderByUsername(username);
       new AccountView(r);
     });
     new TableCopyAction(setsTable);
@@ -78,20 +114,20 @@ public class SetTable extends JFrame {
 
   /**
    * createTable method.
-   * <p>
-   * Creates the table model, adds rows to the model, and applies the model to the table.
+   *
+   * <p>Creates the table model, adds rows to the model, and applies the model to the table.
    *
    * @param accountInventoryMap Map containing an Account object as the key
    *                            and its Inventory as the value.
    */
-  private void createTableSniffer(List<Raider> accountInventoryMap) {
-    DefaultTableModel tableModel = new SetTableModel();
+  private void createTableSniffer(final List<Raider> accountInventoryMap) {
+    final DefaultTableModel tableModel = new SetTableModel();
     int width = 0;
-    for (Raider raider : accountInventoryMap) {
-      Account account = raider.getAccounts().get(0);
-      Inventory inventory = account.getCharacters().get(0).getInventory();
-      Object[] array = new Object[6];
-      ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
+    for (final Raider raider : accountInventoryMap) {
+      final Account account = raider.getAccounts().get(0);
+      final Inventory inventory = account.getCharacters().get(0).getInventory();
+      final Object[] array = new Object[6];
+      final ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
       result.setDescription(inventory.printInventory());
       width = result.getIconWidth();
       // array[0] = inventory.getIssue().getWhisper();
@@ -110,21 +146,21 @@ public class SetTable extends JFrame {
 
   /**
    * createTable method.
-   * <p>
-   * Creates the table model, adds rows to the model, and applies the model to the table.
+   *
+   * <p>Creates the table model, adds rows to the model, and applies the model to the table.
    *
    * @param accountInventoryMap Map containing an Account object as the key
    *                            and its Inventory as the value.
    */
-  private void createTable(List<Raider> accountInventoryMap) {
-    DefaultTableModel tableModel = new SetTableModel();
+  private void createTable(final List<Raider> accountInventoryMap) {
+    final DefaultTableModel tableModel = new SetTableModel();
     int width = 0;
-    for (Raider raider : accountInventoryMap) {
+    for (final Raider raider : accountInventoryMap) {
       for (int j = 0; j < raider.getAccounts().size(); j++) {
-        Account account = raider.getAccounts().get(j);
-        Inventory inventory = account.getCharacters().get(0).getInventory();
-        Object[] array = new Object[6];
-        ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
+        final Account account = raider.getAccounts().get(j);
+        final Inventory inventory = account.getCharacters().get(0).getInventory();
+        final Object[] array = new Object[6];
+        final ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
         result.setDescription(inventory.printInventory());
         width = result.getIconWidth();
         array[0] = inventory.getIssue().getProblem().getProblem();
@@ -143,21 +179,21 @@ public class SetTable extends JFrame {
 
   /**
    * addActionListeners method.
-   * <p>
-   * Constructs all listeners for the JFrame.
+   *
+   * <p>Constructs all listeners for the JFrame.
    */
   private void addActionListeners() {
     setsTable.addPropertyChangeListener(evt -> {
-      JTable editedTable = (JTable) evt.getSource();
-      int row = editedTable.getEditingRow();
-      int column = editedTable.getEditingColumn();
+      final JTable editedTable = (JTable) evt.getSource();
+      final int row = editedTable.getEditingRow();
+      final int column = editedTable.getEditingColumn();
 
       if (column == 3) {
-        String username = (String) editedTable.getValueAt(row, 1);
-        Raider r = GUI.raid.findRaiderByUsername(username);
-        boolean newValue = (boolean) editedTable.getValueAt(row, column);
-        for (Account a : r.getAccounts()) {
-          int n = findRowValue(a.getName());
+        final String username = (String) editedTable.getValueAt(row, 1);
+        final Raider r = Gui.getRaid().findRaiderByUsername(username);
+        final boolean newValue = (boolean) editedTable.getValueAt(row, column);
+        for (final Account a : r.getAccounts()) {
+          final int n = findRowValue(a.getName());
           if (n != -1) {
             setsTable.setValueAt(newValue, n, column);
           }
@@ -224,7 +260,7 @@ public class SetTable extends JFrame {
   }
 
   /**
-   * Method generated by IntelliJ IDEA GUI Designer
+   * Method generated by IntelliJ IDEA Gui Designer.
    * >>> IMPORTANT!! <<<
    * DO NOT edit this method OR call it in your code!
    *
@@ -257,7 +293,10 @@ public class SetTable extends JFrame {
   }
 
   /**
+   * To be documented.
+   *
    * @noinspection ALL
+   * @return To be documented.
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
@@ -265,12 +304,12 @@ public class SetTable extends JFrame {
 
   /**
    * updateFilters method.
-   * <p>
-   * Updates the current filters to the table.
+   *
+   * <p>Updates the current filters to the table.
    * This allows real-time updates to filtered rows upon changes.
    */
   private void updateFilters() {
-    List<RowFilter<Object, Object>> filters = new ArrayList<>();
+    final List<RowFilter<Object, Object>> filters = new ArrayList<>();
     filters.add(this.removeGoodSets);
     filters.add(this.removeBadSets);
     filters.add(this.privateProfile);
@@ -278,11 +317,20 @@ public class SetTable extends JFrame {
     this.sorter.setRowFilter(RowFilter.andFilter(filters));
   }
 
+  /**
+   * To be documented.
+   */
   private void createUIComponents() {
-    // TODO: place custom component creation code here
+    // todo: place custom component creation code here
   }
 
-  private int findRowValue(String value) {
+  /**
+   * To be documented.
+   *
+   * @param value To be documented.
+   * @return To be documented.
+   */
+  private int findRowValue(final String value) {
     for (int i = 0; i < setsTable.getRowCount(); i++) {
       if (setsTable.getValueAt(i, 1).equals(value)) {
         return i;

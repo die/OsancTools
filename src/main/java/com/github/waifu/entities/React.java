@@ -15,152 +15,188 @@ import org.json.JSONObject;
  */
 public class React {
 
+  /**
+   * To be documented.
+   */
   private final String id;
+  /**
+   * To be documented.
+   */
   private final String name;
+  /**
+   * To be documented.
+   */
   private final String requirement;
+  /**
+   * To be documented.
+   */
   private String type;
+  /**
+   * To be documented.
+   */
   private ImageIcon image;
+  /**
+   * To be documented.
+   */
   private List<Raider> raiders;
 
   /**
    * React method.
-   * <p>
-   * Constructs a React with limited information.
+   *
+   * <p>Constructs a React with limited information.
    *
    * @param id       id of the React.
    * @param name     name of the React.
-   * @param imageURL url of the image of the React.
+   * @param requirement To be documented.
+   * @param imageUrl url of the image of the React.
    * @param raiders  list of raiders who have reacted to this React.
    */
-  public React(String id, String name, String requirement, String imageURL, List<Raider> raiders) throws MalformedURLException {
+  public React(final String id, final String name, final String requirement, final String imageUrl, final List<Raider> raiders) throws MalformedURLException {
     this.id = id;
     this.name = name;
     this.type = "manual";
     this.requirement = requirement;
-    this.image = new ImageIcon(new URL(imageURL));
+    this.image = new ImageIcon(new URL(imageUrl));
     this.raiders = raiders;
   }
 
   /**
    * React method.
-   * <p>
-   * Constructs a React with all information.
+   *
+   * <p>Constructs a React with all information.
    *
    * @param id       id of the React.
    * @param name     name of the React.
    * @param type     type of React in how it should be checked.
-   * @param imageURL url of the image of the React.
+   * @param requirement To be documented.
+   * @param imageUrl url of the image of the React.
    * @param raiders  list of raiders who have reacted to this React.
    */
-  public React(String id, String name, String type, String requirement, String imageURL, List<Raider> raiders) {
+  public React(final String id, final String name, final String type, final String requirement, final String imageUrl, final List<Raider> raiders) {
     this.id = id;
     this.name = name;
     this.type = type;
     this.requirement = requirement;
     try {
-      this.image = new ImageIcon(new URL(imageURL));
-    } catch (MalformedURLException exception) {
+      this.image = new ImageIcon(new URL(imageUrl));
+    } catch (final MalformedURLException exception) {
       this.image = null;
     }
     this.raiders = raiders;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public String getId() {
     return this.id;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public String getName() {
     return this.name;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public String getType() {
     return type;
   }
 
   /**
-   * @param type
+   * To be documented.
+   *
+   * @param type To be documented.
    */
-  public void setType(String type) {
+  public void setType(final String type) {
     this.type = type;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public String getRequirement() {
     return this.requirement;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public ImageIcon getImage() {
     return this.image;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public List<Raider> getRaiders() {
     return this.raiders;
   }
 
   /**
-   * @param raiders
+   * To be documented.
+   *
+   * @param raiders To be documented.
    */
-  public void setRaiders(List<Raider> raiders) {
+  public void setRaiders(final List<Raider> raiders) {
     this.raiders = raiders;
   }
 
   /**
    * parseReact method.
-   * <p>
-   * Parsing the react given its type.
+   *
+   * <p>Parsing the react given its type.
    *
    * @param type type of React in how it should be checked.
    */
-  public void parseReact(String type) {
+  public void parseReact(final String type) {
     switch (type) {
       case "item":
-        for (Raider r : raiders) {
-          for (Account a : r.getAccounts()) {
+        for (final Raider r : raiders) {
+          for (final Account a : r.getAccounts()) {
             parseItem(a);
           }
         }
         break;
       case "class":
-        for (Raider r : raiders) {
-          for (Account a : r.getAccounts()) {
+        for (final Raider r : raiders) {
+          for (final Account a : r.getAccounts()) {
             parseClass(a);
           }
         }
         break;
       case "dps":
-        for (Raider r : raiders) {
-          for (Account a : r.getAccounts()) {
+        for (final Raider r : raiders) {
+          for (final Account a : r.getAccounts()) {
             parseDps(a);
           }
         }
         break;
       case "lock":
-        for (Raider r : raiders) {
-          for (Account a : r.getAccounts()) {
+        for (final Raider r : raiders) {
+          for (final Account a : r.getAccounts()) {
             a.getCharacters().get(0).getInventory().getIssue().setWhisper("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
           }
         }
         break;
       default:
-        for (Raider r : raiders) {
-          for (Account a : r.getAccounts()) {
+        for (final Raider r : raiders) {
+          for (final Account a : r.getAccounts()) {
             a.getCharacters().get(0).getInventory().getIssue().setWhisper("/lock " + a.getName());
           }
         }
@@ -170,15 +206,15 @@ public class React {
 
   /**
    * parseItem method.
-   * <p>
-   * Checks if the inventory contains the proper item for the React.
+   *
+   * <p>Checks if the inventory contains the proper item for the React.
    *
    * @param account account of the raider.
    */
-  private void parseItem(Account account) {
-    Inventory inventory = account.getRecentCharacter().getInventory();
+  private void parseItem(final Account account) {
+    final Inventory inventory = account.getRecentCharacter().getInventory();
     if (inventory != null) {
-      String ability = inventory.getAbility().getName();
+      final String ability = inventory.getAbility().getName();
       switch (name) {
         case "Ogmur/Pogmur":
           if (ability.equals("Shield of Ogmur UT") || ability.equals("Crystallised Fang's Venom UT")) {
@@ -192,17 +228,17 @@ public class React {
           }
           break;
         case "Slow":
-          JSONObject slowItems = Utilities.json.getJSONObject("reacts").getJSONObject("slowItems");
+          final JSONObject slowItems = Utilities.getJson().getJSONObject("reacts").getJSONObject("slowItems");
           boolean good = true;
-          for (String keys : slowItems.keySet()) {
-            JSONObject jsonObject = (JSONObject) slowItems.get(keys);
-            JSONArray items = jsonObject.getJSONArray("items");
-            String item = ability.substring(0, ability.length() - 3);
+          for (final String keys : slowItems.keySet()) {
+            final JSONObject jsonObject = (JSONObject) slowItems.get(keys);
+            final JSONArray items = jsonObject.getJSONArray("items");
+            final String item = ability.substring(0, ability.length() - 3);
             if (items.toList().contains(item)) {
-              JSONArray slotArray = jsonObject.getJSONArray("slot");
+              final JSONArray slotArray = jsonObject.getJSONArray("slot");
               for (int j = 0; j < slotArray.length(); j++) {
-                String slot = slotArray.getString(j);
-                Item item1 = switch (slot) {
+                final String slot = slotArray.getString(j);
+                final Item item1 = switch (slot) {
                   case "weapon" -> inventory.getWeapon();
                   case "ability" -> inventory.getAbility();
                   case "armor" -> inventory.getArmor();
@@ -210,7 +246,7 @@ public class React {
                   default -> null;
                 };
                 assert item1 != null;
-                String substring = item1.getName().substring(0, item1.getName().length() - 3);
+                final String substring = item1.getName().substring(0, item1.getName().length() - 3);
                 if (items.toList().contains(substring)) {
                   item1.setImage(Utilities.markImage(item1.getImage(), Problem.NONE.getColor()));
                 } else {
@@ -255,24 +291,26 @@ public class React {
             inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT.getColor()));
           }
           break;
+        default:
+          break;
       }
     }
   }
 
   /**
    * parseDps method.
-   * <p>
-   * Checks if the inventory meets the required DPS and Class.
+   *
+   * <p>Checks if the inventory meets the required DPS and Class.
    *
    * @param account account of the raider.
    */
-  public void parseDps(Account account) {
-    Inventory inventory = account.getRecentCharacter().getInventory();
-    String type = account.getRecentCharacter().getType();
+  public void parseDps(final Account account) {
+    final Inventory inventory = account.getRecentCharacter().getInventory();
+    final String type = account.getRecentCharacter().getType();
     if (inventory.getItems().stream().allMatch(item -> item.getName().equals("Empty slot"))) {
       inventory.getIssue().setWhisper("Private Profile");
     } else {
-      List<String> ranged = Arrays.asList("Wizard", "Mystic", "Necromancer", "Priest", "Summoner", "Sorcerer", "Bard", "Archer", "Huntress");
+      final List<String> ranged = Arrays.asList("Wizard", "Mystic", "Necromancer", "Priest", "Summoner", "Sorcerer", "Bard", "Archer", "Huntress");
       switch (name) {
         case "Wizard/Summoner 2/4":
           if (!(type.equals("Wizard") || type.equals("Summoner"))) {
@@ -352,20 +390,22 @@ public class React {
             }
           }
           break;
+        default:
+          break;
       }
     }
   }
 
   /**
    * parseClass method.
-   * <p>
-   * Checks if the inventory meets the required Class and T6/T7 Item.
+   *
+   * <p>Checks if the inventory meets the required Class and T6/T7 Item.
    *
    * @param account account of the raider.
    */
-  public void parseClass(Account account) {
-    String type = account.getRecentCharacter().getType();
-    Inventory inventory = account.getRecentCharacter().getInventory();
+  public void parseClass(final Account account) {
+    final String type = account.getRecentCharacter().getType();
+    final Inventory inventory = account.getRecentCharacter().getInventory();
     if (name.equals(type)) {
       account.getRecentCharacter().setSkinImage(Utilities.markImage(account.getRecentCharacter().getSkinImage(), Problem.NONE.getColor()));
       inventory.getIssue().setProblem(Problem.NONE);
@@ -375,8 +415,8 @@ public class React {
           inventory.getIssue().setWhisper("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after");
           inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT_CLASS_ABILITY_T6.getColor()));
         } else if (inventory.getItems().get(1).getName().endsWith("UT")) {
-          JSONArray reskins = Utilities.json.getJSONObject("allowedSTSets").getJSONObject("Oryxmas").getJSONArray("items");
-          String ability = inventory.getAbility().getName();
+          final JSONArray reskins = Utilities.getJson().getJSONObject("allowedSTSets").getJSONObject("Oryxmas").getJSONArray("items");
+          final String ability = inventory.getAbility().getName();
           if (reskins.toList().contains(ability.substring(0, ability.length() - 3))) {
             inventory.getIssue().setWhisper("None");
             inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));
@@ -385,7 +425,7 @@ public class React {
             inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT_CLASS_ABILITY_T6.getColor()));
           }
         } else {
-          String ability = inventory.getAbility().getName();
+          final String ability = inventory.getAbility().getName();
           if (Integer.parseInt(ability.substring(ability.length() - 1)) >= 6) {
             inventory.getIssue().setWhisper("None");
             inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.NONE.getColor()));

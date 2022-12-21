@@ -14,18 +14,33 @@ import java.util.Arrays;
  */
 public class TickAligner {
 
-  private final RC4 rc4;
+  /**
+   * To be documented.
+   */
+  private final Rc4 rc4;
+  /**
+   * To be documented.
+   */
   private boolean synced = false;
+  /**
+   * To be documented.
+   */
   private int packetBytes = 0;
-  private byte[] TickA;
-  private int CURRENT_TICK;
+  /**
+   * To be documented.
+   */
+  private byte[] firstTick;
+  /**
+   * To be documented.
+   */
+  private int currentTick;
 
   /**
    * Tick aligner constructor to a RC4 cipher.
    *
    * @param r The cipher to align.
    */
-  public TickAligner(RC4 r) {
+  public TickAligner(final Rc4 r) {
     rc4 = r;
   }
 
@@ -41,41 +56,42 @@ public class TickAligner {
    * @param type          Type of the packet
    * @return Returns the state of the cipher alignment being synced.
    */
-  public boolean checkRC4Alignment(ByteBuffer encryptedData, int size, byte type) {
+  public boolean checkRC4Alignment(final ByteBuffer encryptedData, final int size, final byte type) {
     if (synced) {
       if (type == PacketType.NEWTICK.getIndex()) {
-        byte[] duplicate = Arrays.copyOfRange(encryptedData.array(), 5, encryptedData.capacity());
+        final byte[] duplicate = Arrays.copyOfRange(encryptedData.array(), 5, encryptedData.capacity());
         rc4.fork().decrypt(duplicate);
-        CURRENT_TICK++;
-        int tick = Util.decodeInt(duplicate);
-        if (CURRENT_TICK != tick) {
+        currentTick++;
+        final int tick = Util.decodeInt(duplicate);
+        if (currentTick != tick) {
           rc4.reset();
           synced = false;
-          TickA = null;
+          firstTick = null;
         }
       }
-      if (synced) packetBytes += size - 5;
+      if (synced) {
+        packetBytes += size - 5;
+      }
     }
 
     if (!synced) {
       if (type == PacketType.NEWTICK.getIndex()) {
-        byte[] tick = Arrays.copyOfRange(encryptedData.array(), 5, 5 + 4);
-        if (TickA != null) {
+        final byte[] tick = Arrays.copyOfRange(encryptedData.array(), 5, 5 + 4);
+        if (firstTick != null) {
           rc4.reset();
           System.out.println("Packet bytes between sync packets: " + packetBytes);
-          int i = RC4Aligner.syncCipher(rc4, TickA, tick, packetBytes);
+          final int i = Rc4Aligner.syncCipher(rc4, firstTick, tick, packetBytes);
           if (i != -1) {
             synced = true;
             rc4.skip(packetBytes).decrypt(tick);
             rc4.skip(size - 5 - 4);
-            CURRENT_TICK = Util.decodeInt(tick);
-            System.out.println("Synced. offset: " + i + " tick: " + CURRENT_TICK);
-          } else {
+            currentTick = Util.decodeInt(tick);
+            System.out.println("Synced. offset: " + i + " tick: " + currentTick);
           }
-          TickA = null;
+          firstTick = null;
           packetBytes = 0;
         } else {
-          TickA = tick;
+          firstTick = tick;
           packetBytes = size - 5;
         }
       } else {
@@ -90,6 +106,6 @@ public class TickAligner {
    * A reset method for resenting the tick counter. Called when changing game sessions.
    */
   public void reset() {
-    CURRENT_TICK = -1;
+    currentTick = -1;
   }
 }

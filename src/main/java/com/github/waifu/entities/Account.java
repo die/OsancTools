@@ -7,15 +7,45 @@ import java.util.List;
  */
 public class Account {
 
+  /**
+   * To be documented.
+   */
   private final String name;
+  /**
+   * To be documented.
+   */
   private final String stars;
+  /**
+   * To be documented.
+   */
   private final String skins;
+  /**
+   * To be documented.
+   */
   private final String exaltations;
+  /**
+   * To be documented.
+   */
   private final String accountFame;
+  /**
+   * To be documented.
+   */
   private final String guild;
+  /**
+   * To be documented.
+   */
   private final String guildRank;
+  /**
+   * To be documented.
+   */
   private final String creationDate;
+  /**
+   * To be documented.
+   */
   private final String lastSeen;
+  /**
+   * To be documented.
+   */
   private List<Character> characters;
 
   /**
@@ -46,7 +76,7 @@ public class Account {
    * @param name       username of the Account.
    * @param characters list of characters the Account has.
    */
-  public Account(String name, List<Character> characters) {
+  public Account(final String name, final List<Character> characters) {
     this.name = name;
     this.stars = "";
     this.skins = "";
@@ -60,19 +90,22 @@ public class Account {
   }
 
   /**
-   * Account Constructor.
+   * To be documented.
    *
-   * <p>Constructs an Account with information by the Update Packet
-   *
-   * @param name = name
+   * @param name       To be documented.
+   * @param characters To be documented.
+   * @param stars      To be documented.
+   * @param fame       To be documented.
+   * @param guild      To be documented.
+   * @param guildRank  To be documented.
    */
-  public Account(String name, List<Character> characters, int stars, int fame, String guildName, String guildRank) {
+  public Account(final String name, final List<Character> characters, final int stars, final int fame, final String guild, final String guildRank) {
     this.name = name;
     this.stars = String.valueOf(stars);
     this.skins = "";
     this.exaltations = "";
     this.accountFame = String.valueOf(fame);
-    this.guild = guildName;
+    this.guild = guild;
     this.guildRank = guildRank;
     this.creationDate = "";
     this.lastSeen = "";
@@ -80,22 +113,20 @@ public class Account {
   }
 
   /**
-   * Account Constructor.
+   * To be documented.
    *
-   * <p>Constructs an Account with all information.
-   *
-   * @param name         username of the Account.
-   * @param stars        number of stars the Account has.
-   * @param skins        number of skins the Account has.
-   * @param exaltations  number of exaltations the Account has.
-   * @param accountFame  number of account fame the Account has.
-   * @param guild        name of the guild the Account is in.
-   * @param guildRank    name of the guild rank the Account has.
-   * @param creationDate creation date of the Account.
-   * @param lastSeen     last seen date of the Account.
-   * @param characters   list of characters the Account has.
+   * @param name         To be documented.
+   * @param stars        To be documented.
+   * @param skins        To be documented.
+   * @param exaltations  To be documented.
+   * @param accountFame  To be documented.
+   * @param guild        To be documented.
+   * @param guildRank    To be documented.
+   * @param creationDate To be documented.
+   * @param lastSeen     To be documented.
+   * @param characters   To be documented.
    */
-  public Account(String name, String stars, String skins, String exaltations, String accountFame, String guild, String guildRank, String creationDate, String lastSeen, List<Character> characters) {
+  public Account(final String name, final String stars, final String skins, final String exaltations, final String accountFame, final String guild, final String guildRank, final String creationDate, final String lastSeen, final List<Character> characters) {
     this.name = name;
     this.stars = stars;
     this.skins = skins;
@@ -252,8 +283,13 @@ public class Account {
     return this.characters;
   }
 
-  public void setCharacters(List<Character> characters) {
-    this.characters = characters;
+  /**
+   * To be documented.
+   *
+   * @param c To be documented.
+   */
+  public void setCharacters(final List<Character> c) {
+    this.characters = c;
   }
 
   /**

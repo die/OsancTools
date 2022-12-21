@@ -13,8 +13,14 @@ import org.json.JSONTokener;
  */
 public final class Main {
 
-  public static Settings settings = new Settings();
+  /**
+   * To be documented.
+   */
+  private static Settings settings = new Settings();
 
+  /**
+   * To be documented.
+   */
   private Main() {
   }
 
@@ -28,8 +34,8 @@ public final class Main {
   public static void main(final String[] args) {
     try {
       loadRequirementSheet();
-      SwingUtilities.invokeLater(GUI::new);
-    } catch (Exception e) {
+      SwingUtilities.invokeLater(Gui::new);
+    } catch (final Exception e) {
       e.printStackTrace();
     }
   }
@@ -40,9 +46,18 @@ public final class Main {
    * <p>Loads requirement sheets from the repository.
    */
   public static void loadRequirementSheet() throws IOException {
-    URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/sniffer/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
-    JSONTokener tokener = new JSONTokener(url.openStream());
-    Utilities.json = new JSONObject(tokener);
+    final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/sniffer/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
+    final JSONTokener tokener = new JSONTokener(url.openStream());
+    Utilities.setJson(new JSONObject(tokener));
 
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public static Settings getSettings() {
+    return settings;
   }
 }

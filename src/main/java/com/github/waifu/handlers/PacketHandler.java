@@ -4,7 +4,7 @@ import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Character;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Item;
-import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.Main;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.data.StatData;
@@ -29,21 +29,41 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+/**
+ * To be documented.
+ */
+public final class PacketHandler {
 
-public class PacketHandler {
+  /**
+   * To be documented.
+   */
+  private PacketHandler() {
 
+  }
+
+  /**
+   * To be documented.
+   */
   private static Document equipmentData;
+  /**
+   * To be documented.
+   */
   private static Document classData;
 
-  public static void handlePacket(Packet packet) {
-    UpdatePacket updatePacket = (UpdatePacket) packet;
+  /**
+   * To be documented.
+   *
+   * @param packet To be documented.
+   */
+  public static void handlePacket(final Packet packet) {
+    final UpdatePacket updatePacket = (UpdatePacket) packet;
 
-    boolean maxedMP = false;
-    boolean maxedHP = false;
-    int maxMPValue = 0;
-    int maxHPValue = 0;
-    int currentHPValue = 0;
-    int currentMPValue = 0;
+    boolean maxedMp = false;
+    boolean maxedHp = false;
+    int maxMpValue = 0;
+    int maxHpValue = 0;
+    int currentHpValue = 0;
+    int currentMpValue = 0;
     int stars = 0;
     int level = 0;
     String charClass = "";
@@ -56,22 +76,22 @@ public class PacketHandler {
     String guildRank = "";
     int fame = 0;
     int currentFame = 0;
-    int exaltedHP = 0;
-    int exaltedMP = 0;
+    int exaltedHp = 0;
+    int exaltedMp = 0;
     int dexterity = 0;
 
-    for (int i = 0; i < updatePacket.newObjects.length; i++) {
-      StatData[] stats = updatePacket.newObjects[i].getStatus().getStatData();
+    for (int i = 0; i < updatePacket.getNewObjects().length; i++) {
+      final StatData[] stats = updatePacket.getNewObjects()[i].getStatus().getStatData();
 
-      for (StatData stat : stats) {
+      for (final StatData stat : stats) {
         switch (stat.getStatType()) {
-          case MAX_MP_STAT -> maxMPValue = stat.getStatValue();
-          case MP_STAT -> currentMPValue = stat.getStatValue();
+          case MAX_MP_STAT -> maxMpValue = stat.getStatValue();
+          case MP_STAT -> currentMpValue = stat.getStatValue();
           case NUM_STARS_STAT -> stars = stat.getStatValue();
-          case MAX_HP_STAT -> maxHPValue = stat.getStatValue();
-          case HP_STAT -> currentHPValue = stat.getStatValue();
+          case MAX_HP_STAT -> maxHpValue = stat.getStatValue();
+          case HP_STAT -> currentHpValue = stat.getStatValue();
           case LEVEL_STAT -> level = stat.getStatValue();
-          case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.newObjects[i].getObjectType()));
+          case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.getNewObjects()[i].getObjectType()));
           case INVENTORY_0_STAT -> weapon = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_2_STAT -> armor = getItemName(String.valueOf(stat.getStatValue()));
@@ -81,40 +101,51 @@ public class PacketHandler {
           case GUILD_RANK_STAT -> guildRank = stat.getStringStatValue();
           case FAME_STAT -> fame = stat.getStatValue();
           case CURR_FAME_STAT -> currentFame = stat.getStatValue();
-          case EXALTED_HP -> exaltedHP = stat.getStatValue();
-          case EXALTED_MP -> exaltedMP = stat.getStatValue();
+          case EXALTED_HP -> exaltedHp = stat.getStatValue();
+          case EXALTED_MP -> exaltedMp = stat.getStatValue();
           case DEXTERITY_STAT -> dexterity = stat.getStatValue();
+          default -> {
+
+          }
         }
       }
     }
-    if (userName.equals("") || weapon.equals("")) return;
-    if (maxHPValue != 0 || maxHPValue == currentHPValue) {
-      maxedHP = true;
+    if (userName.equals("") || weapon.equals("")) {
+      return;
     }
-    if (maxMPValue != 0 || maxMPValue == currentMPValue) {
-      maxedMP = true;
+    if (maxHpValue != 0 || maxHpValue == currentHpValue) {
+      maxedHp = true;
     }
-    Item weaponItem = new Item(weapon, "weapon", charClass);
-    Item abilityItem = new Item(ability, "ability", charClass);
-    Item armorItem = new Item(armor, "armor", charClass);
-    Item ringItem = new Item(ring, "ring", charClass);
-    List<Item> items = new ArrayList<>();
+    if (maxMpValue != 0 || maxMpValue == currentMpValue) {
+      maxedMp = true;
+    }
+    final Item weaponItem = new Item(weapon, "weapon", charClass);
+    final Item abilityItem = new Item(ability, "ability", charClass);
+    final Item armorItem = new Item(armor, "armor", charClass);
+    final Item ringItem = new Item(ring, "ring", charClass);
+    final List<Item> items = new ArrayList<>();
     Collections.addAll(items, weaponItem, abilityItem, armorItem, ringItem);
-    Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, maxedMP, maxedHP, currentFame, exaltedHP, exaltedMP, dexterity);
+    final Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, maxedMp, maxedHp, currentFame, exaltedHp, exaltedMp, dexterity);
     System.out.println(account.getName() + " : " + account.getRecentCharacter().getInventory().printInventory());
-    GUI.raid.addSnifferAccount(account);
+    Gui.getRaid().addSnifferAccount(account);
   }
 
-  public static String getClassName(String id) {
-    NodeList nodeList = classData.getElementsByTagName("Object");
+  /**
+   * To be documented.
+   *
+   * @param id To be documented.
+   * @return To be documented.
+   */
+  public static String getClassName(final String id) {
+    final NodeList nodeList = classData.getElementsByTagName("Object");
 
     for (int i = 0; i < nodeList.getLength(); i++) {
-      Node nNode = nodeList.item(i);
+      final Node nNode = nodeList.item(i);
 
       if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element eElement = (Element) nNode;
+        final Element eElement = (Element) nNode;
         if (eElement.getElementsByTagName("Class").item(0) != null) {
-          long foundId = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
+          final long foundId = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
           if (String.valueOf(foundId).equals(id)) {
             return eElement.getAttribute("id");
           }
@@ -124,20 +155,26 @@ public class PacketHandler {
     return "Wizard";
   }
 
-  public static String getItemName(String id) {
+  /**
+   * To be documented.
+   *
+   * @param id To be documented.
+   * @return To be documented.
+   */
+  public static String getItemName(final String id) {
     if (id.equals("-1")) {
       return "Empty slot";
     } else {
-      NodeList nodeList = equipmentData.getElementsByTagName("Object");
+      final NodeList nodeList = equipmentData.getElementsByTagName("Object");
 
       for (int i = 0; i < nodeList.getLength(); i++) {
-        Node nNode = nodeList.item(i);
+        final Node nNode = nodeList.item(i);
 
         if (nNode.getNodeType() == Node.ELEMENT_NODE) {
           String label = "";
-          Element eElement = (Element) nNode;
+          final Element eElement = (Element) nNode;
 
-          long found_id = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
+          final long found_id = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
 
           if (String.valueOf(found_id).equals(id)) {
             String name = "";
@@ -148,14 +185,14 @@ public class PacketHandler {
               name = eElement.getAttribute("id");
             }
 
-            NodeList tiers = eElement.getElementsByTagName("Tier");
+            final NodeList tiers = eElement.getElementsByTagName("Tier");
             if (tiers.item(0) != null) {
               label = "T" + tiers.item(0).getTextContent();
             }
 
-            NodeList labels = eElement.getElementsByTagName("Labels");
+            final NodeList labels = eElement.getElementsByTagName("Labels");
             if (labels.item(0) != null) {
-              List<String> labelsList = Arrays.stream(labels.item(0).getTextContent().split(",")).toList();
+              final List<String> labelsList = Arrays.stream(labels.item(0).getTextContent().split(",")).toList();
 
               if (labelsList.contains("ST")) {
                 label = "ST";
@@ -175,45 +212,49 @@ public class PacketHandler {
   }
 
   /**
-   * @param userName
-   * @param stars
-   * @param fame
-   * @param guildName
-   * @param guildRank
-   * @param items
-   * @param level
-   * @param maxedMP
-   * @param maxedHP
-   * @param currentFame
-   * @param exaltedHP
-   * @param exaltedMP
-   * @param dexterity
-   * @return
+   * To be documented.
+   *
+   * @param userName To be documented.
+   * @param stars To be documented.
+   * @param fame To be documented.
+   * @param guildName To be documented.
+   * @param guildRank To be documented.
+   * @param items To be documented.
+   * @param level To be documented.
+   * @param maxedMp To be documented.
+   * @param maxedHp To be documented.
+   * @param currentFame To be documented.
+   * @param exaltedHp To be documented.
+   * @param exaltedMp To be documented.
+   * @param dexterity To be documented.
+   * @return To be documented.
    */
-  public static Account createAccount(String userName, int stars, int fame, String guildName, String guildRank, List<Item> items, int level, boolean maxedMP, boolean maxedHP, int currentFame, int exaltedHP, int exaltedMP, int dexterity) {
+  public static Account createAccount(final String userName, final int stars, final int fame, final String guildName, final String guildRank, final List<Item> items, final int level, final boolean maxedMp, final boolean maxedHp, final int currentFame, final int exaltedHp, final int exaltedMp, final int dexterity) {
 
-    Inventory inventory = new Inventory(items);
-    Character character = new Character(inventory, level, currentFame, maxedHP, maxedMP, dexterity, exaltedHP, exaltedMP);
+    final Inventory inventory = new Inventory(items);
+    final Character character = new Character(inventory, level, currentFame, maxedHp, maxedMp, dexterity, exaltedHp, exaltedMp);
 
-    List<Character> characterlist = new ArrayList<>();
+    final List<Character> characterlist = new ArrayList<>();
     characterlist.add(character);
 
     return new Account(userName, characterlist, stars, fame, guildName, guildRank);
   }
 
   /**
+   * To be documented.
    *
+   * @return To be documented.
    */
   public static boolean loadXML() {
-    File file = new File(Main.settings.getResourceDir());
+    final File file = new File(Main.getSettings().getResourceDir());
 
     if (!file.getName().equals("resources.assets")) {
-      JOptionPane.showMessageDialog(GUI.getFrames()[0], "Make sure you select the correct resources file!");
+      JOptionPane.showMessageDialog(Gui.getFrames()[0], "Make sure you select the correct resources file!");
       return false;
     }
 
-    StringBuilder equipXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-    StringBuilder classXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+    final StringBuilder equipXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+    final StringBuilder classXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
       String line;
       boolean writeEquip = false;
@@ -232,7 +273,7 @@ public class PacketHandler {
           }
         } else if (checkEquip) {
           if (line.contains("equip") && line.contains("<?xml version=\"1.0\" encoding=\"utf-8\"?>")) {
-            byte[] bytes = line.getBytes(StandardCharsets.UTF_8);
+            final byte[] bytes = line.getBytes(StandardCharsets.UTF_8);
             for (int i = 0; i < bytes.length; i++) {
               // check for equip
               if (bytes[i] == 101 && bytes[i + 1] == 113) {
@@ -255,7 +296,7 @@ public class PacketHandler {
           }
         } else if (checkClass) {
           if (line.contains("player") && line.contains("<?xml version=\"1.0\" encoding=\"utf-8\"?>")) {
-            byte[] bytes = line.getBytes(StandardCharsets.UTF_8);
+            final byte[] bytes = line.getBytes(StandardCharsets.UTF_8);
             for (int i = 0; i < bytes.length; i++) {
               // check for player
               if (bytes[i] == 112 && bytes[i + 1] == 108) {
@@ -267,27 +308,29 @@ public class PacketHandler {
           }
         }
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       return false;
     }
 
     try {
       // ignore fatal error: premature end of file
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      InputSource is = new InputSource(new StringReader(equipXml.toString()));
+      final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      final DocumentBuilder builder = factory.newDocumentBuilder();
+      final InputSource is = new InputSource(new StringReader(equipXml.toString()));
       equipmentData = builder.parse(is);
-      InputSource is1 = new InputSource(new StringReader(classXml.toString()));
+      final InputSource is1 = new InputSource(new StringReader(classXml.toString()));
       classData = builder.parse(is1);
-    } catch (Exception e) {
-      JOptionPane.showMessageDialog(GUI.getFrames()[0], "Select the resources.assets in your Documents folder!");
+    } catch (final Exception e) {
+      JOptionPane.showMessageDialog(Gui.getFrames()[0], "Select the resources.assets in your Documents folder!");
       return false;
     }
     return true;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public static boolean isXMLNull() {
     return equipmentData == null || classData == null;

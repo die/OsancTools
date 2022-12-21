@@ -10,23 +10,32 @@ import java.util.HashMap;
  * are received the emit method will send an update and trigger the lambda used.
  */
 public class Register {
-  public static Register INSTANCE = new Register();
-  private final HashMap<Class<? extends Packet>, ArrayList<IPacketListener<Packet>>> packetListeners = new HashMap<>();
+
+  /**
+   * To be documented.
+   */
+  private static Register instance = new Register();
+  /**
+   * To be documented.
+   */
+  private final HashMap<Class<? extends Packet>, ArrayList<PacketListenerInterface<Packet>>> packetListeners = new HashMap<>();
 
   /**
    * Emitter for sending packets to any subscriber which matches the packets the subscriber have subbed too.
    *
    * @param packet The packet being received and emitted.
    */
-  public void emit(Packet packet) {
+  public void emit(final Packet packet) {
     if (packetListeners.containsKey(packet.getClass())) {
-      for (IPacketListener<Packet> processor : packetListeners.get(packet.getClass()))
+      for (final PacketListenerInterface<Packet> processor : packetListeners.get(packet.getClass())) {
         processor.process(packet);
+      }
     }
 
     if (packetListeners.containsKey(Packet.class)) {
-      for (IPacketListener<Packet> processor : packetListeners.get(Packet.class))
+      for (final PacketListenerInterface<Packet> processor : packetListeners.get(Packet.class)) {
         processor.process(packet);
+      }
     }
   }
 
@@ -37,7 +46,7 @@ public class Register {
    * @param processor The lambda needed to trigger what event should happen if packet is received.
    * @param <T>       Class type.
    */
-  public <T extends Class<? extends Packet>> void register(PacketType type, IPacketListener<Packet> processor) {
+  public <T extends Class<? extends Packet>> void register(final PacketType type, final PacketListenerInterface<Packet> processor) {
     packetListeners.computeIfAbsent(type.getPacketClass(), (a) -> new ArrayList<>()).add(processor);
   }
 
@@ -47,7 +56,25 @@ public class Register {
    * @param processor The lambda needed to trigger what event should happen if packet is received.
    * @param <T>       Class type.
    */
-  public <T extends Class<? extends Packet>> void registerAll(IPacketListener<Packet> processor) {
+  public <T extends Class<? extends Packet>> void registerAll(final PacketListenerInterface<Packet> processor) {
     packetListeners.computeIfAbsent(Packet.class, (a) -> new ArrayList<>()).add(processor);
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public static Register getInstance() {
+    return instance;
+  }
+
+  /**
+   * To be documented.
+   *
+   * @param instance To be documented.
+   */
+  public static void setInstance(final Register instance) {
+    Register.instance = instance;
   }
 }

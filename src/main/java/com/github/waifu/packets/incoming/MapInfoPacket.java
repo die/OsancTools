@@ -95,7 +95,7 @@ public class MapInfoPacket extends Packet {
     gameOpenedTime = buffer.readUnsignedInt();
     buildVersion = buffer.readString();
     unknownInt = buffer.readInt();
-    String dungeonMods = buffer.readString();
+    final String dungeonMods = buffer.readString();
     dungeonModifiers = dungeonMods.split(";");
   }
 

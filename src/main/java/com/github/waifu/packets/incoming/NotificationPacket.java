@@ -57,44 +57,49 @@ public class NotificationPacket extends Packet {
    */
   private int unknownInt3;
 
+  /**
+   * Deserializes the NotificationPacket.
+   *
+   * @param buffer The data of the packet in a rotmg buffer format.
+   */
   @Override
   public void deserialize(final BufferReader buffer) {
     effect = NotificationEffectType.byOrdinal(buffer.readByte());
     extra = buffer.readByte();
 
-    switch (effect.get()) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 9:
+    switch (effect) {
+      case StatIncrease:
+      case ServerMessage:
+      case ErrorMessage:
+      case KeepMessage:
+      case TeleportationError:
         message = buffer.readString();
         return;
-      case 4:
+      case UI:
         message = buffer.readString();
         uiExtra = buffer.readShort();
         return;
-      case 5:
+      case Queue:
         objectId = buffer.readInt();
         queuePos = buffer.readShort();
         return;
-      case 6:
+      case ObjectText:
         message = buffer.readString();
         objectId = buffer.readInt();
         color = buffer.readInt();
         return;
-      case 7:
-      case 8:
+      case Death:
+      case DungeonOpened:
         message = buffer.readString();
         pictureType = buffer.readInt();
         return;
-      case 10:
-      case 11:
+      case DungeonCall:
+      case ProgressBar:
         message = buffer.readString();
         unknownInt1 = buffer.readInt();
         unknownShort1 = buffer.readShort();
         return;
-      case 12:
+      case Behavior:
         message = buffer.readString();
         unknownInt2 = buffer.readInt();
         unknownInt3 = buffer.readInt();
@@ -103,6 +108,11 @@ public class NotificationPacket extends Packet {
     }
   }
 
+  /**
+   * Constructs a String to show NotificationPacket.
+   *
+   * @return packet representation as String.
+   */
   @Override
   public String toString() {
     return "NotificationPacket{"

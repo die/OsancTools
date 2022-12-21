@@ -3,7 +3,7 @@ package com.github.waifu.packets.packetcapture.sniff.assembly;
 /**
  * TCP packet stream interface used to send ordered TCP packets with bytes contained in their payload.
  */
-public interface PStream {
+public interface PaStream {
 
   /**
    * Ordered TCP packet method to send the byte stream contained in the payload.

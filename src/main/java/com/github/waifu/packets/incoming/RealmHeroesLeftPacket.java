@@ -12,13 +12,25 @@ public class RealmHeroesLeftPacket extends Packet {
    */
   private int realmHeroesLeft;
 
+  /**
+   * Deserializes the RealmHeroesLeftPacket.
+   *
+   * @param buffer The data of the packet in a rotmg buffer format.
+   */
   @Override
   public void deserialize(final BufferReader buffer) {
     realmHeroesLeft = buffer.readInt();
   }
 
+  /**
+   * Constructs a String to show RealmHeroesLeftPacket.
+   *
+   * @return packet representation as String.
+   */
   @Override
   public String toString() {
-    return "RealmHeroesLeftPacket{" + "\n   realmHeroesLeft=" + realmHeroesLeft;
+    return "RealmHeroesLeftPacket{"
+            + "\n   realmHeroesLeft="
+            + realmHeroesLeft;
   }
 }

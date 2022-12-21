@@ -2,11 +2,11 @@ package com.github.waifu.packets.packetcapture;
 
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.PacketType;
-import com.github.waifu.packets.packetcapture.encryption.RC4;
-import com.github.waifu.packets.packetcapture.encryption.RotMGRC4Keys;
+import com.github.waifu.packets.packetcapture.encryption.Rc4;
+import com.github.waifu.packets.packetcapture.encryption.RotmgRc4Keys;
 import com.github.waifu.packets.packetcapture.pconstructor.PacketConstructor;
 import com.github.waifu.packets.packetcapture.register.Register;
-import com.github.waifu.packets.packetcapture.sniff.PProcessor;
+import com.github.waifu.packets.packetcapture.sniff.PaProcessor;
 import com.github.waifu.packets.packetcapture.sniff.Sniffer;
 import com.github.waifu.packets.reader.BufferReader;
 import java.nio.ByteBuffer;
@@ -17,20 +17,33 @@ import java.nio.ByteBuffer;
  * streamConstructor and rotmgConstructor class. After the packets are constructed the RC4 cipher is used
  * decrypt the data. The data is then matched with target classes and emitted through the registry.
  */
-public class PacketProcessor extends Thread implements PProcessor {
+public class PacketProcessor extends Thread implements PaProcessor {
+
+  /**
+   * To be documented.
+   */
   private final PacketConstructor incomingPacketConstructor;
+  /**
+   * To be documented.
+   */
   private final PacketConstructor outgoingPacketConstructor;
+  /**
+   * To be documented.
+   */
   private final Sniffer sniffer;
+  /**
+   * To be documented.
+   */
   private final byte[] srcAddr;
 
   /**
-   * Basic constructor of packetProcessor
-   * TODO: Add linux and mac support later
+   * Basic constructor of packetProcessor.
+   * todo: Add linux and mac support later
    */
   public PacketProcessor() {
     sniffer = new Sniffer(this);
-    incomingPacketConstructor = new PacketConstructor(this, new RC4(RotMGRC4Keys.INCOMING_STRING));
-    outgoingPacketConstructor = new PacketConstructor(this, new RC4(RotMGRC4Keys.OUTGOING_STRING));
+    incomingPacketConstructor = new PacketConstructor(this, new Rc4(RotmgRc4Keys.INCOMING_STRING));
+    outgoingPacketConstructor = new PacketConstructor(this, new Rc4(RotmgRc4Keys.OUTGOING_STRING));
     srcAddr = new byte[4];
   }
 
@@ -57,8 +70,7 @@ public class PacketProcessor extends Thread implements PProcessor {
     outgoingPacketConstructor.startResets();
     try {
       sniffer.startSniffer();
-    } catch (UnsatisfiedLinkError e) {
-    } catch (Exception e) {
+    } catch (final UnsatisfiedLinkError | Exception e) {
       e.printStackTrace();
     }
   }
@@ -70,7 +82,7 @@ public class PacketProcessor extends Thread implements PProcessor {
    * @param srcAddr Source IP of incoming packets.
    */
   @Override
-  public void incomingStream(byte[] data, byte[] srcAddr) {
+  public void incomingStream(final byte[] data, final byte[] srcAddr) {
     incomingPacketConstructor.build(data);
   }
 
@@ -80,7 +92,7 @@ public class PacketProcessor extends Thread implements PProcessor {
    * @param data Outgoing byte stream
    */
   @Override
-  public void outgoingStream(byte[] data) {
+  public void outgoingStream(final byte[] data) {
     //  logger.addOutgoing(data.length);
     outgoingPacketConstructor.build(data);
   }
@@ -93,34 +105,38 @@ public class PacketProcessor extends Thread implements PProcessor {
    * @param size size of the packet.
    * @param data Constructed packet data.
    */
-  public void processPackets(byte type, int size, ByteBuffer data) {
+  public void processPackets(final byte type, final int size, final ByteBuffer data) {
     if (!PacketType.containsKey(type)) {
       //System.err.println("Unknown packet type:" + type + " Data:" + Arrays.toString(data.array()));
       return;
     }
-    Packet packetType = PacketType.getPacket(type).factory();
+    final Packet packetType = PacketType.getPacket(type).factory();
     packetType.setData(data.array());
-    BufferReader pData = new BufferReader(data);
+    final BufferReader pData = new BufferReader(data);
 
     try {
       packetType.deserialize(pData);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       debugPackets(type, data);
       return;
     }
-    Register.INSTANCE.emit(packetType);
+    Register.getInstance().emit(packetType);
   }
 
   /**
-   * Helper for debugging packets
+   * Helper for debugging packets.
+   *
+   * @param type To be documented.
+   * @param data To be documented.
    */
-  private void debugPackets(int type, ByteBuffer data) {
-    Packet packetType = PacketType.getPacket(type).factory();
+  private void debugPackets(final int type, final ByteBuffer data) {
+    final Packet packetType = PacketType.getPacket(type).factory();
     try {
       data.position(5);
-      BufferReader pDebug = new BufferReader(data);
+      final BufferReader pDebug = new BufferReader(data);
       packetType.deserialize(pDebug);
-    } catch (Exception ignored) {
+    } catch (final Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -131,11 +147,17 @@ public class PacketProcessor extends Thread implements PProcessor {
     sniffer.closeSniffers();
   }
 
+  /**
+   * To be documented.
+   */
   @Override
   public void resetIncoming() {
     incomingPacketConstructor.reset();
   }
 
+  /**
+   * To be documented.
+   */
   @Override
   public void resetOutgoing() {
     outgoingPacketConstructor.reset();

@@ -12,29 +12,39 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 /**
- *
+ * To be documented.
  */
 public class CalculatePlayerExaltationsAction implements ActionListener {
 
+  /**
+   * To be documented.
+   */
   private final JTextField exaltsInput;
+  /**
+   * To be documented.
+   */
   private final JLabel exaltsResult;
 
   /**
-   * @param exaltsInput
-   * @param exaltsResult
+   * To be documented.
+   *
+   * @param exaltsInput To be documented.
+   * @param exaltsResult To be documented.
    */
-  public CalculatePlayerExaltationsAction(JTextField exaltsInput, JLabel exaltsResult) {
+  public CalculatePlayerExaltationsAction(final JTextField exaltsInput, final JLabel exaltsResult) {
     this.exaltsInput = exaltsInput;
     this.exaltsResult = exaltsResult;
   }
 
   /**
-   * @param e
+   * To be documented.
+   *
+   * @param e To be documented.
    */
   @Override
-  public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(final ActionEvent e) {
     if (exaltsInput.getText() != null) {
-      String username = exaltsInput.getText();
+      final String username = exaltsInput.getText();
       List<String[]> collection = null;
       try {
         if (username != null && !username.equals("") && username.chars().allMatch((Character::isAlphabetic)) && username.length() <= 15) {
@@ -44,13 +54,13 @@ public class CalculatePlayerExaltationsAction implements ActionListener {
           exaltsResult.setForeground(Color.yellow);
           exaltsResult.setText("Invalid IGN (above 15 characters)");
         }
-      } catch (Exception ex) {
+      } catch (final Exception ex) {
         ex.printStackTrace();
       }
       if (collection != null) {
-        ExaltCalculator calculator = new ExaltCalculator();
-        int stat = calculator.getStat();
-        String statName = switch (stat) {
+        final ExaltCalculator calculator = new ExaltCalculator();
+        final int stat = calculator.getStat();
+        final String statName = switch (stat) {
           case 0 -> "Oryx 3";
           case 1 -> "Void";
           case 2 -> "Shatters";
@@ -61,7 +71,7 @@ public class CalculatePlayerExaltationsAction implements ActionListener {
           case 7 -> "Fungal";
           default -> "";
         };
-        int completes = calculator.calculateCompletions(collection);
+        final int completes = calculator.calculateCompletions(collection);
         if (completes >= Preferences.userRoot().getInt("requirement", 100)) {
           exaltsResult.setForeground(Color.green);
         } else {

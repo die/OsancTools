@@ -18,66 +18,81 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
- *
+ * To be documented.
  */
 public class DropListener implements DropTargetListener {
 
+  /**
+   * To be documented.
+   */
   private final AcceptFilePanel frame;
 
   /**
-   * @param frame
+   * To be documented.
+   *
+   * @param frame To be documented.
    */
-  public DropListener(AcceptFilePanel frame) {
+  public DropListener(final AcceptFilePanel frame) {
     this.frame = frame;
   }
 
   /**
-   * @param dtde
+   * To be documented.
+   *
+   * @param dtde To be documented.
    */
   @Override
-  public void dragEnter(DropTargetDragEvent dtde) {
+  public void dragEnter(final DropTargetDragEvent dtde) {
     frame.getLabel().setForeground(Color.BLUE);
   }
 
   /**
-   * @param dtde
+   * To be documented.
+   *
+   * @param dtde To be documented.
    */
   @Override
-  public void dragOver(DropTargetDragEvent dtde) {
+  public void dragOver(final DropTargetDragEvent dtde) {
 
   }
 
   /**
-   * @param dtde
+   * To be documented.
+   *
+   * @param dtde To be documented.
    */
   @Override
-  public void dropActionChanged(DropTargetDragEvent dtde) {
+  public void dropActionChanged(final DropTargetDragEvent dtde) {
   }
 
   /**
-   * @param dte
+   * To be documented.
+   *
+   * @param dte To be documented.
    */
   @Override
-  public void dragExit(DropTargetEvent dte) {
+  public void dragExit(final DropTargetEvent dte) {
     frame.getLabel().setForeground(Color.BLACK);
   }
 
   /**
-   * @param dtde
+   * To be documented.
+   *
+   * @param dtde To be documented.
    */
   @Override
-  public void drop(DropTargetDropEvent dtde) {
+  public void drop(final DropTargetDropEvent dtde) {
     try {
       dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-      Transferable transferable = dtde.getTransferable();
-      java.util.List<File> files = (java.util.List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-      File file = files.get(0); // get first selected file if multiple
+      final Transferable transferable = dtde.getTransferable();
+      final java.util.List<File> files = (java.util.List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+      final File file = files.get(0); // get first selected file if multiple
       if (Utilities.isImage(file)) {
         frame.getLabel().setText("");
         frame.setImage(ImageIO.read(files.get(0)));
         frame.getLabel().setIcon(new ImageIcon(frame.getImage().getScaledInstance(frame.getPanelWidth(), frame.getPanelHeight(), Image.SCALE_DEFAULT)));
       }
-    } catch (UnsupportedFlavorException | IOException e) {
+    } catch (final UnsupportedFlavorException | IOException e) {
       e.printStackTrace();
     }
   }

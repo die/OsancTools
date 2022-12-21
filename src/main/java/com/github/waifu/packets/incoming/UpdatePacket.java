@@ -12,32 +12,37 @@ import java.util.Arrays;
  * Received when an update even occurs. Some events include
  * + One or more new objects have entered the map (become visible)
  * + One or more objects have left the map (become invisible)
- * + New tiles are visible
+ * + New tiles are visible.
  */
 public class UpdatePacket extends Packet {
   /**
-   * Unknown level byte
+   * Unknown level byte.
    */
-  public byte levelType;
+  private byte levelType;
   /**
-   * The player pos if the player have moved, otherwise sends (0,0)
+   * The player pos if the player have moved, otherwise sends (0,0).
    */
-  public WorldPosData pos;
+  private WorldPosData pos;
   /**
    * The new tiles which are visible.
    */
-  public GroundTileData[] tiles;
+  private GroundTileData[] tiles;
   /**
    * The new objects which have entered the map (become visible).
    */
-  public ObjectData[] newObjects;
+  private ObjectData[] newObjects;
   /**
    * The visible objects which have left the map (become invisible).
    */
-  public int[] drops;
+  private int[] drops;
 
+  /**
+   * Deserializes the UpdatePacket.
+   *
+   * @param buffer The data of the packet in a rotmg buffer format.
+   */
   @Override
-  public void deserialize(BufferReader buffer) {
+  public void deserialize(final BufferReader buffer) {
     pos = new WorldPosData().deserialize(buffer);
     levelType = buffer.readByte();
 
@@ -57,6 +62,11 @@ public class UpdatePacket extends Packet {
     }
   }
 
+  /**
+   * Constructs a String to show UpdatePacket.
+   *
+   * @return packet representation as String.
+   */
   @Override
   public String toString() {
     return "UpdatePacket"
@@ -71,4 +81,14 @@ public class UpdatePacket extends Packet {
             + (newObjects.length == 0 ? "" : Util.showAll(newObjects))
             + (drops.length == 0 ? "" : Arrays.toString(drops));
   }
+
+  /**
+   * Gets the new object data.
+   *
+   * @return new object data as ObjectData
+   */
+  public ObjectData[] getNewObjects() {
+    return newObjects;
+  }
+
 }

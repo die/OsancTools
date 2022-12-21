@@ -16,7 +16,14 @@ import pcap.spi.exception.ErrorException;
  * Bridge class to hook directly into native methods instead of using
  * preset methods used by the ardikars library.
  */
-public class NativeBridge {
+public final class NativeBridge {
+
+  /**
+   * To be documented.
+   */
+  private NativeBridge() {
+
+  }
 
   /**
    * The main looping function on the network tap.
@@ -27,14 +34,14 @@ public class NativeBridge {
    * @param packetCount Number of packets to listen to. -1 loops infinitely.
    * @param listener    Lambda abstract interface used when packets are captured.
    */
-  public static void loop(Pcap pcap, int packetCount, PacketListener listener) {
+  public static void loop(final Pcap pcap, final int packetCount, final PacketListener listener) {
     try {
-      Field field = pcap.getClass().getDeclaredField("pointer");
+      final Field field = pcap.getClass().getDeclaredField("pointer");
       field.setAccessible(true);
-      Pointer p = (Pointer) field.get(pcap);
+      final Pointer p = (Pointer) field.get(pcap);
 
       NativeMappings.pcap_loop(p, packetCount, new GotPacketFuncExecutor(listener, SimpleExecutor.getInstance()), null);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       //e.printStackTrace();
     }
   }
@@ -46,8 +53,8 @@ public class NativeBridge {
    * @return List of all interfaces on the device.
    * @throws ErrorException Error when attempting to grab interfaces.
    */
-  public static Interface[] getInterfaces(Service service) throws ErrorException {
-    List<Interface> list = new ArrayList<>();
+  public static Interface[] getInterfaces(final Service service) throws ErrorException {
+    final List<Interface> list = new ArrayList<>();
     Interface i = service.interfaces();
     while (i != null) {
       list.add(i);
@@ -60,6 +67,11 @@ public class NativeBridge {
    * Interface class for responding to captured packets.
    */
   public interface PacketListener {
+    /**
+     * To be documented.
+     *
+     * @param packet To be documented.
+     */
     void gotPacket(RawPacket packet);
   }
 
@@ -68,17 +80,33 @@ public class NativeBridge {
    */
   public static final class SimpleExecutor implements Executor {
 
+    /**
+     * To be documented.
+     */
     private static final SimpleExecutor INSTANCE = new SimpleExecutor();
 
+    /**
+     * To be documented.
+     */
     private SimpleExecutor() {
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     public static SimpleExecutor getInstance() {
       return INSTANCE;
     }
 
+    /**
+     * To be documented.
+     *
+     * @param command To be documented.
+     */
     @Override
-    public void execute(Runnable command) {
+    public void execute(final Runnable command) {
       command.run();
     }
   }
@@ -87,21 +115,31 @@ public class NativeBridge {
    * Interface class for unwrapping captured packets from native
    * pointers to useful byte arrays and timestamps.
    */
-  private static final class GotPacketFuncExecutor implements NativeMappings.pcap_handler {
+  private static final class GotPacketFuncExecutor implements NativeMappings.PcapHandler {
+
+    /**
+     * To be documented.
+     */
     private final PacketListener listener;
+    /**
+     * To be documented.
+     */
     private final Executor executor;
+    /**
+     * To be documented.
+     */
     private final int timestampPrecision = 1;
 
-    public GotPacketFuncExecutor(PacketListener listener, Executor executor) {
+    GotPacketFuncExecutor(final PacketListener listener, final Executor executor) {
       this.listener = listener;
       this.executor = executor;
     }
 
     @Override
-    public void got_packet(Pointer args, Pointer header, final Pointer packet) {
+    public void got_packet(final Pointer args, final Pointer header, final Pointer packet) {
       final Instant now = buildTimestamp(header);
-      final int len = NativeMappings.pcap_pkthdr.getLen(header);
-      final byte[] data = packet.getByteArray(0, NativeMappings.pcap_pkthdr.getCaplen(header));
+      final int len = NativeMappings.PcapPkthdr.getLen(header);
+      final byte[] data = packet.getByteArray(0, NativeMappings.PcapPkthdr.getCaplen(header));
 
       try {
         executor.execute(() -> {
@@ -109,17 +147,18 @@ public class NativeBridge {
             listener.gotPacket(RawPacket.newPacket(data, now));
           }
         });
-      } catch (Throwable ignored) {
+      } catch (final Throwable throwable) {
+        throwable.printStackTrace();
       }
     }
 
-    private Instant buildTimestamp(Pointer header) {
-      long epochSecond = NativeMappings.pcap_pkthdr.getTvSec(header).longValue();
+    private Instant buildTimestamp(final Pointer header) {
+      final long epochSecond = NativeMappings.PcapPkthdr.getTvSec(header).longValue();
       switch (timestampPrecision) {
         case 0:
-          return Instant.ofEpochSecond(epochSecond, NativeMappings.pcap_pkthdr.getTvUsec(header).intValue() * 1000);
+          return Instant.ofEpochSecond(epochSecond, NativeMappings.PcapPkthdr.getTvUsec(header).intValue() * 1000);
         case 1:
-          return Instant.ofEpochSecond(epochSecond, NativeMappings.pcap_pkthdr.getTvUsec(header).intValue());
+          return Instant.ofEpochSecond(epochSecond, NativeMappings.PcapPkthdr.getTvUsec(header).intValue());
         default:
           throw new AssertionError("Never get here.");
       }

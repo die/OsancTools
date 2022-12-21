@@ -202,7 +202,7 @@ public class Settings {
    * Iterates through all settings and deletes stored data.
    */
   public void clearSettings() {
-    for (String s : settings) {
+    for (final String s : settings) {
       preferences.remove(s);
     }
   }

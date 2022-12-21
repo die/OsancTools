@@ -12,10 +12,21 @@ import java.util.List;
  * <p>Implementation based on article:
  * https://packetpushers.net/ip-fragmentation-in-detail/
  * </p>
- * TODO: test this class properly. WARNING UNTESTED!
+ * todo: test this class properly. WARNING UNTESTED!
  */
-public class Ip4Defragmenter {
-  private static final HashMap<Integer, ArrayList<Ip4Packet>> fragments = new HashMap<>();
+public final class Ip4Defragmenter {
+
+  /**
+   * To be documented.
+   */
+  private Ip4Defragmenter() {
+
+  }
+
+  /**
+   * To be documented.
+   */
+  private static final HashMap<Integer, ArrayList<Ip4Packet>> FRAGMENTS = new HashMap<>();
 
   /**
    * Main method used to de-fragment packets. If the packet doesn't need re-assembly
@@ -28,12 +39,12 @@ public class Ip4Defragmenter {
    * @param ip4packet Ip4 packet that needs to be checked if it needs to be re-assembled.
    * @return de-fragmented packet if it needs to be re-assembled. Otherwise, returns the same ip4 packet.
    */
-  public static Ip4Packet defragment(Ip4Packet ip4packet) {
+  public static Ip4Packet defragment(final Ip4Packet ip4packet) {
     if (ip4packet == null || ip4packet.isDontFragmentFlag() || (!ip4packet.isMoreFragmentFlag() && ip4packet.getFragmentOffset() == 0)) {
       return ip4packet;
     }
-    int id = ip4packet.getIdentification();
-    fragments.computeIfAbsent(id, k -> new ArrayList<>(5)).add(ip4packet);
+    final int id = ip4packet.getIdentification();
+    FRAGMENTS.computeIfAbsent(id, k -> new ArrayList<>(5)).add(ip4packet);
     return assemble(id, ip4packet);
   }
 
@@ -44,12 +55,12 @@ public class Ip4Defragmenter {
    * @param ip4packet Ip4Packet object
    * @return Assembled packet if it needs to be re-assemble or returns null if all fragments haven't arrived.
    */
-  private static Ip4Packet assemble(int id, Ip4Packet ip4packet) {
+  private static Ip4Packet assemble(final int id, final Ip4Packet ip4packet) {
     Ip4Packet head = null;
     Ip4Packet tail = null;
-    List<Ip4Packet> frags = fragments.get(id);
+    final List<Ip4Packet> frags = FRAGMENTS.get(id);
     int math = 0;
-    for (Ip4Packet ip : frags) {
+    for (final Ip4Packet ip : frags) {
       if (!ip.isMoreFragmentFlag()) {
         tail = ip;
         math += ip.getFragmentOffset() * 8;
@@ -63,15 +74,15 @@ public class Ip4Defragmenter {
       return null;
     }
 
-    byte[] data = new byte[head.getIhl() * 4 + tail.getFragmentOffset() * 8 + tail.getPayloadLength()];
+    final byte[] data = new byte[head.getIhl() * 4 + tail.getFragmentOffset() * 8 + tail.getPayloadLength()];
 
     System.arraycopy(head.rawData(), 0, data, 0, head.getTotalLength());
-    for (Ip4Packet ip : frags) {
+    for (final Ip4Packet ip : frags) {
       if (ip != head) {
         System.arraycopy(ip.getPayload(), 0, data, ip.getFragmentOffset() * 8, ip.getPayloadLength());
       }
     }
-    fragments.remove(id);
+    FRAGMENTS.remove(id);
     return new Ip4Packet(data, ip4packet.getEthernetPacket());
   }
 }

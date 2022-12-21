@@ -8,18 +8,24 @@ package com.github.waifu.util;
  */
 public class Pair<A, B> {
 
+  /**
+   * To be documented.
+   */
   private final A fst;
+  /**
+   * To be documented.
+   */
   private final B snd;
 
   /**
    * Constructor initilizing the pair.
    *
-   * @param fst Left object.
-   * @param snd Right object.
+   * @param f Left object.
+   * @param s Right object.
    */
-  public Pair(A fst, B snd) {
-    this.fst = fst;
-    this.snd = snd;
+  public Pair(final A f, final B s) {
+    this.fst = f;
+    this.snd = s;
   }
 
   /**
@@ -41,9 +47,15 @@ public class Pair<A, B> {
   }
 
   /**
-   * toString of the pair.
+   * To be documented.
+   *
+   * @return to be documented.
    */
   public String toString() {
-    return "Pair[" + fst + "," + snd + "]";
+    return "Pair["
+            + fst
+            + ","
+            + snd
+            + "]";
   }
 }

@@ -18,22 +18,46 @@ package com.github.waifu.packets.packetcapture.sniff;
  */
 public class RingBuffer<T> {
 
-  private static final byte EMPTY = 0, NORMAL = 1, FULL = 2;
+  /**
+   * To be documented.
+   */
+  private static final byte EMPTY = 0;
+  /**
+   * To be documented.
+   */
+  private static final byte NORMAL = 1;
+  /**
+   * To be documented.
+   */
+  private static final byte FULL = 2;
+  /**
+   * To be documented.
+   */
   private T[] buffer;
-  private int readPointer = 0, writePointer = 0;
+  /**
+   * To be documented.
+   */
+  private int readPointer = 0;
+  /**
+   * To be documented.
+   */
+  private int writePointer = 0;
+  /**
+   * To be documented.
+   */
   private byte state = EMPTY;
 
   /**
-   * Constructor with initial capacity
+   * Constructor with initial capacity.
    *
    * @param capacity Initial capacity of buffer size.
    */
-  public RingBuffer(int capacity) {
+  public RingBuffer(final int capacity) {
     buffer = (T[]) new Object[capacity];
   }
 
   /**
-   * Is empty check
+   * Is empty check.
    *
    * @return True if buffer is empty.
    */
@@ -61,23 +85,25 @@ public class RingBuffer<T> {
    *
    * @param item Items to be inserted into the buffer.
    */
-  public synchronized void push(T item) {
+  public synchronized void push(final T item) {
     if ((writePointer + 1) % buffer.length == readPointer) {
       state = FULL;
     } else {
       if (state == FULL) {
-        T[] next = (T[]) new Object[buffer.length << 1];
-                /*
-                    [-----[writePointer,readPointer]-------]
-                    start from zero to writePointer or readPointer given they
-                    are the same point and write it to the new array.
-                 */
+        final T[] next = (T[]) new Object[buffer.length << 1];
+        /*
+            [-----[writePointer,readPointer]-------]
+            start from zero to writePointer or readPointer given they
+            are the same point and write it to the new array.
+         */
         System.arraycopy(buffer, 0, next, 0, writePointer);
-                /*
-                    Write also from writePointer to the end of the old array.
-                    into new
-                 */
-        System.arraycopy(buffer, writePointer, next, buffer.length + writePointer, buffer.length - writePointer);
+        /*
+            Write also from writePointer to the end of the old array.
+            into new
+         */
+        final int destPos = buffer.length + writePointer;
+        final int length = buffer.length - writePointer;
+        System.arraycopy(buffer, writePointer, next, destPos, length);
         readPointer += buffer.length;
         buffer = next;
       }
@@ -101,7 +127,7 @@ public class RingBuffer<T> {
     } else {
       state = NORMAL;
     }
-    T buf = buffer[readPointer];
+    final T buf = buffer[readPointer];
     readPointer = (readPointer + 1) % buffer.length;
     return buf;
   }

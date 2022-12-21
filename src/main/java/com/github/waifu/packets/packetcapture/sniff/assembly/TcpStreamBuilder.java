@@ -8,10 +8,25 @@ import java.util.HashMap;
  */
 public class TcpStreamBuilder {
 
-  HashMap<Long, TcpPacket> packetMap = new HashMap<>();
-  PStream stream;
-  PReset packetReset;
+  /**
+   * To be documented.
+   */
+  private HashMap<Long, TcpPacket> packetMap = new HashMap<>();
+  /**
+   * To be documented.
+   */
+  private PaStream stream;
+  /**
+   * To be documented.
+   */
+  private PaReset packetReset;
+  /**
+   * To be documented.
+   */
   private long sequenseNumber;
+  /**
+   * To be documented.
+   */
   private int idNumber;
 
   /**
@@ -21,7 +36,7 @@ public class TcpStreamBuilder {
    * @param preset  Reset class if a reset packet is retrieved.
    * @param pstream Constructor class to send ordered packets to.
    */
-  public TcpStreamBuilder(PReset preset, PStream pstream) {
+  public TcpStreamBuilder(final PaReset preset, final PaStream pstream) {
     packetReset = preset;
     stream = pstream;
   }
@@ -31,7 +46,7 @@ public class TcpStreamBuilder {
    *
    * @param packet TCP packets needing to be ordered.
    */
-  public void streamBuilder(TcpPacket packet) {
+  public void streamBuilder(final TcpPacket packet) {
     if (packet.isResetBit()) {
       if (packet.isSyn()) {
         reset();
@@ -56,12 +71,12 @@ public class TcpStreamBuilder {
         index++;
         counter++;
       }
-    } else if (packetMap.size() >= 100) { // Temp hacky solution until better solution is found. TODO: fix this
+    } else if (packetMap.size() >= 100) { // Temp hacky solution until better solution is found. todo: fix this
       reset();
     }
 
     while (packetMap.containsKey(sequenseNumber)) {
-      TcpPacket packetSeqed = packetMap.remove(sequenseNumber);
+      final TcpPacket packetSeqed = packetMap.remove(sequenseNumber);
       idNumber = packetSeqed.getIp4Packet().getIdentification();
       if (packet.getPayload() != null) {
         sequenseNumber += packetSeqed.getPayloadSize();

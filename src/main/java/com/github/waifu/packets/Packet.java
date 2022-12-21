@@ -7,14 +7,27 @@ import com.github.waifu.packets.reader.BufferReader;
  */
 public abstract class Packet {
 
+  /**
+   * Data as a byte array.
+   */
   private byte[] data;
 
+  /**
+   * To be documented.
+   *
+   * @return to be documented.
+   */
   public byte[] getPayload() {
     return data;
   }
 
-  public void setData(byte[] data) {
-    this.data = data;
+  /**
+   * To be documented.
+   *
+   * @param newData to be documented.
+   */
+  public void setData(final byte[] newData) {
+    this.data = newData;
   }
 
   /**
@@ -27,7 +40,12 @@ public abstract class Packet {
   /**
    * An interface to be used as a class factory for different packet types.
    */
-  public interface IPacket {
+  public interface PacketInterface {
+    /**
+     * To be documented.
+     *
+     * @return to be documented.
+     */
     Packet factory();
   }
 }

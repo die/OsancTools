@@ -15,27 +15,48 @@ import pcap.spi.Interface;
  */
 public class DefaultInterfaceIterator implements Iterator<Interface> {
 
+  /**
+   * To be documented.
+   */
   private Interface next;
 
-  DefaultInterfaceIterator(Interface next) {
+  /**
+   * To be documented.
+   *
+   * @param next To be documented.
+   */
+  DefaultInterfaceIterator(final Interface next) {
     this.next = next;
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   @Override
   public boolean hasNext() {
     return next != null;
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   @Override
   public Interface next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    Interface previous = next;
+    final Interface previous = next;
     next = next.next();
     return previous;
   }
 
+  /**
+   * To be documented.
+   */
   @Override
   public void remove() {
     throw new UnsupportedOperationException();

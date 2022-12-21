@@ -3,8 +3,14 @@ package com.github.waifu.packets;
 /**
  * Generic utility class for utility methods.
  */
-public class Util {
+public final class Util {
 
+  /**
+   * To be documented.
+   */
+  private Util() {
+
+  }
 
   /**
    * Fast method to return an integer from the first 4 bytes of a byte array.
@@ -12,7 +18,7 @@ public class Util {
    * @param bytes The byte array to extract the integer from.
    * @return The integer converted from the first 4 bytes of an array.
    */
-  public static int decodeInt(byte[] bytes) {
+  public static int decodeInt(final byte[] bytes) {
     return (Byte.toUnsignedInt(bytes[0]) << 24) | (Byte.toUnsignedInt(bytes[1]) << 16) | (Byte.toUnsignedInt(bytes[2]) << 8) | Byte.toUnsignedInt(bytes[3]);
   }
 
@@ -22,9 +28,9 @@ public class Util {
    * @param hex String of hex data where a pair of numbers represents a byte.
    * @return Returns a byte array converted from the passed hex string.
    */
-  public static byte[] hexStringToByteArray(String hex) {
-    int l = hex.length();
-    byte[] data = new byte[l / 2];
+  public static byte[] hexStringToByteArray(final String hex) {
+    final int l = hex.length();
+    final byte[] data = new byte[l / 2];
     for (int i = 0; i < l; i += 2) {
       data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4) + Character.digit(hex.charAt(i + 1), 16));
     }
@@ -37,9 +43,9 @@ public class Util {
    * @param list List all objects to be printed.
    * @return String output of the list.
    */
-  public static String showAll(Object[] list) {
-    StringBuilder sb = new StringBuilder();
-    for (Object o : list) {
+  public static String showAll(final Object[] list) {
+    final StringBuilder sb = new StringBuilder();
+    for (final Object o : list) {
       sb.append(o);
     }
     return sb.toString();

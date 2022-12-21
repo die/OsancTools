@@ -2,6 +2,7 @@
  * Copyright (c) 2020-2021 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
+
 package com.github.waifu.packets.packetcapture.sniff.ardikars;
 
 import com.sun.jna.Callback;
@@ -40,29 +41,73 @@ import pcap.spi.annotation.Version;
  * Directly extracted out of ardikars library to make edits possible.
  * https://github.com/ardikars/pcap
  */
-public class NativeMappings {
+public final class NativeMappings {
 
+  /**
+   * To be documented.
+   */
   static final int RESTRICTED_LEVEL;
+  /**
+   * To be documented.
+   */
   static final int RESTRICTED_LEVEL_DENY = 0;
+  /**
+   * To be documented.
+   */
   static final int RESTRICTED_LEVEL_PERMIT = 1;
+  /**
+   * To be documented.
+   */
   static final int RESTRICTED_LEVEL_WARN = 2;
+  /**
+   * To be documented.
+   */
   static final String RESTRICTED_MESSAGE =
           "Access to restricted method is disabled by default; to enabled access to restricted method, the Pcap property 'pcap.restricted' must be set to a value other then deny.";
+  /**
+   * To be documented.
+   */
   static final String RESTRICTED_PROPERTY_VALUE =
           "The possible values for this property are:\n"
                   + "0) deny: issues a runtime exception on each restricted call. This is the default value;\n"
                   + "1) permit: allows restricted calls;\n"
                   + "2) warn: like permit, but also prints a one-line warning on each restricted call.\n";
+  /**
+   * To be documented.
+   */
   static final int OK = 0;
+  /**
+   * To be documented.
+   */
   static final int TRUE = 1;
+  /**
+   * To be documented.
+   */
   static final int FALSE = 0;
+  /**
+   * To be documented.
+   */
   static final short AF_INET;
+  /**
+   * To be documented.
+   */
   static final short AF_INET6;
+  /**
+   * To be documented.
+   */
   static final DefaultPlatformDependent PLATFORM_DEPENDENT;
+  /**
+   * To be documented.
+   */
   static final boolean IS_WIN_PCAP;
+  /**
+   * To be documented.
+   */
   private static final Logger LOG = LoggerFactory.getLogger(NativeMappings.class);
-  private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
-          new HashMap<String, Object>();
+  /**
+   * To be documented.
+   */
+  private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS = new HashMap<String, Object>();
 
   static {
     com.sun.jna.Native.register(NativeMappings.class, NativeLibrary.getInstance(libName(Platform.isWindows())));
@@ -92,22 +137,22 @@ public class NativeMappings {
     funcMap.put("pcap_activate", "pcap_activate");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
-            Library.OPTION_FUNCTION_MAPPER,
-            new FunctionMapper() {
-              @Override
-              public String getFunctionName(NativeLibrary library, Method method) {
-                return funcMap.get(method.getName());
-              }
-            });
+          Library.OPTION_FUNCTION_MAPPER,
+          new FunctionMapper() {
+            @Override
+            public String getFunctionName(final NativeLibrary library, final Method method) {
+              return funcMap.get(method.getName());
+            }
+          });
     PLATFORM_DEPENDENT = new DefaultPlatformDependent();
     IS_WIN_PCAP = pcap_lib_version().toLowerCase().contains("winpcap");
 
     AF_INET = 2;
     AF_INET6 = defaultAfInet6();
 
-    String characterEncoding = System.getProperty("pcap.character.encoding");
+    final String characterEncoding = System.getProperty("pcap.character.encoding");
     initLibrary(characterEncoding);
-    String unsafeAccess = System.getProperty("pcap.restricted", "deny");
+    final String unsafeAccess = System.getProperty("pcap.restricted", "deny");
     if (unsafeAccess.equals("deny")) {
       RESTRICTED_LEVEL = RESTRICTED_LEVEL_DENY;
     } else if (unsafeAccess.equals("permit")) {
@@ -122,7 +167,7 @@ public class NativeMappings {
   private NativeMappings() {
   }
 
-  static void initLibrary(String characterEncoding) {
+  static void initLibrary(final String characterEncoding) {
     if (characterEncoding != null) {
       /*
        * Initialization options.
@@ -133,10 +178,10 @@ public class NativeMappings {
        *
        * On Windows, the local character encoding is the local ANSI code page.
        */
-      int PCAP_CHAR_ENC_LOCAL = 0x00000000; /* strings are in the local character encoding */
-      int PCAP_CHAR_ENC_UTF_8 = 0x00000001; /* strings are in UTF-8 */
-      int rc;
-      ErrorBuffer errbuf = new ErrorBuffer();
+      final int PCAP_CHAR_ENC_LOCAL = 0x00000000; /* strings are in the local character encoding */
+      final int PCAP_CHAR_ENC_UTF_8 = 0x00000001; /* strings are in UTF-8 */
+      final int rc;
+      final ErrorBuffer errbuf = new ErrorBuffer();
       errbuf.clear();
       errbuf.buf[0] = '\0';
       if (characterEncoding.equals("UTF-8")) {
@@ -148,13 +193,13 @@ public class NativeMappings {
     }
   }
 
-  static void eprint(int rc, ErrorBuffer errbuf) {
+  static void eprint(final int rc, final ErrorBuffer errbuf) {
     if (rc != 0) {
       LOG.warn(errbuf.toString());
     }
   }
 
-  static String libName(boolean isWindows) {
+  static String libName(final boolean isWindows) {
     if (isWindows) {
       return "wpcap";
     } else {
@@ -163,26 +208,26 @@ public class NativeMappings {
   }
 
   static short defaultAfInet6() {
-    short af_inet6 = 0;
-    String afInet6 = System.getProperty("pcap.af.inet6");
+    short tmpAfInet6 = 0;
+    final String afInet6 = System.getProperty("pcap.af.inet6");
     try {
-      af_inet6 = (short) Integer.parseInt(afInet6);
-    } catch (NumberFormatException e) {
+      tmpAfInet6 = (short) Integer.parseInt(afInet6);
+    } catch (final NumberFormatException e) {
       switch (Platform.getOSType()) {
         case Platform.MAC:
-          af_inet6 = 30;
+          tmpAfInet6 = 30;
           break;
         case Platform.KFREEBSD:
-          af_inet6 = 28;
+          tmpAfInet6 = 28;
           break;
         case Platform.LINUX:
-          af_inet6 = 10;
+          tmpAfInet6 = 10;
           break;
         default:
-          af_inet6 = 23;
+          tmpAfInet6 = 23;
       }
     }
-    return af_inet6;
+    return tmpAfInet6;
   }
 
   @NativeSignature(
@@ -217,14 +262,14 @@ public class NativeMappings {
   static native Pointer pcap_open_offline(String fname, ErrorBuffer errbuf);
 
   @NativeSignature(
-          signature = "int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)",
+          signature = "int pcap_loop(pcap_t *p, int cnt, PcapHandler callback, u_char *user)",
           since = @Version(major = 0, minor = 4))
-  static native int pcap_loop(Pointer p, int cnt, pcap_handler callback, Pointer user);
+  static native int pcap_loop(Pointer p, int cnt, PcapHandler callback, Pointer user);
 
   @NativeSignature(
-          signature = "int pcap_dispatch(pcap_t *p, int cnt, pcap_handler callback, u_char *user)",
+          signature = "int pcap_dispatch(pcap_t *p, int cnt, PcapHandler callback, u_char *user)",
           since = @Version(major = 0, minor = 4))
-  static native int pcap_dispatch(Pointer p, int cnt, pcap_handler callback, Pointer user);
+  static native int pcap_dispatch(Pointer p, int cnt, PcapHandler callback, Pointer user);
 
   @NativeSignature(
           signature = "int pcap_sendpacket(pcap_t *p, const u_char *buf, int size)",
@@ -233,19 +278,19 @@ public class NativeMappings {
 
   @NativeSignature(
           signature =
-                  "int pcap_compile(pcap_t *p, struct bpf_program *fp, const char *str, int optimize, bpf_u_int32 netmask)",
+                  "int pcap_compile(pcap_t *p, struct BpfProgram *fp, const char *str, int optimize, bpf_u_int32 netmask)",
           since = @Version(major = 0, minor = 4))
-  static native int pcap_compile(Pointer p, bpf_program fp, String str, int optimize, int netmask);
+  static native int pcap_compile(Pointer p, BpfProgram fp, String str, int optimize, int netmask);
 
   @NativeSignature(
-          signature = "int pcap_setfilter(pcap_t *p, struct bpf_program *fp)",
+          signature = "int pcap_setfilter(pcap_t *p, struct BpfProgram *fp)",
           since = @Version(major = 0, minor = 4))
-  static native int pcap_setfilter(Pointer p, bpf_program fp);
+  static native int pcap_setfilter(Pointer p, BpfProgram fp);
 
   @NativeSignature(
-          signature = "void pcap_freecode(struct bpf_program *)",
+          signature = "void pcap_freecode(struct BpfProgram *)",
           since = @Version(major = 0, minor = 6))
-  static native void pcap_freecode(bpf_program fp);
+  static native void pcap_freecode(BpfProgram fp);
 
   @NativeSignature(signature = "void pcap_close(pcap_t *p)", since = @Version(major = 0, minor = 4))
   static native void pcap_close(Pointer p);
@@ -255,7 +300,7 @@ public class NativeMappings {
 
   @NativeSignature(
           signature =
-                  "int pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header, const u_char **pkt_data)",
+                  "int pcap_next_ex(pcap_t *p, struct PcapPkthdr **pkt_header, const u_char **pkt_data)",
           since = @Version(major = 0, minor = 8))
   static native int pcap_next_ex(Pointer p, PointerByReference h, PointerByReference data);
 
@@ -265,7 +310,7 @@ public class NativeMappings {
   static native Pointer pcap_dump_open(Pointer p, String fname);
 
   @NativeSignature(
-          signature = "void pcap_dump(u_char *user, struct pcap_pkthdr *h, u_char *sp)",
+          signature = "void pcap_dump(u_char *user, struct PcapPkthdr *h, u_char *sp)",
           since = @Version(major = 0, minor = 4))
   static native void pcap_dump(Pointer user, Pointer header, Pointer packet);
 
@@ -320,31 +365,31 @@ public class NativeMappings {
   static native int pcap_datalink(Pointer p);
 
   @NativeSignature(
-          signature = "u_int bpf_filter(const struct bpf_insn *, const u_char *, u_int, u_int)",
+          signature = "u_int bpf_filter(const struct BpfInsn *, const u_char *, u_int, u_int)",
           since = @Version(major = 0, minor = 4))
   static native int bpf_filter(
-          bpf_insn insn, Pointer packet, int oriPktLen, int pktLen);
+          BpfInsn insn, Pointer packet, int oriPktLen, int pktLen);
 
-  static InetAddress inetAddress(sockaddr sockaddr) {
+  static InetAddress inetAddress(final SockAddr sockaddr) {
     if (sockaddr == null) {
       return null;
     }
     InetAddress address;
     try {
       if (sockaddr.getSaFamily() == AF_INET) {
-        address = InetAddress.getByAddress(Arrays.copyOfRange(sockaddr.sa_data, 2, 6));
-      } else if (sockaddr.sa_family == AF_INET6) {
-        address = InetAddress.getByAddress(Arrays.copyOfRange(sockaddr.sa_data, 2, 18));
+        address = InetAddress.getByAddress(Arrays.copyOfRange(sockaddr.saData, 2, 6));
+      } else if (sockaddr.saFamily == AF_INET6) {
+        address = InetAddress.getByAddress(Arrays.copyOfRange(sockaddr.saData, 2, 18));
       } else {
         address = null;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       address = null;
     }
     return address;
   }
 
-  interface pcap_handler extends Callback {
+  interface PcapHandler extends Callback {
 
     void got_packet(Pointer args, Pointer header, Pointer packet);
   }
@@ -364,7 +409,7 @@ public class NativeMappings {
     @NativeSignature(
             signature = "int pcap_setdirection(pcap_t *p, pcap_direction_t d)",
             since = @Version(major = 0, minor = 9))
-    int pcap_setdirection(Pointer p, int pcap_direction);
+    int pcap_setdirection(Pointer p, int pcapDirection);
 
     @NativeSignature(
             signature = "pcap_t *pcap_create(const char *source, char *errbuf)",
@@ -434,14 +479,14 @@ public class NativeMappings {
             String fname, int precision, ErrorBuffer errbuf);
 
     @NativeSignature(
-            signature = "int pcap_set_tstamp_precision(pcap_t *p, int tstamp_precision)",
+            signature = "int pcap_set_tstamp_precision(pcap_t *p, int tstampPrecision)",
             since = @Version(major = 1, minor = 5))
-    int pcap_set_tstamp_precision(Pointer p, int tstamp_precision);
+    int pcap_set_tstamp_precision(Pointer p, int tstampPrecision);
 
     @NativeSignature(
-            signature = "int pcap_set_immediate_mode(pcap_t *p, int immediate_mode)",
+            signature = "int pcap_set_immediate_mode(pcap_t *p, int immediateMode)",
             since = @Version(major = 1, minor = 5))
-    int pcap_set_immediate_mode(Pointer p, int immediate_mode);
+    int pcap_set_immediate_mode(Pointer p, int immediateMode);
 
     @NativeSignature(
             signature = "int pcap_get_selectable_fd(pcap_t *p)",
@@ -458,11 +503,11 @@ public class NativeMappings {
     Pointer pcap_get_required_select_timeout(Pointer p);
 
     @NativeSignature(
-            signature = "HANDLE pcap_getevent(pcap_t *p)",
+            signature = "Handle pcap_getevent(pcap_t *p)",
             since = @Version(major = 0, minor = 4),
             description = "Only available on Windows system.",
             portable = false)
-    HANDLE pcap_getevent(Pointer p);
+    Handle pcap_getevent(Pointer p);
 
     @NativeSignature(
             signature = "int pcap_setmintocopy(pcap_t *p, int size)",
@@ -480,26 +525,46 @@ public class NativeMappings {
 
   static final class DefaultPlatformDependent implements PlatformDependent {
 
+    /**
+     * To be documented.
+     */
     private static final NativeLong ZERO = new NativeLong(0);
 
+    /**
+     * To be documented.
+     */
     private static final PlatformDependent NATIVE =
             com.sun.jna.Native.load(
                     libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
 
+    /**
+     * To be documented.
+     */
     private final AtomicBoolean injectIsSupported = new AtomicBoolean(true);
+    /**
+     * To be documented.
+     */
     private final AtomicBoolean dumpFtellIsSupported = new AtomicBoolean(true);
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param buf To be documented.
+     * @param size To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_inject(Pointer p, Pointer buf, int size) {
+    public int pcap_inject(final Pointer p, final Pointer buf, final int size) {
       if (injectIsSupported.get()) {
         try {
           return NATIVE.pcap_inject(p, buf, size);
-        } catch (NullPointerException | UnsatisfiedLinkError e) {
+        } catch (final NullPointerException | UnsatisfiedLinkError e) {
           LOG.warn("pcap_inject: Function doesn't exist, use pcap_sendpacket.");
           injectIsSupported.compareAndSet(true, false);
         }
       }
-      int rc = pcap_sendpacket(p, buf, size);
+      final int rc = pcap_sendpacket(p, buf, size);
       if (rc < 0) {
         return rc;
       } else {
@@ -507,12 +572,18 @@ public class NativeMappings {
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param dumper To be documented.
+     * @return To be documented.
+     */
     @Override
-    public NativeLong pcap_dump_ftell(Pointer dumper) {
+    public NativeLong pcap_dump_ftell(final Pointer dumper) {
       if (dumpFtellIsSupported.get()) {
         try {
           return NATIVE.pcap_dump_ftell(dumper);
-        } catch (NullPointerException | UnsatisfiedLinkError e) {
+        } catch (final NullPointerException | UnsatisfiedLinkError e) {
           LOG.warn("pcap_dump_ftell: Function doesn't exist.");
           dumpFtellIsSupported.compareAndSet(true, false);
         }
@@ -520,246 +591,426 @@ public class NativeMappings {
       return ZERO;
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param pcapDirection To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_setdirection(Pointer p, int pcap_direction) {
+    public int pcap_setdirection(final Pointer p, final int pcapDirection) {
       try {
-        return NATIVE.pcap_setdirection(p, pcap_direction);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        return NATIVE.pcap_setdirection(p, pcapDirection);
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_setdirection: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param device To be documented.
+     * @param errbuf To be documented.
+     * @return To be documented.
+     */
     @Override
-    public Pointer pcap_create(String device, ErrorBuffer errbuf) {
+    public Pointer pcap_create(final String device, final ErrorBuffer errbuf) {
       try {
         return NATIVE.pcap_create(device, errbuf);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_create: Function doesn't exist.");
         return null;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param snaplen To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_snaplen(Pointer p, int snaplen) {
+    public int pcap_set_snaplen(final Pointer p, final int snaplen) {
       try {
         return NATIVE.pcap_set_snaplen(p, snaplen);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_snaplen: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param promisc To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_promisc(Pointer p, int promisc) {
+    public int pcap_set_promisc(final Pointer p, final int promisc) {
       try {
         return NATIVE.pcap_set_promisc(p, promisc);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_promisc: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param timeout To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_timeout(Pointer p, int timeout) {
+    public int pcap_set_timeout(final Pointer p, final int timeout) {
       try {
         return NATIVE.pcap_set_timeout(p, timeout);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_timeout: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param bufferSize To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_buffer_size(Pointer p, int bufferSize) {
+    public int pcap_set_buffer_size(final Pointer p, final int bufferSize) {
       try {
         return NATIVE.pcap_set_buffer_size(p, bufferSize);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_buffer_size: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_activate(Pointer p) {
+    public int pcap_activate(final Pointer p) {
       try {
         return NATIVE.pcap_activate(p);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_activate: Function doesn't exist.");
         return -1;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_can_set_rfmon(Pointer p) {
+    public int pcap_can_set_rfmon(final Pointer p) {
       try {
         return NATIVE.pcap_can_set_rfmon(p);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_can_set_frmon: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param error To be documented.
+     * @return To be documented.
+     */
     @Override
-    public String pcap_statustostr(int error) {
+    public String pcap_statustostr(final int error) {
       try {
         return NATIVE.pcap_statustostr(error);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         return "pcap_statustostr: Function doesn't exist.";
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param fname To be documented.
+     * @return To be documented.
+     */
     @Override
-    public Pointer pcap_dump_open_append(Pointer p, String fname) {
+    public Pointer pcap_dump_open_append(final Pointer p, final String fname) {
       try {
         return NATIVE.pcap_dump_open_append(p, fname);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_dump_open_append: Function doesn't exist.");
         return null;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param tstampType To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_tstamp_type(Pointer p, int tstampType) {
+    public int pcap_set_tstamp_type(final Pointer p, final int tstampType) {
       try {
         return NATIVE.pcap_set_tstamp_type(p, tstampType);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_tstamp_type: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_get_tstamp_precision(Pointer p) {
+    public int pcap_get_tstamp_precision(final Pointer p) {
       try {
         return NATIVE.pcap_get_tstamp_precision(p);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_get_tstamp_precision: Function doesn't exist.");
         return Timestamp.Precision.MICRO.value();
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param rfmon To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_rfmon(Pointer p, int rfmon) {
+    public int pcap_set_rfmon(final Pointer p, final int rfmon) {
       try {
         return NATIVE.pcap_set_rfmon(p, rfmon);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_rfmon: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param fname To be documented.
+     * @param precision To be documented.
+     * @param errbuf To be documented.
+     * @return To be documented.
+     */
     @Override
-    public Pointer pcap_open_offline_with_tstamp_precision(
-            String fname, int precision, ErrorBuffer errbuf) {
+    public Pointer pcap_open_offline_with_tstamp_precision(final String fname, final int precision, final ErrorBuffer errbuf) {
       try {
         return NATIVE.pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_open_offline_with_tstamp_precision: Function doesn't exist.");
         return null;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param tstampPrecision To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_tstamp_precision(Pointer p, int tstamp_precision) {
+    public int pcap_set_tstamp_precision(final Pointer p, final int tstampPrecision) {
       try {
-        return NATIVE.pcap_set_tstamp_precision(p, tstamp_precision);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        return NATIVE.pcap_set_tstamp_precision(p, tstampPrecision);
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_set_tstamp_precision: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param immediateMode To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_set_immediate_mode(Pointer p, int immediate_mode) {
+    public int pcap_set_immediate_mode(final Pointer p, final int immediateMode) {
       try {
-        return NATIVE.pcap_set_immediate_mode(p, immediate_mode);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        return NATIVE.pcap_set_immediate_mode(p, immediateMode);
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         return 0; // ignore immediate mode for libpcap version before 1.5.0
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @param size To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_setmintocopy(Pointer p, int size) {
+    public int pcap_setmintocopy(final Pointer p, final int size) {
       try {
         return NATIVE.pcap_setmintocopy(p, size);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_setmintocopy: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param opts To be documented.
+     * @param errbuf To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_init(int opts, ErrorBuffer errbuf) {
+    public int pcap_init(final int opts, final ErrorBuffer errbuf) {
       try {
         return NATIVE.pcap_init(opts, errbuf);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_init: Function doesn't exist.");
         return 0;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @return To be documented.
+     */
     @Override
-    public int pcap_get_selectable_fd(Pointer p) {
+    public int pcap_get_selectable_fd(final Pointer p) {
       try {
         return NATIVE.pcap_get_selectable_fd(p);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         throw new UnsupportedOperationException("pcap_get_selectable_fd: Function doesn't exist.");
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @return To be documented.
+     */
     @Override
-    public Pointer pcap_get_required_select_timeout(Pointer p) {
+    public Pointer pcap_get_required_select_timeout(final Pointer p) {
       try {
         return NATIVE.pcap_get_required_select_timeout(p);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         LOG.warn("pcap_get_required_select_timeout: Function doesn't exist.");
         return null;
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     * @return To be documented.
+     */
     @Override
-    public HANDLE pcap_getevent(Pointer p) {
+    public Handle pcap_getevent(final Pointer p) {
       try {
         return NATIVE.pcap_getevent(p);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
+      } catch (final NullPointerException | UnsatisfiedLinkError e) {
         throw new UnsupportedOperationException("pcap_getevent: Function doesn't exist.");
       }
     }
   }
 
+  /**
+   * To be documented.
+   */
   public static final class ErrorBuffer extends Structure {
+    /**
+     * To be documented.
+     */
+    private byte[] buf;
 
-    public byte[] buf;
-
+    /**
+     * To be documented.
+     */
     public ErrorBuffer() {
       this(256);
     }
 
-    public ErrorBuffer(int size) {
+    /**
+     * To be documented.
+     *
+     * @param size To be documented.
+     */
+    public ErrorBuffer(final int size) {
       this.buf = new byte[size];
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
       return Collections.singletonList("buf");
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public String toString() {
       return com.sun.jna.Native.toString(buf);
     }
   }
 
-  public static final class bpf_program extends Structure {
+  /**
+   * To be documented.
+   */
+  public static final class BpfProgram extends Structure {
 
-    public int bf_len;
-    public bpf_insn.ByReference bf_insns;
+    /**
+     * To be documented.
+     */
+    private int bfLen;
+    /**
+     * To be documented.
+     */
+    private BpfInsn.ByReference bfInsns;
 
-    public bpf_program() {
+    /**
+     * To be documented.
+     */
+    public BpfProgram() {
       // public constructor
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
       return Arrays.asList(
@@ -769,17 +1020,40 @@ public class NativeMappings {
     }
   }
 
-  public static class bpf_insn extends Structure {
+  /**
+   * To be documented.
+   */
+  public static class BpfInsn extends Structure {
 
-    public short code;
-    public byte jt;
-    public byte jf;
-    public int k;
+    /**
+     * To be documented.
+     */
+    private short code;
+    /**
+     * To be documented.
+     */
+    private byte jt;
+    /**
+     * To be documented.
+     */
+    private byte jf;
+    /**
+     * To be documented.
+     */
+    private int k;
 
-    public bpf_insn() {
+    /**
+     * To be documented.
+     */
+    public BpfInsn() {
       // public constructor
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
       return Arrays.asList(
@@ -789,26 +1063,55 @@ public class NativeMappings {
               "k");
     }
 
-    public static final class ByReference extends bpf_insn implements Structure.ByReference {
+    /**
+     * To be documented.
+     */
+    public static final class ByReference extends BpfInsn implements Structure.ByReference {
     }
   }
 
-  public static class sockaddr extends Structure {
+  /**
+   * To be documented.
+   */
+  public static class SockAddr extends Structure {
 
+    /**
+     * To be documented.
+     */
     private static final ByteOrder NATIVE_BYTE_ORDER = ByteOrder.nativeOrder();
+    /**
+     * To be documented.
+     */
+    private short saFamily;
+    /**
+     * To be documented.
+     */
+    private byte[] saData = new byte[14];
 
-    public short sa_family;
-    public byte[] sa_data = new byte[14];
-
-    public sockaddr() {
+    /**
+     * To be documented.
+     */
+    public SockAddr() {
       // public constructor
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     static boolean isLinuxOrWindows() {
       return Platform.isWindows() || Platform.isLinux();
     }
 
-    static short getSaFamilyByByteOrder(short saFamily, ByteOrder bo) {
+    /**
+     * To be documented.
+     *
+     * @param saFamily To be documented.
+     * @param bo To be documented.
+     * @return To be documented.
+     */
+    static short getSaFamilyByByteOrder(final short saFamily, final ByteOrder bo) {
       if (bo.equals(ByteOrder.BIG_ENDIAN)) {
         return (short) (0xFF & saFamily);
       } else {
@@ -816,6 +1119,11 @@ public class NativeMappings {
       }
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
       return Arrays.asList(
@@ -824,65 +1132,134 @@ public class NativeMappings {
       );
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     public short getSaFamily() {
       if (isLinuxOrWindows()) {
-        return sa_family;
+        return saFamily;
       } else {
-        return getSaFamilyByByteOrder(sa_family, NATIVE_BYTE_ORDER);
+        return getSaFamilyByByteOrder(saFamily, NATIVE_BYTE_ORDER);
       }
     }
 
-    public static final class ByReference extends sockaddr implements Structure.ByReference {
+    /**
+     * To be documented.
+     */
+    public static final class ByReference extends SockAddr implements Structure.ByReference {
     }
   }
 
-  public static class pcap_if extends Structure implements Interface {
+  /**
+   * To be documented.
+   */
+  public static class PcapIf extends Structure implements Interface {
 
-    public pcap_if.ByReference next;
-    public String name;
-    public String description;
-    public pcap_addr.ByReference addresses;
-    public int flags;
+    /**
+     * To be documented.
+     */
+    private PcapIf.ByReference next;
+    /**
+     * To be documented.
+     */
+    private String name;
+    /**
+     * To be documented.
+     */
+    private String description;
+    /**
+     * To be documented.
+     */
+    private PcapAddr.ByReference addresses;
+    /**
+     * To be documented.
+     */
+    private int flags;
 
-    public pcap_if() {
+    /**
+     * To be documented.
+     */
+    public PcapIf() {
       // public constructor
     }
 
-    public pcap_if(Pointer pointer) {
+    /**
+     * To be documented.
+     *
+     * @param pointer To be documented.
+     */
+    public PcapIf(final Pointer pointer) {
       super(pointer);
       read();
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
-    public pcap_if next() {
+    public PcapIf next() {
       return next;
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public String name() {
       return name;
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public String description() {
       return description;
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
-    public pcap_addr addresses() {
+    public PcapAddr addresses() {
       return addresses;
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public int flags() {
       return flags;
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public Iterator<Interface> iterator() {
       return new DefaultInterfaceIterator(this);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
       return Arrays.asList(
@@ -894,51 +1271,110 @@ public class NativeMappings {
       );
     }
 
-    public static final class ByReference extends pcap_if implements Structure.ByReference {
+    /**
+     * To be documented.
+     */
+    public static final class ByReference extends PcapIf implements Structure.ByReference {
     }
   }
 
-  public static class pcap_addr extends Structure implements Address {
+  /**
+   * To be documented.
+   */
+  public static class PcapAddr extends Structure implements Address {
 
-    public pcap_addr.ByReference next;
-    public sockaddr.ByReference addr;
-    public sockaddr.ByReference netmask;
-    public sockaddr.ByReference broadaddr;
-    public sockaddr.ByReference dstaddr;
+    /**
+     * To be documented.
+     */
+    private PcapAddr.ByReference next;
+    /**
+     * To be documented.
+     */
+    private SockAddr.ByReference addr;
+    /**
+     * To be documented.
+     */
+    private SockAddr.ByReference netmask;
+    /**
+     * To be documented.
+     */
+    private SockAddr.ByReference broadaddr;
+    /**
+     * To be documented.
+     */
+    private SockAddr.ByReference dstaddr;
 
-    public pcap_addr() {
+    /**
+     * To be documented.
+     */
+    public PcapAddr() {
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
-    public pcap_addr next() {
+    public PcapAddr next() {
       return next;
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public InetAddress address() {
       return inetAddress(addr);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public InetAddress netmask() {
       return inetAddress(netmask);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public InetAddress broadcast() {
       return inetAddress(broadaddr);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public InetAddress destination() {
       return inetAddress(dstaddr);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public Iterator<Address> iterator() {
       return new DefaultAddressIterator(this);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
       return Arrays.asList(
@@ -950,21 +1386,39 @@ public class NativeMappings {
       );
     }
 
-    public static final class ByReference extends pcap_addr implements Structure.ByReference {
+    /**
+     * To be documented.
+     */
+    public static final class ByReference extends PcapAddr implements Structure.ByReference {
     }
   }
 
-  public static class HANDLE extends PointerType {
+  /**
+   * To be documented.
+   */
+  public static class Handle extends PointerType {
 
-    static HANDLE INVALID_HANDLE_VALUE =
-            new HANDLE(Pointer.createConstant(Native.POINTER_SIZE == 8 ? -1 : 0xFFFFFFFFL));
-
+    /**
+     * To be documented.
+     */
+    private static Handle invalidHandleValue = new Handle(Pointer.createConstant(Native.POINTER_SIZE == 8 ? -1 : 0xFFFFFFFFL));
+    /**
+     * To be documented.
+     */
     private boolean immutable;
 
-    public HANDLE() {
+    /**
+     * To be documented.
+     */
+    public Handle() {
     }
 
-    public HANDLE(Pointer p) {
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     */
+    public Handle(final Pointer p) {
       super(p);
       immutable = true;
     }
@@ -973,120 +1427,200 @@ public class NativeMappings {
      * Override to the appropriate object for INVALID_HANDLE_VALUE.
      */
     @Override
-    public Object fromNative(Object nativeValue, FromNativeContext context) {
-      Object o = super.fromNative(nativeValue, context);
-      if (HANDLE.INVALID_HANDLE_VALUE.equals(o)) {
-        return HANDLE.INVALID_HANDLE_VALUE;
+    public Object fromNative(final Object nativeValue, final FromNativeContext context) {
+      final Object o = super.fromNative(nativeValue, context);
+      if (Handle.invalidHandleValue.equals(o)) {
+        return Handle.invalidHandleValue;
       }
       return o;
     }
 
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     */
     @Override
-    public void setPointer(Pointer p) {
+    public void setPointer(final Pointer p) {
       if (immutable) {
         throw new UnsupportedOperationException("immutable reference");
       }
       super.setPointer(p);
     }
 
+    /**
+     * To be documented.
+     *
+     * @param o To be documented.
+     * @return To be documented.
+     */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) {
         return true;
       }
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      HANDLE handle = (HANDLE) o;
+      final Handle handle = (Handle) o;
       return Pointer.nativeValue(getPointer()) == Pointer.nativeValue(handle.getPointer());
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public int hashCode() {
       return Objects.hash(Pointer.nativeValue(getPointer()));
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     public String toString() {
       return String.valueOf(getPointer());
     }
   }
 
-  public static class pcap_pkthdr extends Structure {
+  /**
+   * To be documented.
+   */
+  public static class PcapPkthdr extends Structure {
 
+    /**
+     * To be documented.
+     */
     public static final int TS_OFFSET;
+    /**
+     * To be documented.
+     */
     public static final int CAPLEN_OFFSET;
+    /**
+     * To be documented.
+     */
     public static final int LEN_OFFSET;
 
     static {
-      pcap_pkthdr ph = new pcap_pkthdr();
+      final PcapPkthdr ph = new PcapPkthdr();
       TS_OFFSET = ph.fieldOffset("ts");
       CAPLEN_OFFSET = ph.fieldOffset("caplen");
       LEN_OFFSET = ph.fieldOffset("len");
     }
 
-    public timeval ts; // struct timeval
-    public int caplen; // bpf_u_int32
-    public int len; // bpf_u_int32
+    /**
+     * To be documented.
+     */
+    private TimeVal ts; // struct TimeVal
+    /**
+     * To be documented.
+     */
+    private int caplen; // bpf_u_int32
+    /**
+     * To be documented.
+     */
+    private int len; // bpf_u_int32
 
-    public pcap_pkthdr() {
+    /**
+     * To be documented.
+     */
+    public PcapPkthdr() {
     }
 
-    public pcap_pkthdr(Pointer p) {
+    /**
+     * To be documented.
+     *
+     * @param p To be documented.
+     */
+    public PcapPkthdr(final Pointer p) {
       super(p);
       read();
     }
 
-    static NativeLong getTvSec(Pointer p) {
-      return p.getNativeLong(TS_OFFSET + timeval.TV_SEC_OFFSET);
+    static NativeLong getTvSec(final Pointer p) {
+      return p.getNativeLong(TS_OFFSET + TimeVal.TV_SEC_OFFSET);
     }
 
-    static NativeLong getTvUsec(Pointer p) {
-      return p.getNativeLong(TS_OFFSET + timeval.TV_USEC_OFFSET);
+    static NativeLong getTvUsec(final Pointer p) {
+      return p.getNativeLong(TS_OFFSET + TimeVal.TV_USEC_OFFSET);
     }
 
-    static int getCaplen(Pointer p) {
+    static int getCaplen(final Pointer p) {
       return p.getInt(CAPLEN_OFFSET);
     }
 
-    static int getLen(Pointer p) {
+    static int getLen(final Pointer p) {
       return p.getInt(LEN_OFFSET);
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
-      List<String> list = new ArrayList<String>();
+      final List<String> list = new ArrayList<String>();
       list.add("ts");
       list.add("caplen");
       list.add("len");
       return list;
     }
 
-    public static class ByReference extends pcap_pkthdr implements Structure.ByReference {
+    /**
+     * To be documented.
+     */
+    public static class ByReference extends PcapPkthdr implements Structure.ByReference {
     }
   }
 
+  /**
+   * To be documented.
+   */
+  public static class TimeVal extends Structure {
 
-  public static class timeval extends Structure {
-
+    /**
+     * To be documented.
+     */
     public static final int TV_SEC_OFFSET;
+    /**
+     * To be documented.
+     */
     public static final int TV_USEC_OFFSET;
 
     static {
-      NativeMappings.timeval tv = new NativeMappings.timeval();
+      final TimeVal tv = new TimeVal();
       TV_SEC_OFFSET = tv.fieldOffset("tv_sec");
       TV_USEC_OFFSET = tv.fieldOffset("tv_usec");
     }
 
-    public NativeLong tv_sec; // long
-    public NativeLong tv_usec; // long
+    /**
+     * To be documented.
+     */
+    private NativeLong tvSec; // long
+    /**
+     * To be documented.
+     */
+    private NativeLong tvUsec; // long
 
-    public timeval() {
+    /**
+     * To be documented.
+     */
+    public TimeVal() {
     }
 
+    /**
+     * To be documented.
+     *
+     * @return To be documented.
+     */
     @Override
     protected List<String> getFieldOrder() {
-      List<String> list = new ArrayList<String>();
+      final List<String> list = new ArrayList<String>();
       list.add("tv_sec");
       list.add("tv_usec");
       return list;

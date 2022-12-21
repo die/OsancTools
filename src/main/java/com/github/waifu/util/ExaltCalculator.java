@@ -5,28 +5,34 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * To be documented.
  */
 public class ExaltCalculator {
 
+  /**
+   * To be documented.
+   */
   private int stat;
 
   /**
-   *
+   * To be documented.
    */
   public ExaltCalculator() {
-    this.stat = Main.settings.getStat();
+    this.stat = Main.getSettings().getStat();
   }
 
   /**
-   * @param exalts
-   * @return
+   * To be documented.
+   *
+   * @param exalts to be documented.
+   * @return to be documented.
    */
-  public int calculateCompletions(List<String[]> exalts) {
+  public int calculateCompletions(final List<String[]> exalts) {
     int completes = 0;
-    for (String[] s : exalts) {
-      int exalt = Integer.parseInt(Arrays.asList(s).subList(2, s.length).get(stat).replace("+", ""));
-      int multiplier;
+    for (final String[] s : exalts) {
+      final String exaltString = Arrays.asList(s).subList(2, s.length).get(stat);
+      final int exalt = Integer.parseInt(exaltString.replace("+", ""));
+      final int multiplier;
       switch (stat) {
         case 0, 1 -> multiplier = 5;
         default -> multiplier = 1;
@@ -41,16 +47,20 @@ public class ExaltCalculator {
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return to be documented.
    */
   public int getStat() {
     return this.stat;
   }
 
   /**
-   * @param stat
+   * To be documented.
+   *
+   * @param s to be documented.
    */
-  public void setStat(int stat) {
-    this.stat = stat;
+  public void setStat(final int s) {
+    this.stat = s;
   }
 }

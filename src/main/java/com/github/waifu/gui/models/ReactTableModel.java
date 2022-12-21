@@ -4,12 +4,12 @@ import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * To be documented.
  */
 public class ReactTableModel extends DefaultTableModel {
 
   /**
-   *
+   * To be documented.
    */
   public ReactTableModel() {
     addColumn("React");
@@ -20,24 +20,34 @@ public class ReactTableModel extends DefaultTableModel {
   }
 
   /**
-   * @param column
-   * @return
+   * To be documented.
+   *
+   * @param column To be documented.
+   * @return To be documented.
    */
   @Override
-  public Class<?> getColumnClass(int column) {
-    if (column == 0) return ImageIcon.class;
-    if (column == 2) return ImageIcon.class;
-    if (column == 4) return Boolean.class;
+  public Class<?> getColumnClass(final int column) {
+    if (column == 0) {
+      return ImageIcon.class;
+    }
+    if (column == 2) {
+      return ImageIcon.class;
+    }
+    if (column == 4) {
+      return Boolean.class;
+    }
     return Object.class;
   }
 
   /**
-   * @param row
-   * @param column
-   * @return
+   * To be documented.
+   *
+   * @param row To be documented.
+   * @param column To be documented.
+   * @return To be documented.
    */
   @Override
-  public boolean isCellEditable(int row, int column) {
+  public boolean isCellEditable(final int row, final int column) {
     return column == 4;
   }
 }

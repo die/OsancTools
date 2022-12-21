@@ -9,15 +9,15 @@ public class GroundTileData {
   /**
    * The X coordinate of this tile.
    */
-  public short x;
+  private short positionX;
   /**
    * The Y coordinate of this tile.
    */
-  public short y;
+  private short positionY;
   /**
    * The tile type of this tile.
    */
-  public int type;
+  private int type;
 
   /**
    * Deserializer method to extract data from the buffer.
@@ -25,9 +25,9 @@ public class GroundTileData {
    * @param buffer Data that needs deserializing.
    * @return Returns this object after deserializing.
    */
-  public GroundTileData deserialize(BufferReader buffer) {
-    x = buffer.readShort();
-    y = buffer.readShort();
+  public GroundTileData deserialize(final BufferReader buffer) {
+    positionX = buffer.readShort();
+    positionY = buffer.readShort();
     type = buffer.readUnsignedShort();
     return this;
   }

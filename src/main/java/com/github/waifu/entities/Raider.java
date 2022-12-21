@@ -1,6 +1,6 @@
 package com.github.waifu.entities;
 
-import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.Gui;
 import java.awt.Image;
 import java.io.File;
 import java.net.URL;
@@ -12,24 +12,57 @@ import javax.swing.ImageIcon;
 import org.json.JSONArray;
 
 /**
- *
+ * To be documented.
  */
 public class Raider {
 
+  /**
+   * To be documented.
+   */
   private final String id;
+  /**
+   * To be documented.
+   */
   private final String serverNickname;
+  /**
+   * To be documented.
+   */
   private final ImageIcon avatar;
+  /**
+   * To be documented.
+   */
   private final List<Account> accounts;
+  /**
+   * To be documented.
+   */
   private String timestampJoined;
+  /**
+   * To be documented.
+   */
   private boolean gotPriority;
+  /**
+   * To be documented.
+   */
   private boolean gotEarlyLocation;
+  /**
+   * To be documented.
+   */
   private boolean inWaitingList;
-  private boolean inVC;
+  /**
+   * To be documented.
+   */
+  private boolean inVc;
+  /**
+   * To be documented.
+   */
   private JSONArray roles;
+  /**
+   * To be documented.
+   */
   private JSONArray reacts;
 
   /**
-   *
+   * To be documented.
    */
   public Raider() {
     this.id = "";
@@ -39,13 +72,18 @@ public class Raider {
     this.gotPriority = false;
     this.gotEarlyLocation = false;
     this.inWaitingList = false;
-    this.inVC = false;
+    this.inVc = false;
     this.roles = null;
     this.reacts = null;
     this.accounts = new ArrayList<>();
   }
 
-  public Raider(Account account) {
+  /**
+   * To be documented.
+   *
+   * @param account To be documented.
+   */
+  public Raider(final Account account) {
     this.id = "";
     this.serverNickname = "";
     this.timestampJoined = "";
@@ -53,14 +91,21 @@ public class Raider {
     this.gotPriority = false;
     this.gotEarlyLocation = false;
     this.inWaitingList = false;
-    this.inVC = false;
+    this.inVc = false;
     this.roles = null;
     this.reacts = null;
     this.accounts = new ArrayList<>();
     accounts.add(account);
   }
 
-  public Raider(String id, String avatar, String serverNickname) {
+  /**
+   * To be documented.
+   *
+   * @param id To be documented.
+   * @param avatar To be documented.
+   * @param serverNickname To be documented.
+   */
+  public Raider(final String id, final String avatar, final String serverNickname) {
     this.id = id;
     this.avatar = setAvatar(avatar);
     this.serverNickname = serverNickname;
@@ -68,26 +113,28 @@ public class Raider {
   }
 
   /**
-   * @param id
-   * @param serverNickname
-   * @param timestampJoined
-   * @param avatar
-   * @param gotPriority
-   * @param gotEarlyLocation
-   * @param inWaitingList
-   * @param inVC
-   * @param roles
-   * @param reacts
-   * @param accounts
+   * To be documented.
+   *
+   * @param id To be documented.
+   * @param serverNickname To be documented.
+   * @param timestampJoined To be documented.
+   * @param avatar To be documented.
+   * @param gotPriority To be documented.
+   * @param gotEarlyLocation To be documented.
+   * @param inWaitingList To be documented.
+   * @param inVc To be documented.
+   * @param roles To be documented.
+   * @param reacts To be documented.
+   * @param accounts To be documented.
    */
-  public Raider(String id, String serverNickname, String timestampJoined, String avatar, boolean gotPriority, boolean gotEarlyLocation, boolean inWaitingList, boolean inVC, JSONArray roles, JSONArray reacts, List<Account> accounts) {
+  public Raider(final String id, final String serverNickname, final String timestampJoined, final String avatar, final boolean gotPriority, final boolean gotEarlyLocation, final boolean inWaitingList, final boolean inVc, final JSONArray roles, final JSONArray reacts, final List<Account> accounts) {
     this.id = id;
     this.serverNickname = serverNickname;
     this.timestampJoined = timestampJoined;
     this.gotPriority = gotPriority;
     this.gotEarlyLocation = gotEarlyLocation;
     this.inWaitingList = inWaitingList;
-    this.inVC = inVC;
+    this.inVc = inVc;
     this.roles = roles;
     this.reacts = reacts;
     this.accounts = accounts;
@@ -95,72 +142,121 @@ public class Raider {
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public String printRaider() {
-    return "ID: " + this.id + "\n" +
-            "Joined: " + new Date(Long.parseLong(this.timestampJoined)) + "\n" +
-            "Got Priority: " + this.gotPriority + "\n" +
-            "Got Early Location: " + this.gotEarlyLocation + "\n" +
-            "In Waiting List: " + this.inWaitingList + "\n" +
-            "In Voice Channel: " + this.inVC + "\n" +
-            "Reacts: " + this.reacts.length() + "\n" +
-            "Roles: " + this.roles.length() + "\n" +
-            "Accounts: " + this.accounts.size() + "\n";
+    return "ID: "
+            + this.id
+            + "\n"
+            + "Joined: "
+            + new Date(Long.parseLong(this.timestampJoined))
+            + "\nGot Priority: "
+            + this.gotPriority
+            + "\nGot Early Location: "
+            + this.gotEarlyLocation
+            + "\nIn Waiting List: "
+            + this.inWaitingList
+            + "\nIn Voice Channel: "
+            + this.inVc
+            + "\nReacts: "
+            + this.reacts.length()
+            + "\nRoles: "
+            + this.roles.length()
+            + "\nAccounts: "
+            + this.accounts.size()
+            + "\n";
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   public String getId() {
     return id;
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   public String getServerNickname() {
     return serverNickname;
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   public boolean isCelestial() {
     return roles.toList().contains("907008641079586817");
   }
 
-  public boolean isInVC() {
-    return inVC;
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public boolean isInVc() {
+    return inVc;
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   public JSONArray getRoles() {
     return this.roles;
   }
 
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   public JSONArray getReacts() {
     return this.reacts;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public ImageIcon getAvatar() {
     return this.avatar;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public List<Account> getAccounts() {
     return this.accounts;
   }
 
   /**
-   * @param avatar
-   * @return
+   * To be documented.
+   *
+   * @param avatar To be documented.
+   * @return To be documented.
    */
-  public ImageIcon setAvatar(String avatar) {
-    if (GUI.getMode() == GUI.LAN_MODE) {
+  public ImageIcon setAvatar(final String avatar) {
+    if (Gui.getMode() == Gui.LAN_MODE) {
       if (this.accounts != null) {
-        String[] extensions = {".png", ".jpg", ".gif"};
-        for (String s : extensions) {
-          File file = new File(GUI.TEST_RESOURCE_PATH + "raids/" + GUI.getJson().getJSONObject("raid").getInt("id") + "/players/" + this.accounts.get(0).getName() + "/avatar" + s);
+        final String[] extensions = {".png", ".jpg", ".gif"};
+        for (final String s : extensions) {
+          final File file = new File(Gui.TEST_RESOURCE_PATH + "raids/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/players/" + this.accounts.get(0).getName() + "/avatar" + s);
           if (file.exists()) {
             try {
               return new ImageIcon(ImageIO.read(file));
-            } catch (Exception e) {
+            } catch (final Exception e) {
               e.printStackTrace();
             }
           }
@@ -168,24 +264,30 @@ public class Raider {
       }
     } else {
       try {
-        Image image;
+        final Image image;
         if (avatar.contains(".gif")) {
           image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_REPLICATE);
         } else {
           image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
         }
-        ImageIcon icon = new ImageIcon(image);
+        final ImageIcon icon = new ImageIcon(image);
         icon.setDescription(id);
         return icon;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         return null;
       }
     }
     return null;
   }
 
-  public Account findAccount(String username) {
-    for (Account a : accounts) {
+  /**
+   * To be documented.
+   *
+   * @param username To be documented.
+   * @return To be documented.
+   */
+  public Account findAccount(final String username) {
+    for (final Account a : accounts) {
       if (a.getName().equals(username)) {
         return a;
       }
@@ -194,11 +296,14 @@ public class Raider {
   }
 
   /**
-   * @param width
-   * @param height
+   * To be documented.
+   *
+   * @param width To be documented.
+   * @param height To be documented.
+   * @return To be documented.
    */
-  public ImageIcon getResizedAvatar(int width, int height) {
-    ImageIcon resized = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
+  public ImageIcon getResizedAvatar(final int width, final int height) {
+    final ImageIcon resized = new ImageIcon(this.avatar.getImage().getScaledInstance(width, height, Image.SCALE_REPLICATE));
     resized.setDescription(avatar.getDescription());
     return resized;
   }

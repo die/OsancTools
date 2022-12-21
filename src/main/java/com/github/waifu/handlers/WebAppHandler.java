@@ -7,7 +7,14 @@ import org.jsoup.Jsoup;
 /**
  * Handler to work with the WebApp API.
  */
-public class WebAppHandler {
+public final class WebAppHandler {
+
+  /**
+   * To be documented.
+   */
+  private WebAppHandler() {
+
+  }
 
   /**
    * getRaid method.
@@ -19,7 +26,7 @@ public class WebAppHandler {
    */
   public static JSONObject getRaid(final String raidId) {
     try {
-      int id = Integer.parseInt(raidId);
+      final int id = Integer.parseInt(raidId);
       /* Oldest Valid ID is 9 */
       final int minId = 9;
       if (id >= minId) {
@@ -27,7 +34,7 @@ public class WebAppHandler {
       } else {
         return null;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return null;
     }
   }
@@ -41,15 +48,15 @@ public class WebAppHandler {
    * @return JSONObject containing raid data.
    */
   public static JSONObject getData(final int id) {
-    JSONObject request = new JSONObject();
-    String token = Main.settings.getToken();
+    final JSONObject request = new JSONObject();
+    final String token = Main.getSettings().getToken();
     if (!token.equals("")) {
       request.put("access_token", token);
       request.put("raid_id", id);
       try {
-        String data = Jsoup.connect("https://api.osanc.net/getRaid").requestBody(request.toString()).header("Content-Type", "application/json").ignoreContentType(true).post().body().text();
+        final String data = Jsoup.connect("https://api.osanc.net/getRaid").requestBody(request.toString()).header("Content-Type", "application/json").ignoreContentType(true).post().body().text();
         return new JSONObject(data);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         return null;
       }
     } else {

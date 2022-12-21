@@ -6,7 +6,11 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.github.waifu.debug.KeyListener;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.enums.Stat;
-import com.github.waifu.gui.actions.*;
+import com.github.waifu.gui.actions.CalculatePlayerExaltationsAction;
+import com.github.waifu.gui.actions.GetWebAppDataAction;
+import com.github.waifu.gui.actions.ParseWebAppReactsAction;
+import com.github.waifu.gui.actions.ParseWebAppSetsAction;
+import com.github.waifu.gui.actions.StoreStatIndexAction;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -38,6 +42,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -51,85 +56,280 @@ import org.json.JSONTokener;
 
 
 /**
- * GUI class to construct the GUI.
+ * Gui class to construct the Gui.
  */
-public class GUI extends JFrame {
+public class Gui extends JFrame {
 
+  /**
+   * To be documented.
+   */
   public static final int NORMAL_MODE = 0;
+  /**
+   * To be documented.
+   */
   public static final int DEBUG_MODE = 1;
+  /**
+   * To be documented.
+   */
   public static final int LAN_MODE = 2;
-  public static String TEST_RESOURCE_PATH = "src/test/resources/";
-  public static Raid raid;
+  /**
+   * Path for getting test resources.
+   */
+  public static final String TEST_RESOURCE_PATH = "src/test/resources/";
+  /**
+   * Raid object.
+   */
+  private static Raid raid;
+  /**
+   * Mode of the program.
+   */
   private static int mode;
+  /**
+   * WebApp JSON.
+   */
   private static JSONObject json;
+  /**
+   * Check if a process is running.
+   */
   private static boolean processRunning;
+  /**
+   * Worker for handling background processes.
+   */
   private static SwingWorker<Void, Void> worker;
+  /**
+   * Button to get WebApp data.
+   */
   private JButton inputRaidButton;
+  /**
+   * Button to parse vc.
+   */
   private JButton vcParseButton;
+  /**
+   * Button to parse reacts.
+   */
   private JButton parseReactsButton;
+  /**
+   * Button to parse sets.
+   */
   private JButton parseSetsButton;
+  /**
+   * To be documented.
+   */
   private JProgressBar progressBar;
+  /**
+   * To be documented.
+   */
   private JPanel main;
+  /**
+   * To be documented.
+   */
   private JTabbedPane tabbedPane;
+  /**
+   * To be documented.
+   */
   private JPanel home;
+  /**
+   * To be documented.
+   */
   private JLabel raidLabel;
+  /**
+   * To be documented.
+   */
   private JPanel raidPanel;
+  /**
+   * To be documented.
+   */
   private JPanel descriptionPanel;
+  /**
+   * To be documented.
+   */
   private JLabel description;
+  /**
+   * To be documented.
+   */
   private JButton stopButton;
+  /**
+   * To be documented.
+   */
   private JPanel connected;
+  /**
+   * To be documented.
+   */
   private JLabel metadata;
+  /**
+   * To be documented.
+   */
   private JPanel creditsPanel;
+  /**
+   * To be documented.
+   */
   private JPanel options;
+  /**
+   * To be documented.
+   */
   private JPasswordField tokenField;
+  /**
+   * To be documented.
+   */
   private JButton setTokenButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton lightRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton darkRadioButton;
+  /**
+   * To be documented.
+   */
   private JPasswordField betaTokenField;
+  /**
+   * To be documented.
+   */
   private JButton setBetaTokenButton;
-  private JLabel WebAppTokenField;
+  /**
+   * To be documented.
+   */
+  private JLabel webAppTokenField;
+  /**
+   * To be documented.
+   */
   private JButton clearSettingsButton;
+  /**
+   * To be documented.
+   */
   private JPanel metadataPanel;
+  /**
+   * To be documented.
+   */
   private JPanel buttonsPanel;
+  /**
+   * To be documented.
+   */
   private JPanel progressBarPanel;
+  /**
+   * To be documented.
+   */
   private JLabel creditsImage;
+  /**
+   * To be documented.
+   */
   private JRadioButton manaRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton defenseRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton dexterityRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton wisdomRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton lifeRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton attackRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton speedRadioButton;
+  /**
+   * To be documented.
+   */
   private JRadioButton vitalityRadioButton;
+  /**
+   * To be documented.
+   */
   private JTextField exaltsInput;
+  /**
+   * To be documented.
+   */
   private JButton exaltsButton;
+  /**
+   * To be documented.
+   */
   private JLabel exaltsResult;
+  /**
+   * To be documented.
+   */
   private JLabel lifePotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel manaPotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel attackPotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel speedPotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel vitalityPotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel defensePotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel dexterityPotionImage;
+  /**
+   * To be documented.
+   */
   private JLabel wisdomPotionImage;
+  /**
+   * To be documented.
+   */
   private JTextField requirementInput;
+  /**
+   * To be documented.
+   */
   private JButton requirementButton;
+  /**
+   * To be documented.
+   */
   private JPanel exaltsSelection;
+  /**
+   * To be documented.
+   */
   private JComboBox requirementSheetComboBox;
+  /**
+   * To be documented.
+   */
   private JCheckBox showRealmeyeAlertCheckBox;
+  /**
+   * To be documented.
+   */
   private JButton setResourceDirButton;
+  /**
+   * To be documented.
+   */
   private TitledBorder border;
 
   /**
-   * GUI method.
-   * <p>
-   * Constructs a JFrame to display the GUI.
+   * Gui method.
+   *
+   * <p>Constructs a JFrame to display the Gui.
    */
-  public GUI() {
+  public Gui() {
     try {
-      UIManager.setLookAndFeel(Main.settings.getTheme().equals("dark") ? new FlatDarkLaf() : new FlatLightLaf());
+      final String theme = Main.getSettings().getTheme();
+      final LookAndFeel lookAndFeel = theme.equals("dark") ? new FlatDarkLaf() : new FlatLightLaf();
+      UIManager.setLookAndFeel(lookAndFeel);
       FlatLaf.updateUI();
-    } catch (Exception ignored) {
+    } catch (final Exception e) {
+      e.printStackTrace();
     }
     $$$setupUI$$$();
     createUIComponents();
@@ -149,53 +349,67 @@ public class GUI extends JFrame {
   }
 
   /**
-   * @param worker
+   * Set the Swing worker.
+   *
+   * @param newWorker Swing Worker that runs background tasks.
    */
-  public static void setWorker(SwingWorker worker) {
-    GUI.worker = worker;
+  public static void setWorker(final SwingWorker newWorker) {
+    Gui.worker = newWorker;
   }
 
   /**
-   * @return
+   * Gets the WebApp JSON.
+   *
+   * @return WebApp data as JSON
    */
   public static JSONObject getJson() {
-    return GUI.json;
+    return Gui.json;
   }
 
   /**
-   * @param json
+   * Sets the WebApp JSON.
+   *
+   * @param newJson WebApp data as JSON
    */
-  public static void setJson(JSONObject json) {
-    GUI.json = json;
+  public static void setJson(final JSONObject newJson) {
+    Gui.json = newJson;
   }
 
   /**
-   * @return
+   * Get the mode of the GUI.
+   *
+   * @return mode as int.
    */
   public static int getMode() {
     return mode;
   }
 
   /**
-   * @param mode
+   * Set the mode of the GUI.
+   *
+   * @param newMode int representing the mode.
    */
-  public void setMode(int mode) {
-    GUI.mode = mode;
+  public void setMode(final int newMode) {
+    Gui.mode = newMode;
   }
 
   /**
-   * @param processRunning
+   * Set the boolean for tracking processes.
+   *
+   * @param newProcessRunning boolean if the process is running.
    */
-  public static void setProcessRunning(boolean processRunning) {
-    GUI.processRunning = processRunning;
+  public static void setProcessRunning(final boolean newProcessRunning) {
+    Gui.processRunning = newProcessRunning;
   }
 
   /**
-   * @return
+   * Check if there is a process running.
+   *
+   * @return state of the worker as boolean.
    */
   public static boolean checkProcessRunning() {
     if (processRunning) {
-      Component rootPane = GUI.getFrames()[0].getComponents()[0];
+      final Component rootPane = Gui.getFrames()[0].getComponents()[0];
       JOptionPane.showMessageDialog(rootPane,
               "Please wait until the current process is finished.",
               "Wait!",
@@ -204,79 +418,115 @@ public class GUI extends JFrame {
     return processRunning;
   }
 
+  /**
+   * Gets the raid.
+   *
+   * @return raid as a Raid object.
+   */
+  public static Raid getRaid() {
+    return Gui.raid;
+  }
+
+  /**
+   * Sets the raid.
+   *
+   * @param newRaid as a Raid object.
+   */
+  public static void setRaid(final Raid newRaid) {
+    Gui.raid = newRaid;
+  }
+
+  /**
+   * Check if Realm-eye is down.
+   */
   private void checkRealmeye() {
     try {
-      if (Main.settings.showAlert()) {
-        JLabel status = RealmeyeRequestHandler.checkRealmeyeStatus();
+      if (Main.getSettings().showAlert()) {
+        final JLabel status = RealmeyeRequestHandler.checkRealmeyeStatus();
         if (status != null) {
-          JCheckBox checkbox = new JCheckBox("Don't alert in the future");
-          Object[] params = {status, checkbox};
+          final JCheckBox checkbox = new JCheckBox("Don't alert in the future");
+          final Object[] params = {status, checkbox};
           JOptionPane.showMessageDialog(this,
                   params, "Realmeye server error", JOptionPane.WARNING_MESSAGE);
-          Main.settings.setShowAlert(!checkbox.isSelected());
+          Main.getSettings().setShowAlert(!checkbox.isSelected());
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }
   }
 
+  /**
+   * Check if there is a new version of the program.
+   */
   private void checkNewVersion() {
-    int remaining = getGithubRateLimit();
+    final int remaining = getGithubRateLimit();
 
     if (remaining <= 30) {
       return;
     }
 
     try {
-      URL url = new URL("https://api.github.com/repos/waifu/osanctools/releases");
-      JSONTokener tokener = new JSONTokener(url.openStream());
-      JSONArray jsonArray = new JSONArray(tokener);
-      String recentVersion = jsonArray.getJSONObject(0).getString("tag_name");
-      int parseVersion = parseVersion(recentVersion);
-      String version = "v1.0.0.4";
-      int currentVersion = parseVersion(version);
+      final URL url = new URL("https://api.github.com/repos/waifu/osanctools/releases");
+      final JSONTokener tokener = new JSONTokener(url.openStream());
+      final JSONArray jsonArray = new JSONArray(tokener);
+      final String recentVersion = jsonArray.getJSONObject(0).getString("tag_name");
+      final int parseVersion = parseVersion(recentVersion);
+      final String version = "v1.0.0.4";
+      final int currentVersion = parseVersion(version);
 
       if (currentVersion < parseVersion) {
-        JTextArea textarea = new JTextArea("> https://github.com/Waifu/OsancTools/releases/tag/" + recentVersion);
+        final JTextArea textarea = new JTextArea("> https://github.com/Waifu/OsancTools/releases/tag/" + recentVersion);
         textarea.setEditable(false);
-        JLabel label = new JLabel("<html>Note: previous versions are <b>deprecated</b>. Please update immediately.");
-        Object[] params = {"A new version was found. Please download it here:", textarea, label};
+        final String text = "<html>Note: previous versions are <b>deprecated</b>. Please update immediately.";
+        final JLabel label = new JLabel(text);
+        final Object[] params = {"A new version was found. Please download it here:", textarea, label};
 
         JOptionPane.showMessageDialog(this,
                 params, "New release version found", JOptionPane.WARNING_MESSAGE);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }
   }
 
+  /**
+   * Get the current rate limit.
+   *
+   * @return remaining requests as int.
+   */
   private int getGithubRateLimit() {
-    JSONObject jsonObject;
+    final JSONObject jsonObject;
     try {
-      URL url = new URL("https://api.github.com/rate_limit");
-      JSONTokener tokener = new JSONTokener(url.openStream());
+      final URL url = new URL("https://api.github.com/rate_limit");
+      final JSONTokener tokener = new JSONTokener(url.openStream());
       jsonObject = new JSONObject(tokener);
       return jsonObject.getJSONObject("resources").getJSONObject("core").getInt("remaining");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return 0;
     }
   }
 
-  private int parseVersion(String version) {
+  /**
+   * Get the current version of the program.
+   *
+   * @param version version as a String.
+   * @return parsed version as an int.
+   */
+  private int parseVersion(final String version) {
     return Integer.parseInt(version.replace('.', ' ').replace("v", "").replace(" ", ""));
   }
 
   /**
    * addActionListeners method.
-   * <p>
-   * Constructs all listeners for the JFrame.
+   *
+   * <p>Constructs all listeners for the JFrame.
    */
   private void addActionListeners() {
     inputRaidButton.addActionListener(new GetWebAppDataAction(main, this));
 
     vcParseButton.addActionListener(e -> {
-      AcceptFilePanel acceptFilePanel = new AcceptFilePanel();
+      final AcceptFilePanel acceptFilePanel = new AcceptFilePanel();
       acceptFilePanel.setLocationRelativeTo(this);
     });
 
@@ -291,7 +541,7 @@ public class GUI extends JFrame {
       }
     });
 
-    requirementButton.addActionListener(e -> Main.settings.setRequirement(Integer.parseInt(requirementInput.getText())));
+    requirementButton.addActionListener(e -> Main.getSettings().setRequirement(Integer.parseInt(requirementInput.getText())));
 
     exaltsButton.addActionListener(new CalculatePlayerExaltationsAction(exaltsInput, exaltsResult));
 
@@ -312,96 +562,96 @@ public class GUI extends JFrame {
     wisdomRadioButton.addActionListener(new StoreStatIndexAction(Stat.WISDOM));
 
     setResourceDirButton.addActionListener(e -> {
-      JFileChooser fc = new JFileChooser();
-      FileFilter filter = new FileNameExtensionFilter("Assets (*.assets)", "assets");
+      final JFileChooser fc = new JFileChooser();
+      final FileFilter filter = new FileNameExtensionFilter("Assets (*.assets)", "assets");
 
       fc.setFileFilter(filter);
-      int returnVal = fc.showOpenDialog(main);
+      final int returnVal = fc.showOpenDialog(main);
 
       if (returnVal == JFileChooser.APPROVE_OPTION) {
-        Main.settings.setResourceDir(fc.getSelectedFile().getAbsolutePath());
+        Main.getSettings().setResourceDir(fc.getSelectedFile().getAbsolutePath());
         System.out.println(fc.getSelectedFile().getAbsolutePath());
       }
     });
 
     showRealmeyeAlertCheckBox.addActionListener(e -> {
-      Main.settings.setShowAlert(showRealmeyeAlertCheckBox.isSelected());
+      Main.getSettings().setShowAlert(showRealmeyeAlertCheckBox.isSelected());
     });
 
     requirementSheetComboBox.addActionListener(e -> {
-      JComboBox comboBox = (JComboBox) e.getSource();
-      Main.settings.setRequirementSheetName(String.valueOf(comboBox.getSelectedItem()));
+      final JComboBox comboBox = (JComboBox) e.getSource();
+      Main.getSettings().setRequirementSheetName(String.valueOf(comboBox.getSelectedItem()));
       try {
         Main.loadRequirementSheet();
         TimeUnit.SECONDS.sleep(1);
-      } catch (Exception ex) {
+      } catch (final Exception ex) {
         ex.printStackTrace();
       }
     });
 
     clearSettingsButton.addActionListener(e -> {
-      int confirm = JOptionPane.showConfirmDialog(main,
+      final int confirm = JOptionPane.showConfirmDialog(main,
               "Are you sure you want to clear your settings?",
               "Confirmation",
               JOptionPane.YES_NO_OPTION);
       if (confirm == 0) {
-        Main.settings.clearSettings();
+        Main.getSettings().clearSettings();
       }
     });
 
     setTokenButton.addActionListener(e -> {
-      String token = String.valueOf(tokenField.getPassword());
-      int confirm = JOptionPane.showConfirmDialog(main,
-              "The current token is: " + Main.settings.getToken() + "\n Would you like to change it to: " + token,
+      final String token = String.valueOf(tokenField.getPassword());
+      final int confirm = JOptionPane.showConfirmDialog(main,
+              "The current token is: " + Main.getSettings().getToken() + "\n Would you like to change it to: " + token,
               "Confirmation",
               JOptionPane.YES_NO_OPTION);
       if (confirm == 0) {
-        Main.settings.setToken(token);
+        Main.getSettings().setToken(token);
       }
     });
 
     setBetaTokenButton.addActionListener(e -> {
-      String betaToken = String.valueOf(betaTokenField.getPassword());
-      int confirm = JOptionPane.showConfirmDialog(main,
-              "The current token is: " + Main.settings.getBetaToken() + "\n Would you like to change it to: " + betaToken,
+      final String betaToken = String.valueOf(betaTokenField.getPassword());
+      final int confirm = JOptionPane.showConfirmDialog(main,
+              "The current token is: " + Main.getSettings().getBetaToken() + "\n Would you like to change it to: " + betaToken,
               "Confirmation",
               JOptionPane.YES_NO_OPTION);
       if (confirm == 0) {
-        Main.settings.setBetaToken(betaToken);
+        Main.getSettings().setBetaToken(betaToken);
       }
     });
 
     tokenField.addFocusListener(new FocusAdapter() {
       @Override
-      public void focusGained(FocusEvent e) {
+      public void focusGained(final FocusEvent e) {
         tokenField.setEchoChar((char) 0);
       }
 
       @Override
-      public void focusLost(FocusEvent e) {
+      public void focusLost(final FocusEvent e) {
         tokenField.setEchoChar('•');
       }
     });
 
     betaTokenField.addFocusListener(new FocusAdapter() {
       @Override
-      public void focusGained(FocusEvent e) {
+      public void focusGained(final FocusEvent e) {
         betaTokenField.setEchoChar((char) 0);
       }
 
       @Override
-      public void focusLost(FocusEvent e) {
+      public void focusLost(final FocusEvent e) {
         betaTokenField.setEchoChar('•');
       }
     });
 
-    lightRadioButton.addActionListener(e -> Main.settings.setTheme("light"));
+    lightRadioButton.addActionListener(e -> Main.getSettings().setTheme("light"));
 
-    darkRadioButton.addActionListener(e -> Main.settings.setTheme("dark"));
+    darkRadioButton.addActionListener(e -> Main.getSettings().setTheme("dark"));
   }
 
   /**
-   * Method generated by IntelliJ IDEA GUI Designer
+   * Method generated by IntelliJ IDEA Gui Designer.
    * >>> IMPORTANT!! <<<
    * DO NOT edit this method OR call it in your code!
    *
@@ -570,9 +820,9 @@ public class GUI extends JFrame {
     setTokenButton = new JButton();
     setTokenButton.setText("Set Token");
     options.add(setTokenButton, new GridConstraints(3, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    WebAppTokenField = new JLabel();
-    WebAppTokenField.setText("WebApp Token");
-    options.add(WebAppTokenField, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    webAppTokenField = new JLabel();
+    webAppTokenField.setText("WebApp Token");
+    options.add(webAppTokenField, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     lightRadioButton = new JRadioButton();
     lightRadioButton.setText("Light");
     options.add(lightRadioButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -629,16 +879,19 @@ public class GUI extends JFrame {
   }
 
   /**
+   * To be documented.
+   *
    * @noinspection ALL
+   * @return To be documented.
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
 
   /**
-   *
+   * Update the GUI panel with WebApp metadata.
    */
-  public void updateGUI() {
+  public void updateGui() {
     try {
       if (raid != null) {
         border.setTitle("Connected");
@@ -646,14 +899,21 @@ public class GUI extends JFrame {
         connected.setBorder(border);
         SwingUtilities.updateComponentTreeUI(connected);
         raidPanel.setOpaque(true);
-        Color color = new Color(raid.getJson().getInt("bg_color"));
-        Color invertedColor = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
+        final Color color = new Color(raid.getJson().getInt("bg_color"));
+        final int max = 255;
+        final int invR = max - color.getRed();
+        final int invG = max - color.getGreen();
+        final int invB = max - color.getBlue();
+        final Color invertedColor = new Color(invR, invG, invB);
         raidPanel.setBackground(color);
         raidLabel.setForeground(invertedColor);
         raidLabel.setIcon(raid.getRaidLeader().getResizedAvatar(25, 25));
         raidLabel.setText(raid.getName() + " led by " + raid.getRaidLeader().getServerNickname());
 
-        String raidMetadata = "ID: " + raid.getId() + " Status: " + raid.getStatus() + " Location: " + raid.getLocation();
+        final String textId = "ID: " + raid.getId();
+        final String textStatus = " Status: " + raid.getStatus();
+        final String textLocation = " Location: " + raid.getLocation();
+        final String raidMetadata = textId + textStatus + textLocation;
         metadata.setText(raidMetadata);
 
         String raidDescription = raid.getDescription();
@@ -663,21 +923,21 @@ public class GUI extends JFrame {
         description.setText(raidDescription);
         pack();
       }
-    } catch (JSONException exception) {
+    } catch (final JSONException exception) {
       System.out.println("Cannot find assets from JSON, did you select the right file?");
     }
   }
 
   /**
    * createUIComponents method.
-   * <p>
-   * Modifies custom components on launch.
+   *
+   * <p>Modifies custom components on launch.
    */
   private void createUIComponents() {
-    // TODO: place custom component creation code here
-    switch (Main.settings.getTheme()) {
-      case "light" -> lightRadioButton.setSelected(true);
-      case "dark" -> darkRadioButton.setSelected(true);
+    if ("dark".equals(Main.getSettings().getTheme())) {
+      darkRadioButton.setSelected(true);
+    } else {
+      lightRadioButton.setSelected(true);
     }
     creditsImage.setIcon(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")));
     lifePotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/life.png")));
@@ -688,8 +948,7 @@ public class GUI extends JFrame {
     dexterityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/dexterity.png")));
     vitalityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/vitality.png")));
     wisdomPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/wisdom.png")));
-    switch (Main.settings.getStat()) {
-      case 0 -> lifeRadioButton.setSelected(true);
+    switch (Main.getSettings().getStat()) {
       case 1 -> manaRadioButton.setSelected(true);
       case 2 -> attackRadioButton.setSelected(true);
       case 3 -> defenseRadioButton.setSelected(true);
@@ -697,21 +956,22 @@ public class GUI extends JFrame {
       case 5 -> dexterityRadioButton.setSelected(true);
       case 6 -> vitalityRadioButton.setSelected(true);
       case 7 -> wisdomRadioButton.setSelected(true);
+      default -> lifeRadioButton.setSelected(true);
     }
-    requirementInput.setText(String.valueOf(Main.settings.getRequirement()));
+    requirementInput.setText(String.valueOf(Main.getSettings().getRequirement()));
     border = BorderFactory.createTitledBorder("None");
     border.setTitle("Not Connected");
     border.setTitleColor(Color.red);
     connected.setBorder(border);
     raidPanel.setOpaque(false);
-    showRealmeyeAlertCheckBox.setSelected(Main.settings.showAlert());
-    tokenField.setText(Main.settings.getToken());
-    betaTokenField.setText(Main.settings.getBetaToken());
+    showRealmeyeAlertCheckBox.setSelected(Main.getSettings().showAlert());
+    tokenField.setText(Main.getSettings().getToken());
+    betaTokenField.setText(Main.getSettings().getBetaToken());
     creditsPanel.addKeyListener(new KeyListener());
 
-    List<String> requirementSheets = Main.settings.getRequirementSheets();
-    String selectedSheet = Main.settings.getRequirementSheetName();
-    for (String s : requirementSheets) {
+    final List<String> requirementSheets = Main.getSettings().getRequirementSheets();
+    final String selectedSheet = Main.getSettings().getRequirementSheetName();
+    for (final String s : requirementSheets) {
       requirementSheetComboBox.addItem(s);
       if (selectedSheet.equals(s)) {
         requirementSheetComboBox.setSelectedIndex(requirementSheets.indexOf(s));

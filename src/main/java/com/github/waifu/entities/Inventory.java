@@ -20,7 +20,13 @@ import org.json.JSONObject;
  */
 public class Inventory {
 
+  /**
+   * To be documented.
+   */
   private final List<Item> items;
+  /**
+   * To be documented.
+   */
   private final Issue issue;
 
   /**
@@ -29,7 +35,7 @@ public class Inventory {
    * <p>Constructs a default Inventory with only empty slots.
    */
   public Inventory() {
-    List<Item> empty = new ArrayList<>();
+    final List<Item> empty = new ArrayList<>();
     empty.add(new Item("Empty slot", "weapon", "Wizard"));
     empty.add(new Item("Empty slot", "ability", "Wizard"));
     empty.add(new Item("Empty slot", "armor", "Wizard"));
@@ -46,59 +52,73 @@ public class Inventory {
    *
    * @param items list of items the Inventory has.
    */
-  public Inventory(List<Item> items) {
+  public Inventory(final List<Item> items) {
     this.items = items;
     this.issue = new Issue(Problem.NONE);
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public List<Item> getItems() {
     return this.items;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public Item getWeapon() {
     return this.items.get(0);
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public Item getAbility() {
     return this.items.get(1);
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public Item getArmor() {
     return this.items.get(2);
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public Item getRing() {
     return this.items.get(3);
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public Issue getIssue() {
     return this.issue;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public String printInventory() {
-    StringJoiner stringJoiner = new StringJoiner(" | ");
-    for (Item item : items) {
+    final StringJoiner stringJoiner = new StringJoiner(" | ");
+    for (final Item item : items) {
       stringJoiner.add(item.getName());
     }
     return stringJoiner.toString();
@@ -108,6 +128,8 @@ public class Inventory {
    * parseInventory method.
    *
    * <p>Returns the Inventory after parsing each item.
+   *
+   * @return To be documented.
    */
   public Inventory parseInventory() {
     if (items.stream().allMatch(item -> item.getName().equals("Empty slot"))) {
@@ -115,13 +137,13 @@ public class Inventory {
       issue.setMessage("");
       issue.setWhisper("");
     } else {
-      String metric = Utilities.json.getString("metric");
+      final String metric = Utilities.getJson().getString("metric");
 
       switch (metric) {
         case "points" -> {
           int points = 0;
 
-          for (Item i : items) {
+          for (final Item i : items) {
             if (!parseEmptySlot(i)) {
               switch (i.getLabel()) {
                 case "UT", "ST" -> {
@@ -133,7 +155,7 @@ public class Inventory {
                 }
               }
             }
-            int calculatedPoints = calculatePoints(i);
+            final int calculatedPoints = calculatePoints(i);
 
             if (!i.getImage().getDescription().equals("marked")) {
               if (calculatedPoints > 0) {
@@ -144,14 +166,14 @@ public class Inventory {
             points += calculatedPoints;
           }
 
-          int required = Utilities.json.getJSONObject("required points").getInt(items.get(0).getItemClass());
+          final int required = Utilities.getJson().getJSONObject("required points").getInt(items.get(0).getItemClass());
           if (points < required) {
             issue.setProblem(Problem.POINTS);
           }
         }
 
         case "name" -> {
-          for (Item i : items) {
+          for (final Item i : items) {
             if (!parseEmptySlot(i)) {
               switch (i.getLabel()) {
                 case "UT", "ST" -> {
@@ -165,16 +187,21 @@ public class Inventory {
             }
           }
         }
+        default -> {
+          return this;
+        }
       }
     }
     return this;
   }
 
   /**
-   * @param item
-   * @return
+   * To be documented.
+   *
+   * @param item To be documented.
+   * @return To be documented.
    */
-  private boolean parseEmptySlot(Item item) {
+  private boolean parseEmptySlot(final Item item) {
     if (item.getName().equals("Empty slot")) {
       issue.setProblem(Problem.EMPTY_SLOT);
       item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor()));
@@ -186,29 +213,31 @@ public class Inventory {
   }
 
   /**
-   * @param item
-   * @return
+   * To be documented.
+   *
+   * @param item To be documented.
+   * @return To be documented.
    */
-  private int calculatePoints(Item item) {
+  private int calculatePoints(final Item item) {
 
-    int tier = item.getTier();
+    final int tier = item.getTier();
     if (tier == 11) {
       return -1;
     }
 
     if (item.getType().equals("weapon") && checkAllowedSTSet(item)) {
-      return Utilities.json.getJSONObject("required points").getInt(item.getItemClass());
+      return Utilities.getJson().getJSONObject("required points").getInt(item.getItemClass());
     } else {
-      JSONObject jsonObject = Utilities.json.getJSONObject("items");
+      final JSONObject jsonObject = Utilities.getJson().getJSONObject("items");
 
-      for (String keys : jsonObject.keySet()) {
-        JSONObject pointObject = jsonObject.getJSONObject(keys);
+      for (final String keys : jsonObject.keySet()) {
+        final JSONObject pointObject = jsonObject.getJSONObject(keys);
         if (pointObject.has(item.getType()) && pointObject.getJSONArray(item.getType()).toList().contains(item.getNameWithoutLabel())) {
           return Integer.parseInt(keys);
         } else {
-          for (String k : pointObject.keySet()) {
+          for (final String k : pointObject.keySet()) {
             try {
-              JSONObject combination = pointObject.getJSONObject(k);
+              final JSONObject combination = pointObject.getJSONObject(k);
               if (combination.getJSONArray("items").toList().contains(item.getNameWithoutLabel())) {
                 for (int i = 0; i < items.indexOf(item); i++) {
                   if (combination.getJSONArray("items").toList().contains(items.get(i).getNameWithoutLabel())) {
@@ -220,9 +249,9 @@ public class Inventory {
                     return 0;
                   }
                 }
-                JSONArray slots = combination.getJSONArray("slot");
+                final JSONArray slots = combination.getJSONArray("slot");
                 for (int i = 0; i < slots.length(); i++) {
-                  Item item1 = switch (slots.getString(i)) {
+                  final Item item1 = switch (slots.getString(i)) {
                     case "weapon" -> getWeapon();
                     case "ability" -> getAbility();
                     case "armor" -> getArmor();
@@ -234,7 +263,7 @@ public class Inventory {
                   }
                 }
                 for (int i = 0; i < slots.length(); i++) {
-                  Item item1 = switch (slots.getString(i)) {
+                  final Item item1 = switch (slots.getString(i)) {
                     case "weapon" -> getWeapon();
                     case "ability" -> getAbility();
                     case "armor" -> getArmor();
@@ -246,7 +275,7 @@ public class Inventory {
                 }
                 return Integer.parseInt(keys);
               }
-            } catch (JSONException e) {
+            } catch (final JSONException e) {
               //e.printStackTrace();
             }
           }
@@ -257,12 +286,15 @@ public class Inventory {
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @param item To be documented.
+   * @return To be documented.
    */
-  private boolean checkBannedItem(Item item) {
-    if (Utilities.json.has("bannedItems")) {
-      JSONObject bannedItems = Utilities.json.getJSONObject("bannedItems");
-      JSONArray itemList = bannedItems.getJSONArray(item.getType());
+  private boolean checkBannedItem(final Item item) {
+    if (Utilities.getJson().has("bannedItems")) {
+      final JSONObject bannedItems = Utilities.getJson().getJSONObject("bannedItems");
+      final JSONArray itemList = bannedItems.getJSONArray(item.getType());
 
       boolean mark = false;
       if (itemList.toList().contains(item.getNameWithoutLabel())) {
@@ -287,20 +319,20 @@ public class Inventory {
   /**
    * Checks if a banned ST item is part of the allowed set.
    *
-   * @param item
+   * @param item To be documented.
    * @return true if it is part of an allowed ST set that is equipped
    */
-  public boolean checkAllowedSTSet(Item item) {
-    if (Utilities.json.has("allowedSTSets")) {
-      JSONObject allowedSts = Utilities.json.getJSONObject("allowedSTSets");
+  public boolean checkAllowedSTSet(final Item item) {
+    if (Utilities.getJson().has("allowedSTSets")) {
+      final JSONObject allowedSts = Utilities.getJson().getJSONObject("allowedSTSets");
 
-      for (String keys : allowedSts.keySet()) {
-        JSONObject set = (JSONObject) allowedSts.get(keys);
-        JSONArray stItems = set.getJSONArray("items");
+      for (final String keys : allowedSts.keySet()) {
+        final JSONObject set = (JSONObject) allowedSts.get(keys);
+        final JSONArray stItems = set.getJSONArray("items");
         if (stItems.toList().contains(item.getNameWithoutLabel())) {
-          int total = set.getInt("total");
+          final int total = set.getInt("total");
           int count = 0;
-          for (Item i : items) {
+          for (final Item i : items) {
             if (stItems.toList().contains(i.getNameWithoutLabel())) {
               count++;
             }
@@ -317,9 +349,15 @@ public class Inventory {
     }
   }
 
-  private boolean checkSwapout(Item item) {
-    if (Utilities.json.has("swapoutItems")) {
-      JSONArray swapouts = Utilities.json.getJSONArray("swapoutItems");
+  /**
+   * To be documented.
+   *
+   * @param item To be documented.
+   * @return To be documented.
+   */
+  private boolean checkSwapout(final Item item) {
+    if (Utilities.getJson().has("swapoutItems")) {
+      final JSONArray swapouts = Utilities.getJson().getJSONArray("swapoutItems");
       if (swapouts.toList().contains(item.getNameWithoutLabel())) {
         issue.setProblem(Problem.SWAPOUT_ITEM);
         item.setImage(Utilities.markImage(item.getImage(), Problem.SWAPOUT_ITEM.getColor()));
@@ -333,22 +371,27 @@ public class Inventory {
     }
   }
 
-  private void checkTier(Item item) {
+  /**
+   * To be documented.
+   *
+   * @param item To be documented.
+   */
+  private void checkTier(final Item item) {
     try {
-      String label = item.getLabel().substring(item.getLabel().length() - 2);
-      int tier;
+      final String label = item.getLabel().substring(item.getLabel().length() - 2);
+      final int tier;
       if (label.contains("T")) {
         tier = Integer.parseInt(label.substring(label.length() - 1));
       } else {
         tier = Integer.parseInt(label);
       }
 
-      if (tier < Utilities.json.getJSONObject("tier").getInt(item.getType())) {
+      if (tier < Utilities.getJson().getJSONObject("tier").getInt(item.getType())) {
         issue.setProblem(Problem.UNDER_REQS);
         item.setImage(Utilities.markImage(item.getImage(), Problem.UNDER_REQS.getColor()));
         item.getImage().setDescription("marked");
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       issue.setProblem(Problem.ERROR);
       item.setImage(Utilities.markImage(item.getImage(), Problem.ERROR.getColor()));
@@ -357,15 +400,17 @@ public class Inventory {
   }
 
   /**
-   * calculateDps method.
+   * To be documented.
    *
-   * <p>Returns a boolean if the Inventory meets a certain DPS requirement.
+   * @param skin To be documented.
+   * @param dps To be documented.
+   * @return To be documented.
    */
-  public boolean calculateDps(String skin, int dps) {
-    JSONObject dpsItems = Utilities.json.getJSONObject("reacts").getJSONObject("dpsItems");
+  public boolean calculateDps(final String skin, final int dps) {
+    final JSONObject dpsItems = Utilities.getJson().getJSONObject("reacts").getJSONObject("dpsItems");
     int count = 0;
-    for (Item s : items) {
-      JSONArray jsonArray = dpsItems.getJSONArray(s.getType());
+    for (final Item s : items) {
+      final JSONArray jsonArray = dpsItems.getJSONArray(s.getType());
       String name = "";
       if (s.getName().charAt(s.getName().length() - 4) == ' ') {
         name = s.getName().substring(0, s.getName().length() - 4);
@@ -379,7 +424,7 @@ public class Inventory {
         s.setImage(Utilities.markImage(s.getImage(), Problem.MISSING_REACT_DPS.getColor()));
       }
     }
-    JSONArray exaltedSkins = (JSONArray) Utilities.json.get("exaltedSkins");
+    final JSONArray exaltedSkins = (JSONArray) Utilities.getJson().get("exaltedSkins");
     if (exaltedSkins.toList().contains(skin)) {
       count++;
     }
@@ -387,19 +432,21 @@ public class Inventory {
   }
 
   /**
-   * @param w
-   * @param h
-   * @return
+   * To be documented.
+   *
+   * @param w To be documented.
+   * @param h To be documented.
+   * @return To be documented.
    */
-  public ImageIcon createImage(int w, int h) {
-    ImageIcon weapon = new ImageIcon(getItems().get(InventorySlots.WEAPON.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    ImageIcon ability = new ImageIcon(getItems().get(InventorySlots.ABILITY.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    ImageIcon armor = new ImageIcon(getItems().get(InventorySlots.ARMOR.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    ImageIcon ring = new ImageIcon(getItems().get(InventorySlots.RING.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    int inventoryWidth = weapon.getIconWidth() + ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth();
-    int inventoryHeight = weapon.getIconHeight();
-    BufferedImage combined = new BufferedImage(inventoryWidth, inventoryHeight, BufferedImage.TYPE_INT_ARGB);
-    Graphics g = combined.getGraphics();
+  public ImageIcon createImage(final int w, final int h) {
+    final ImageIcon weapon = new ImageIcon(getItems().get(InventorySlots.WEAPON.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    final ImageIcon ability = new ImageIcon(getItems().get(InventorySlots.ABILITY.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    final ImageIcon armor = new ImageIcon(getItems().get(InventorySlots.ARMOR.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    final ImageIcon ring = new ImageIcon(getItems().get(InventorySlots.RING.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    final int inventoryWidth = weapon.getIconWidth() + ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth();
+    final int inventoryHeight = weapon.getIconHeight();
+    final BufferedImage combined = new BufferedImage(inventoryWidth, inventoryHeight, BufferedImage.TYPE_INT_ARGB);
+    final Graphics g = combined.getGraphics();
     g.drawImage(weapon.getImage(), 0, 0, null);
     g.drawImage(ability.getImage(), ability.getIconWidth(), 0, null);
     g.drawImage(armor.getImage(), ability.getIconWidth() + armor.getIconWidth(), 0, null);

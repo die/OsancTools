@@ -19,22 +19,50 @@ import pcap.spi.option.DefaultLiveOptions;
  * aka if proxies are used.
  */
 public class Sniffer {
-  private static final boolean disableChecksum = true; // disabled given most routers checksum packets automatically.
+
+  /**
+   * To be documented.
+   */
+  private static final boolean DISABLE_CHECKSUM = true; // disabled given most routers checksum packets automatically.
+  /**
+   * To be documented.
+   */
   private final int port = 2050; // 2050 is default rotmg server port.
+  /**
+   * To be documented.
+   */
   private final Sniffer thisObject;
+  /**
+   * To be documented.
+   */
   private final RingBuffer<RawPacket> ringBuffer;
+  /**
+   * To be documented.
+   */
   private final TcpStreamBuilder incoming;
+  /**
+   * To be documented.
+   */
   private final TcpStreamBuilder outgoing;
+  /**
+   * To be documented.
+   */
   private Pcap[] pcaps;
+  /**
+   * To be documented.
+   */
   private Pcap realmPcap;
+  /**
+   * To be documented.
+   */
   private boolean stop;
 
   /**
    * Constructor of a Windows sniffer.
    *
-   * @param processor PProcessor instance used as the base.
+   * @param processor PaProcessor instance used as the base.
    */
-  public Sniffer(PProcessor processor) {
+  public Sniffer(final PaProcessor processor) {
     thisObject = this;
     ringBuffer = new RingBuffer<>(32);
     incoming = new TcpStreamBuilder(processor::resetIncoming, processor::incomingStream);
@@ -46,49 +74,57 @@ public class Sniffer {
    *
    * @param ms Millisecond of pause
    */
-  private static void pause(int ms) {
+  private static void pause(final int ms) {
     try {
       Thread.sleep(ms);
-    } catch (InterruptedException ignored) {
+    } catch (final InterruptedException e) {
+      e.printStackTrace();
     }
   }
 
   /**
    * Verify checksum of TCP packets. This does however not checksum the Ip4Header
    * given only the data of the TCP packet is vital. Not the header data.
-   * <p>
-   * WARNING! Don't use this checksum given the router handles checksums. Filtering packets
+   *
+   * <p>WARNING! Don't use this checksum given the router handles checksums. Filtering packets
    * with checksum results in packets being lost. Even if the checksum fails the packets
    * pass the RC4 cipher meaning the packets are fine, even if the checksum miss matches.
    *
    * @param bytes Raw bytes of the packet being received.
    * @return true if the checksum is similar to the TCP checksum sent in the packet.
-   * <p>
    */
-  private static boolean computeChecksum(byte[] bytes) {
-    if (disableChecksum) return true;
-    int tcpLen = (Byte.toUnsignedInt(bytes[17]) + (Byte.toUnsignedInt(bytes[16]) << 8)) - ((bytes[14] & 15) * 4);
+  private static boolean computeChecksum(final byte[] bytes) {
+    if (DISABLE_CHECKSUM) {
+      return true;
+    }
+    final int tcpLen = (Byte.toUnsignedInt(bytes[17]) + (Byte.toUnsignedInt(bytes[16]) << 8)) - ((bytes[14] & 15) * 4);
     int sum = 6 + tcpLen; // add tcp num + length of tcp
 
     for (int i = 26; i < tcpLen + 33; i += 2) { // compute all byte pairs starting from ip dest/src to end of tcp payload
-      if (i == 50) continue; // skip the TCP checksum values at address 50 & 51
+      if (i == 50) {
+        continue; // skip the TCP checksum values at address 50 & 51
+      }
       sum += (Byte.toUnsignedInt(bytes[i + 1]) + (Byte.toUnsignedInt(bytes[i]) << 8));
     }
 
-    if ((tcpLen & 1) == 1) // add the last odd pair as if the whole packet had a zero byte added to the end
+    if ((tcpLen & 1) == 1) { // add the last odd pair as if the whole packet had a zero byte added to the end
       sum += (Byte.toUnsignedInt(bytes[bytes.length - 1]) << 8);
+    }
 
-    while ((sum >> 16) != 0) // one compliment
+    while ((sum >> 16) != 0) { // one compliment
       sum = (sum & 0xFFFF) + (sum >> 16);
+    }
 
     sum = ~sum; // invert bits
     sum = sum & 0xFFFF; // remove upper bits
 
-    int checksumTCP = (Byte.toUnsignedInt(bytes[51]) + (Byte.toUnsignedInt(bytes[50]) << 8));
-    if (checksumTCP == 0xFFFF) checksumTCP = 0; // get checksum from tcp packet and set to 0 if value is FFFF,
+    int checksumTcp = (Byte.toUnsignedInt(bytes[51]) + (Byte.toUnsignedInt(bytes[50]) << 8));
+    if (checksumTcp == 0xFFFF) {
+      checksumTcp = 0; // get checksum from tcp packet and set to 0 if value is FFFF,
+    }
     //                                                                              FFFF is impossible to have.
 
-    return checksumTCP == sum;
+    return checksumTcp == sum;
   }
 
   /**
@@ -103,20 +139,20 @@ public class Sniffer {
    */
   public void startSniffer() throws ErrorException {
 
-    Service service = Service.Creator.create("PcapService");
-    Interface[] interfaceList = NativeBridge.getInterfaces(service);
+    final Service service = Service.Creator.create("PcapService");
+    final Interface[] interfaceList = NativeBridge.getInterfaces(service);
     pcaps = new Pcap[interfaceList.length];
     realmPcap = null;
     stop = false;
 
     for (int i = 0; i < interfaceList.length; i++) {
-      DefaultLiveOptions defaultLiveOptions = new DefaultLiveOptions();
+      final DefaultLiveOptions defaultLiveOptions = new DefaultLiveOptions();
       defaultLiveOptions.timeout(60000);
-      Pcap pcap;
+      final Pcap pcap;
 
       try {
         pcap = service.live(interfaceList[i], defaultLiveOptions);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
         continue;
       }
@@ -137,13 +173,13 @@ public class Sniffer {
    *
    * @param pcap Current handle to the Pcap instance.
    */
-  public void startPacketSniffer(Pcap pcap) {
+  public void startPacketSniffer(final Pcap pcap) {
     new Thread(new Runnable() {
-      final Pcap p = pcap;
+      private final Pcap p = pcap;
 
       @Override
       public void run() {
-        NativeBridge.PacketListener listener = packet -> {
+        final NativeBridge.PacketListener listener = packet -> {
           if (packet != null && computeChecksum(packet.getPayload())) {
             synchronized (ringBuffer) {
               ringBuffer.push(packet);
@@ -171,7 +207,7 @@ public class Sniffer {
       }
       while (!stop) {
         if (realmPcap != null) {
-          for (Pcap pcap : pcaps) {
+          for (final Pcap pcap : pcaps) {
             if (pcap != null && realmPcap != pcap) {
               pcap.close();
             }
@@ -180,7 +216,7 @@ public class Sniffer {
         }
         pause(100);
       }
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       e.printStackTrace();
     }
   }
@@ -197,30 +233,32 @@ public class Sniffer {
           thisObject.wait();
         }
         while (!ringBuffer.isEmpty()) {
-          RawPacket packet;
+          final RawPacket packet;
           synchronized (ringBuffer) {
             packet = ringBuffer.pop();
           }
-          if (packet == null) continue;
+          if (packet == null) {
+            continue;
+          }
 
           try {
-            EthernetPacket ethernetPacket = packet.getNewEthernetPacket();
+            final EthernetPacket ethernetPacket = packet.getNewEthernetPacket();
             if (ethernetPacket != null) {
-              Ip4Packet ip4packet = ethernetPacket.getNewIp4Packet();
-              Ip4Packet assembledIp4packet = Ip4Defragmenter.defragment(ip4packet);
+              final Ip4Packet ip4packet = ethernetPacket.getNewIp4Packet();
+              final Ip4Packet assembledIp4packet = Ip4Defragmenter.defragment(ip4packet);
               if (assembledIp4packet != null) {
-                TcpPacket tcpPacket = assembledIp4packet.getNewTcpPacket();
+                final TcpPacket tcpPacket = assembledIp4packet.getNewTcpPacket();
                 if (tcpPacket != null) {
                   receivedPackets(tcpPacket);
                 }
               }
             }
-          } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
+          } catch (final ArrayIndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
             e.printStackTrace();
           }
         }
       }
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       e.printStackTrace();
     }
   }
@@ -230,7 +268,7 @@ public class Sniffer {
    *
    * @param packet The TCP packets retrieved from the network tap.
    */
-  private void receivedPackets(TcpPacket packet) {
+  private void receivedPackets(final TcpPacket packet) {
     if (packet.getSrcPort() == port) { // Incoming packets have 2050 source port.
       incoming.streamBuilder(packet);
     } else if (packet.getDstPort() == port) { // Outgoing packets have 2050 destination port.
@@ -247,12 +285,12 @@ public class Sniffer {
       realmPcap.close();
     } else {
       try {
-        for (Pcap c : pcaps) {
+        for (final Pcap c : pcaps) {
           if (c != null) {
             c.close();
           }
         }
-      } catch (NullPointerException e) {
+      } catch (final NullPointerException e) {
         // Network tap is already closed
         System.out.println("[X] Error stopping sniffer: sniffer not running.");
       }

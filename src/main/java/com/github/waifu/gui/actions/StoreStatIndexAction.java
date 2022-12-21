@@ -31,6 +31,6 @@ public class StoreStatIndexAction implements ActionListener {
    */
   @Override
   public void actionPerformed(final ActionEvent e) {
-    Main.settings.setStat(stat.getIndex());
+    Main.getSettings().setStat(stat.getIndex());
   }
 }

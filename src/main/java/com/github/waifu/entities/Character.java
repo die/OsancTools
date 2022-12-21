@@ -121,20 +121,24 @@ public class Character {
   }
 
   /**
-   * Character method.
+   * To be documented.
    *
-   * <p>Constructs a Character with information by the Update Packet
-   *
-   * @param maxedHp   = true if maxed in hp
-   * @param dexterity = dexterity stat value
+   * @param inventory To be documented.
+   * @param level To be documented.
+   * @param fame To be documented.
+   * @param maxedHp To be documented.
+   * @param maxedMp To be documented.
+   * @param dexterity To be documented.
+   * @param exaltedHp To be documented.
+   * @param exaltedMp To be documented.
    */
-  public Character(Inventory inventory, int level, int currentFame, boolean maxedHp, boolean maxedMp, int dexterity, int exaltedHp, int exaltedMp) {
+  public Character(final Inventory inventory, final int level, final int fame, final boolean maxedHp, final boolean maxedMp, final int dexterity, final int exaltedHp, final int exaltedMp) {
     this.type = "Wizard";
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/Wizard.png"));
     this.level = String.valueOf(level);
     this.cqc = "";
-    this.fame = String.valueOf(currentFame);
+    this.fame = String.valueOf(fame);
     this.exp = "";
     this.place = "";
     this.stats = "";
@@ -153,7 +157,7 @@ public class Character {
    *
    * <p>Constructs a Character with all information.
    *
-   * @param type      class of the Character.
+   * @param type      type/class of the Character.
    * @param skin      skin the Character has equipped.
    * @param level     level of the Character.
    * @param cqc       number of class quests completed the Character has.
@@ -161,6 +165,8 @@ public class Character {
    * @param exp       number of exp the Character has.
    * @param place     rank of the Character among others of its type.
    * @param stats     stats of the Character, currently as ?/8.
+   * @param lastSeen last seen
+   * @param server server
    * @param inventory Inventory of the Character.
    */
   public Character(final String type, final String skin, final String level, final String cqc, final String fame, final String exp, final String place, final String stats, final String lastSeen, final String server, final Inventory inventory) {
@@ -238,10 +244,10 @@ public class Character {
   /**
    * Sets the skin image.
    *
-   * @param skinImage skin image as ImageIcon.
+   * @param s skin image as ImageIcon.
    */
-  public void setSkinImage(final ImageIcon skinImage) {
-    this.skinImage = skinImage;
+  public void setSkinImage(final ImageIcon s) {
+    this.skinImage = s;
   }
 
   /**

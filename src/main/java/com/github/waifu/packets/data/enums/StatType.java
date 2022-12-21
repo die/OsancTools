@@ -34,11 +34,11 @@ public enum StatType {
    */
   EXP_STAT(6),
   /**
-   * Current level;
+   * Current level.
    */
   LEVEL_STAT(7),
   /**
-   * Item in slot 0
+   * Item in slot 0.
    */
   INVENTORY_0_STAT(8),
   /**
@@ -286,251 +286,256 @@ public enum StatType {
    */
   HEALTH_POTION_STACK_STAT(69),
   /**
-   *
+   * To be documented.
    */
   MAGIC_POTION_STACK_STAT(70),
   /**
-   *
+   * Item in the backpack slot 0.
    */
   BACKPACK_0_STAT(71),
   /**
-   *
+   * Item in the backpack slot 1.
    */
   BACKPACK_1_STAT(72),
   /**
-   *
+   * Item in the backpack slot 2.
    */
   BACKPACK_2_STAT(73),
   /**
-   *
+   * Item in the backpack slot 3.
    */
   BACKPACK_3_STAT(74),
   /**
-   *
+   * Item in the backpack slot 4.
    */
   BACKPACK_4_STAT(75),
   /**
-   *
+   * Item in the backpack slot 5.
    */
   BACKPACK_5_STAT(76),
   /**
-   *
+   * Item in the backpack slot 6.
    */
   BACKPACK_6_STAT(77),
   /**
-   *
+   * Item in the backpack slot 7.
    */
   BACKPACK_7_STAT(78),
   /**
-   *
+   * If the player has a backpack.
    */
   HASBACKPACK_STAT(79),
   /**
-   *
+   * To be documented.
    */
   TEXTURE_STAT(80),
   /**
-   *
+   * To be documented.
    */
   PET_INSTANCEID_STAT(81),
   /**
-   *
+   * Name of the pet.
    */
   PET_NAME_STAT(82),
   /**
-   *
+   * The type of pet.
    */
   PET_TYPE_STAT(83),
   /**
-   *
+   * The rarity of the pet.
    */
   PET_RARITY_STAT(84),
   /**
-   *
+   * To be documented.
    */
   PET_MAXABILITYPOWER_STAT(85),
   /**
-   *
+   * The family of the pet.
    */
   PET_FAMILY_STAT(86),
   /**
-   *
+   * To be documented.
    */
   PET_FIRSTABILITY_POINT_STAT(87),
   /**
-   *
+   * To be documented.
    */
   PET_SECONDABILITY_POINT_STAT(88),
   /**
-   *
+   * To be documented.
    */
   PET_THIRDABILITY_POINT_STAT(89),
   /**
-   *
+   * To be documented.
    */
   PET_FIRSTABILITY_POWER_STAT(90),
   /**
-   *
+   * To be documented.
    */
   PET_SECONDABILITY_POWER_STAT(91),
   /**
-   *
+   * To be documented.
    */
   PET_THIRDABILITY_POWER_STAT(92),
   /**
-   *
+   * To be documented.
    */
   PET_FIRSTABILITY_TYPE_STAT(93),
   /**
-   *
+   * To be documented.
    */
   PET_SECONDABILITY_TYPE_STAT(94),
   /**
-   *
+   * To be documented.
    */
   PET_THIRDABILITY_TYPE_STAT(95),
   /**
-   *
+   * To be documented.
    */
   NEW_CON_STAT(96),
   /**
-   *
+   * To be documented.
    */
   FORTUNE_TOKEN_STAT(97),
   /**
-   *
+   * To be documented.
    */
   SUPPORTER_POINTS_STAT(98),
   /**
-   *
+   * To be documented.
    */
   SUPPORTER_STAT(99),
   /**
-   *
+   * To be documented.
    */
   CHALLENGER_STARBG_STAT(100),
   /**
-   *
+   * To be documented.
    */
   PLAYER_ID(101),
   /**
-   *
+   * To be documented.
    */
   PROJECTILE_SPEED_MULT(102),
   /**
-   *
+   * To be documented.
    */
   PROJECTILE_LIFE_MULT(103),
   /**
-   *
+   * To be documented.
    */
   OPENED_AT_TIMESTAMP(104),
   /**
-   *
+   * To be documented.
    */
   EXALTED_ATT(105),
   /**
-   *
+   * To be documented.
    */
   EXALTED_DEF(106),
   /**
-   *
+   * To be documented.
    */
   EXALTED_SPEED(107),
   /**
-   *
+   * To be documented.
    */
   EXALTED_VIT(108),
   /**
-   *
+   * To be documented.
    */
   EXALTED_WIS(109),
   /**
-   *
+   * To be documented.
    */
   EXALTED_DEX(110),
   /**
-   *
+   * To be documented.
    */
   EXALTED_HP(111),
   /**
-   *
+   * To be documented.
    */
   EXALTED_MP(112),
   /**
-   *
+   * To be documented.
    */
   EXALTATION_BONUS_DAMAGE(113),
   /**
-   *
+   * To be documented.
    */
   EXALTATION_IC_REDUCTION(114),
   /**
-   *
+   * To be documented.
    */
   GRAVE_ACCOUNT_ID(115),
   /**
-   *
+   * To be documented.
    */
   POTION_ONE_TYPE(116),
   /**
-   *
+   * To be documented.
    */
   POTION_TWO_TYPE(117),
   /**
-   *
+   * To be documented.
    */
   POTION_THREE_TYPE(118),
   /**
-   *
+   * To be documented.
    */
   POTION_BELT(119),
   /**
-   *
+   * To be documented.
    */
   FORGEFIRE(120),
   /**
-   *
+   * Unknown.
    */
   UNKNOWN121(121),
   /**
-   *
+   * Unknown.
    */
   UNKNOWN122(122),
   /**
-   *
+   * Unknown.
    */
   UNKNOWN123(123),
   /**
-   *
+   * Unknown.
    */
   UNKNOWN124(124),
   /**
-   *
+   * Unknown.
    */
   UNKNOWN125(125),
   /**
-   *
+   * Unknown.
    */
   UNKNOWN126(126);
 
   /**
-   *
+   * Index of the Stat type.
    */
   private final int index;
 
   /**
+   * Constructs a stat type.
    *
+   * @param i ordinal of the stat
    */
-  StatType(int i) {
+  StatType(final int i) {
     index = i;
   }
 
   /**
+   * Gets a StatType by Ordinal.
    *
+   * @param ord the ordinal of the StatType.
+   * @return the StatType that matches the ordinal.
    */
-  public static StatType byOrdinal(int ord) {
-    for (StatType o : StatType.values()) {
+  public static StatType byOrdinal(final int ord) {
+    for (final StatType o : StatType.values()) {
       if (o.index == ord) {
         return o;
       }
@@ -539,7 +544,9 @@ public enum StatType {
   }
 
   /**
+   * Get the index.
    *
+   * @return the index of the StatType.
    */
   public int get() {
     return index;

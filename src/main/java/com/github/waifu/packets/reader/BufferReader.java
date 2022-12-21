@@ -9,10 +9,15 @@ import java.util.Arrays;
 public class BufferReader {
 
   /**
-   *
+   * ByteBuffer object.
    */
   private ByteBuffer buffer;
 
+  /**
+   * Construct BufferReader with data.
+   *
+   * @param data ByteBuffer data.
+   */
   public BufferReader(final ByteBuffer data) {
     buffer = data;
   }
@@ -56,7 +61,7 @@ public class BufferReader {
   /**
   * Deserialize an unsigned byte.
   *
-  * @return Returns an integer containing an unsigned byte that have been deserialized.
+  * @return Returns an integer containing an unsigned byte.
   */
   public int readUnsignedByte() {
     return Byte.toUnsignedInt(buffer.get());
@@ -74,7 +79,7 @@ public class BufferReader {
   /**
    * Deserialize an unsigned short.
    *
-   * @return Returns an integer containing an unsigned short that have been deserialized.
+   * @return Returns an integer containing an unsigned short.
    */
   public int readUnsignedShort() {
     return Short.toUnsignedInt(buffer.getShort());
@@ -92,7 +97,7 @@ public class BufferReader {
   /**
    * Deserialize an unsigned integer.
    *
-   * @return Returns an integer containing an unsigned integer that have been deserialized.
+   * @return Returns an integer containing an unsigned integer.
    */
   public long readUnsignedInt() {
     return Integer.toUnsignedLong(buffer.getInt());
@@ -113,8 +118,8 @@ public class BufferReader {
    * @return Returns the string that have been deserialized.
    */
   public String readString() {
-    short len = readShort();
-    byte[] str = new byte[len];
+    final short len = readShort();
+    final byte[] str = new byte[len];
     buffer.get(str);
     return new String(str);
   }
@@ -126,8 +131,8 @@ public class BufferReader {
    * @return Returns the string that have been deserialized.
    */
   public String readStringUtf32() {
-    int len = readInt();
-    byte[] str = new byte[len];
+    final int len = readInt();
+    final byte[] str = new byte[len];
     buffer.get(str);
     return new String(str);
   }
@@ -139,7 +144,7 @@ public class BufferReader {
    * @return Returns a byte array that have been deserialized.
    */
   public byte[] readBytes(final int bytes) {
-    byte[] out = new byte[readShort()];
+    final byte[] out = new byte[readShort()];
     buffer.get(out);
     return out;
   }
@@ -151,14 +156,17 @@ public class BufferReader {
    */
   public int readCompressedInt() {
     int ubyte = readUnsignedByte();
-    boolean isNegative = (ubyte & 64) != 0;
-    int shift = 6;
-    int value = ubyte & 63;
+    final int bits = 64;
+    final boolean isNegative = (ubyte & bits) != 0;
+    final int initShift = 6;
+    int shift = initShift;
+    int value = ubyte & (bits - 1);
 
-    while ((ubyte & 128) != 0) {
+    final int max = 128;
+    while ((ubyte & max) != 0) {
       ubyte = readUnsignedByte();
-      value |= (ubyte & 127) << shift;
-      shift += 7;
+      value |= (ubyte & (max - 1)) << shift;
+      shift += (initShift + 1);
     }
 
     if (isNegative) {
@@ -166,16 +174,20 @@ public class BufferReader {
     }
     return value;
   }
+
   /**
    * Checks if the buffer have finished reading all bytes.
+   *
+   * @return boolean if buffer is fully parsed.
    */
   public boolean isBufferFullyParsed() {
     return buffer.capacity() == buffer.position();
   }
 
   /**
+   * Converts the buffer array to a String.
    *
-   * @return
+   * @return buffer array as a String.
    */
   public String toString() {
     return Arrays.toString(buffer.array());

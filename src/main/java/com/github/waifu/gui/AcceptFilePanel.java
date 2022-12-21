@@ -2,7 +2,7 @@ package com.github.waifu.gui;
 
 import com.github.waifu.entities.Raid;
 import com.github.waifu.gui.listeners.DropListener;
-import com.github.waifu.gui.tables.VCParse;
+import com.github.waifu.gui.tables.VcParse;
 import com.github.waifu.handlers.WebAppHandler;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -39,20 +39,44 @@ import net.sourceforge.tess4j.TesseractException;
 import org.json.JSONObject;
 
 /**
- *
+ * To be documented.
  */
 public class AcceptFilePanel extends JFrame {
+  /**
+   * To be documented.
+   */
   private Image image;
+  /**
+   * To be documented.
+   */
   private int width;
+  /**
+   * To be documented.
+   */
   private int height;
+  /**
+   * To be documented.
+   */
   private JPanel main;
+  /**
+   * To be documented.
+   */
   private JButton openFromFileButton;
+  /**
+   * To be documented.
+   */
   private JButton chooseButton;
+  /**
+   * To be documented.
+   */
   private JPanel panel;
+  /**
+   * To be documented.
+   */
   private JLabel label;
 
   /**
-   *
+   * To be documented.
    */
   AcceptFilePanel() {
     setContentPane(main);
@@ -61,19 +85,19 @@ public class AcceptFilePanel extends JFrame {
     setTitle("OsancTools");
     setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
     setVisible(true);
     pack();
 
     width = panel.getWidth();
     height = panel.getHeight();
-    DropListener dropListener = new DropListener(this);
+    final DropListener dropListener = new DropListener(this);
     panel.setDropTarget(new DropTarget(this, dropListener));
     panel.setBorder(BorderFactory.createDashedBorder(Color.gray, 7.0f, 2.0f));
-    AbstractAction actionListener = new AbstractAction() {
+    final AbstractAction actionListener = new AbstractAction() {
       @Override
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         try {
           if (Toolkit.getDefaultToolkit().getSystemClipboard().isDataFlavorAvailable(DataFlavor.imageFlavor)) {
             image = (Image) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.imageFlavor);
@@ -81,7 +105,7 @@ public class AcceptFilePanel extends JFrame {
             label.setText("");
             pack();
           }
-        } catch (UnsupportedFlavorException | IOException ex) {
+        } catch (final UnsupportedFlavorException | IOException ex) {
           ex.printStackTrace();
         }
       }
@@ -91,11 +115,11 @@ public class AcceptFilePanel extends JFrame {
     main.getRootPane().getActionMap().put("ctrl V", actionListener);
 
     openFromFileButton.addActionListener(e -> {
-      JFileChooser fc = new JFileChooser();
-      FileFilter filter = new FileNameExtensionFilter("Images (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png");
+      final JFileChooser fc = new JFileChooser();
+      final FileFilter filter = new FileNameExtensionFilter("Images (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png");
 
       fc.setFileFilter(filter);
-      int returnVal = fc.showOpenDialog(main);
+      final int returnVal = fc.showOpenDialog(main);
 
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         try {
@@ -105,7 +129,7 @@ public class AcceptFilePanel extends JFrame {
             label.setText("");
             pack();
           }
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
           ex.printStackTrace();
         }
       }
@@ -115,35 +139,35 @@ public class AcceptFilePanel extends JFrame {
       if (image == null) {
         return;
       }
-      JSONObject jsonObject = GUI.getJson();
+      final JSONObject jsonObject = Gui.getJson();
       if (jsonObject == null) {
-        Component rootPane = GUI.getFrames()[0].getComponents()[0];
+        final Component rootPane = Gui.getFrames()[0].getComponents()[0];
         JOptionPane.showMessageDialog(rootPane, "Failed to get members", "Error", JOptionPane.WARNING_MESSAGE);
         return;
       }
-      JSONObject newJson = WebAppHandler.getData(jsonObject.getJSONObject("raid").getInt("id"));
+      final JSONObject newJson = WebAppHandler.getData(jsonObject.getJSONObject("raid").getInt("id"));
       assert newJson != null;
-      Raid raid = new Raid(newJson.getJSONObject("raid"));
+      final Raid raid = new Raid(newJson.getJSONObject("raid"));
       try {
         setVisible(false);
-        JFrame frame = new VCParse(image, raid.getRaiders());
+        final JFrame frame = new VcParse(image, raid.getRaiders());
         frame.setLocationRelativeTo(this);
         dispose();
-      } catch (TesseractException ex) {
+      } catch (final TesseractException ex) {
         ex.printStackTrace();
       }
     });
   }
 
   {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
+    // GUI initializer generated by IntelliJ IDEA GUI Designer
+    // >>> IMPORTANT!! <<<
+    // DO NOT EDIT OR ADD ANY CODE HERE!
     $$$setupUI$$$();
   }
 
   /**
-   * Method generated by IntelliJ IDEA GUI Designer
+   * Method generated by IntelliJ IDEA GUI Designer.
    * >>> IMPORTANT!! <<<
    * DO NOT edit this method OR call it in your code!
    *
@@ -169,44 +193,57 @@ public class AcceptFilePanel extends JFrame {
   }
 
   /**
+   * To be documented.
+   *
    * @noinspection ALL
+   * @return s
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public JLabel getLabel() {
     return label;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public int getPanelWidth() {
     return width;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public int getPanelHeight() {
     return height;
   }
 
   /**
-   * @return
+   * To be documented.
+   *
+   * @return To be documented.
    */
   public Image getImage() {
     return image;
   }
 
   /**
-   * @param image
+   * To be documented.
+   *
+   * @param image To be documented.
    */
-  public void setImage(Image image) {
+  public void setImage(final Image image) {
     this.image = image;
   }
 }

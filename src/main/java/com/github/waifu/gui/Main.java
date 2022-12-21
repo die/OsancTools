@@ -46,7 +46,7 @@ public final class Main {
    * <p>Loads requirement sheets from the repository.
    */
   public static void loadRequirementSheet() throws IOException {
-    final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/sniffer/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
+    final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
     final JSONTokener tokener = new JSONTokener(url.openStream());
     Utilities.setJson(new JSONObject(tokener));
 

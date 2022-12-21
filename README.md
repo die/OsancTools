@@ -1,19 +1,6 @@
 # OsancTools
 A Java application containing various tools for making security work in the Oryx Sanctuary discord server much easier.
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/58831335/194425825-9bf10654-220c-4333-8e37-7a78beb62e06.png">
-</p>
+This branch uses code created by [Xcom](https://github.com/X-com/RealmShark) in order to grab data from network packets to parse RoTMG sets. Credit for the packet code goes to him. This code, found in /java/main/packets/ and /java/main/util/, is under MIT License and will soon be put in a package to indicate this.
 
-## Features
-- Obtain raid information from the WebApp's API.
-- Parse reacts on the WebApp.
-- Parse raider sets according to Oryx Sanctuary requirements.
-- Parse raiders who are not in the voice channel.
-- Filter/mark raiders when parsing to remove duplicate and unnecessary manual checks.
-- Calculate the number of Oryx 3 completes for Veteran/Celestial verification.
-
-## Installation
-To install, download the [specific release](https://github.com/Waifu/osanc-tools/releases) for your system. 
-
-To use the standalone program that is not bundled, you need to install the JDK [here.](https://download.oracle.com/java/18/latest/jdk-18_windows-x64_bin.exe)
+This code is NOT production ready, until the functionality is finalized do not expect well documented, readable, and acceptable code.

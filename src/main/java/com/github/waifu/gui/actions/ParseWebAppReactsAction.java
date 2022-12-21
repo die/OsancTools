@@ -4,134 +4,160 @@ import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.entities.React;
-import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.tables.ReactTable;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
-import org.json.JSONArray;
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
+import org.json.JSONArray;
 
 /**
- *
+ * To be documented.
  */
 public class ParseWebAppReactsAction implements ActionListener {
 
-    private final JProgressBar progressBar;
-    private final JButton stopButton;
+  /**
+   * To be documented.
+   */
+  private final JProgressBar progressBar;
+  /**
+   * To be documented.
+   */
+  private final JButton stopButton;
+  /**
+   * To be documented.
+   */
+  private final JButton parseReactsButton;
 
-    /**
-     *
-     * @param progressBar
-     * @param stopButton
-     */
-    public ParseWebAppReactsAction(JProgressBar progressBar, JButton stopButton) {
-        this.progressBar = progressBar;
-        this.stopButton = stopButton;
-    }
 
-    /**
-     *
-     * @param e
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                try {
-                    if (GUI.checkProcessRunning()) {
-                       return null;
-                    } else if (RealmeyeRequestHandler.checkDirectConnect()){
-                        stopButton.setText("Stop Process");
-                        GUI.setWorker(this);
-                        progressBar.setValue(0);
-                        GUI.setProcessRunning(true);
-                        List<React> reacts = getReacts(GUI.raid, progressBar);
-                        if (reacts != null) {
-                            new ReactTable(reacts);
-                        }
-                        GUI.setProcessRunning(false);
-                        stopButton.setText("Finished");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    GUI.setProcessRunning(false);
-                }
-                return null;
-            }
-        }.execute();
-    }
+  /**
+   * To be documented.
+   *
+   * @param progressBar To be documented.
+   * @param stopButton To be documented.
+   * @param parseReactsButton To be documented.
+   */
+  public ParseWebAppReactsAction(final JProgressBar progressBar, final JButton stopButton, final JButton parseReactsButton) {
+    this.progressBar = progressBar;
+    this.stopButton = stopButton;
+    this.parseReactsButton = parseReactsButton;
+  }
 
-    /**
-     * getReacts method.
-     * <p>
-     * Constructs a list of React objects that contain:
-     * React metadata, including icon and name.
-     * All raiders who reacted and their Accounts.
-     *
-     * @param raid JSONObject returned from the WebApp.
-     * @param bar  progress bar to be updated over time.
-     */
-    private List<React> getReacts(Raid raid, JProgressBar bar) throws InterruptedException, IOException {
-        if (raid.getRaiders().isEmpty()) {
+  /**
+   * To be documented.
+   *
+   * @param e To be documented.
+   */
+  @Override
+  public void actionPerformed(final ActionEvent e) {
+    new SwingWorker<Void, Void>() {
+      @Override
+      protected Void doInBackground() {
+        try {
+          if (Gui.checkProcessRunning()) {
             return null;
-        } else {
-            JSONArray items = (JSONArray) Utilities.json.get("reactItem");
-            JSONArray classes = (JSONArray) Utilities.json.get("reactClass");
-            JSONArray reactDPS = (JSONArray) Utilities.json.get("reactDps");
-            List<React> reactList = createReactObjects();
-            bar.setMaximum(reactList.size());
-            int count = 1;
-            for (React react : reactList) {
-                for (Raider raider : raid.getRaiders()) {
-                    if (raider.getReacts().toList().contains(Integer.parseInt(react.getId()))) {
-                        /* Create deep copy */
-                        Raider temp = new Raider();
-                        for (int i = 0; i < raider.getAccounts().size(); i++) {
-                            String username = raider.getAccounts().get(i).getName();
-                            Account account = RealmeyeRequestHandler.parseHTML(RealmeyeRequestHandler.getRealmeyeData(username), username);
-                            raider.getAccounts().set(i, account);
-                            temp.getAccounts().add(account);
-                        }
-                        react.getRaiders().add(temp);
-                    }
-                }
-
-                String reactName = react.getName();
-                if (items.toList().contains(reactName)) {
-                    react.setType("item");
-                } else if (classes.toList().contains(reactName)) {
-                    react.setType("class");
-                } else if (reactDPS.toList().contains(reactName)) {
-                    react.setType("dps");
-                } else if (reactName.contains("Effusion")) {
-                    react.setType("lock");
-                }
-                react.parseReact(react.getType());
-                bar.setValue(count);
-                count++;
+          } else if (Gui.getRaid() != null && Gui.getRaid().isWebAppRaid()) { // webapp
+            if (RealmeyeRequestHandler.checkDirectConnect()) {
+              stopButton.setText("Stop Process");
+              Gui.setWorker(this);
+              progressBar.setValue(0);
+              Gui.setProcessRunning(true);
+              final List<React> reacts = getRealmeyeReacts(Gui.getRaid(), progressBar);
+              if (reacts != null) {
+                new ReactTable(reacts);
+              }
+              Gui.setProcessRunning(false);
+              stopButton.setText("Finished");
             }
-            return reactList;
+          }
+        } catch (final Exception ex) {
+          ex.printStackTrace();
+          Gui.setProcessRunning(false);
         }
-    }
+        return null;
+      }
+    }.execute();
+  }
 
-    private List<React> createReactObjects() throws MalformedURLException {
-        JSONArray reacts = GUI.getJson().getJSONObject("raid").getJSONArray("reacts");
-        List<React> reactList = new ArrayList<>();
-        for (int i = 0; i < reacts.length(); i++) {
-            String id = String.valueOf(reacts.getJSONObject(i).getInt("id"));
-            String name = reacts.getJSONObject(i).getString("name");
-            String icon = reacts.getJSONObject(i).getString("icon");
-            String requirement = String.valueOf(reacts.getJSONObject(i).get("reqs"));
-            React react = new React(id, name, requirement, icon, new ArrayList<>());
-            reactList.add(react);
+  /**
+   * getReacts method.
+   *
+   * <p>Constructs a list of React objects that contain:
+   * React metadata, including icon and name.
+   * All raiders who reacted and their Accounts.
+   *
+   * @param raid JSONObject returned from the WebApp.
+   * @param bar  progress bar to be updated over time.
+   * @return To be documented.
+   */
+  private List<React> getRealmeyeReacts(final Raid raid, final JProgressBar bar) throws InterruptedException, IOException {
+    if (raid.getRaiders().isEmpty()) {
+      return null;
+    } else {
+      final JSONArray items = (JSONArray) Utilities.getJson().get("reactItem");
+      final JSONArray classes = (JSONArray) Utilities.getJson().get("reactClass");
+      final JSONArray reactDPS = (JSONArray) Utilities.getJson().get("reactDps");
+      final List<React> reactList = createReactObjects();
+      bar.setMaximum(reactList.size());
+      int count = 1;
+      for (final React react : reactList) {
+        for (final Raider raider : raid.getRaiders()) {
+          if (raider.getReacts().toList().contains(Integer.parseInt(react.getId()))) {
+            /* Create deep copy */
+            final Raider temp = new Raider();
+            for (int i = 0; i < raider.getAccounts().size(); i++) {
+              final String username = raider.getAccounts().get(i).getName();
+              final Account account = RealmeyeRequestHandler.parseHTML(RealmeyeRequestHandler.getRealmeyeData(username), username);
+              raider.getAccounts().set(i, account);
+              temp.getAccounts().add(account);
+            }
+            react.getRaiders().add(temp);
+          }
         }
-        return reactList;
+
+        final String reactName = react.getName();
+        if (items.toList().contains(reactName)) {
+          react.setType("item");
+        } else if (classes.toList().contains(reactName)) {
+          react.setType("class");
+        } else if (reactDPS.toList().contains(reactName)) {
+          react.setType("dps");
+        } else if (reactName.contains("Effusion")) {
+          react.setType("lock");
+        }
+        react.parseReact(react.getType());
+        bar.setValue(count);
+        count++;
+      }
+      return reactList;
     }
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   * @throws MalformedURLException To be documented.
+   */
+  private List<React> createReactObjects() throws MalformedURLException {
+    final JSONArray reacts = Gui.getJson().getJSONObject("raid").getJSONArray("reacts");
+    final List<React> reactList = new ArrayList<>();
+    for (int i = 0; i < reacts.length(); i++) {
+      final String id = String.valueOf(reacts.getJSONObject(i).getInt("id"));
+      final String name = reacts.getJSONObject(i).getString("name");
+      final String icon = reacts.getJSONObject(i).getString("icon");
+      final String requirement = String.valueOf(reacts.getJSONObject(i).get("reqs"));
+      final React react = new React(id, name, requirement, icon, new ArrayList<>());
+      reactList.add(react);
+    }
+    return reactList;
+  }
 }

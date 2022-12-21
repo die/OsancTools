@@ -1,34 +1,63 @@
 package com.github.waifu.enums;
 
 /**
- *
+ * To be documented.
  */
 public enum Stat {
 
-    LIFE(0),
-    MANA(1),
-    ATTACK(2),
-    DEFENSE(3),
-    SPEED(4),
-    DEXTERITY(5),
-    VITALITY(6),
-    WISDOM(7);
+  /**
+   * To be documented.
+   */
+  LIFE(0),
+  /**
+   * To be documented.
+   */
+  MANA(1),
+  /**
+   * To be documented.
+   */
+  ATTACK(2),
+  /**
+   * To be documented.
+   */
+  DEFENSE(3),
+  /**
+   * To be documented.
+   */
+  SPEED(4),
+  /**
+   * To be documented.
+   */
+  DEXTERITY(5),
+  /**
+   * To be documented.
+   */
+  VITALITY(6),
+  /**
+   * To be documented.
+   */
+  WISDOM(7);
 
-    private final int index;
+  /**
+   * To be documented.
+   */
+  private final int index;
 
-    /**
-     *
-     * @param index
-     */
-    Stat(int index) {
-        this.index = index;
-    }
+  /**
+   * To be documented.
+   *
+   * @param index To be documented.
+   */
+  Stat(final int index) {
+    this.index = index;
+  }
 
-    /**
-     *
-     * @return
-     */
-    public int getIndex() {
-        return index;
-    }
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public int getIndex() {
+    return index;
+  }
 }

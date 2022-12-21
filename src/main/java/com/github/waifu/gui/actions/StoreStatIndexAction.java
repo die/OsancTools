@@ -1,32 +1,36 @@
 package com.github.waifu.gui.actions;
 
 import com.github.waifu.enums.Stat;
+import com.github.waifu.gui.Main;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.prefs.Preferences;
 
 /**
- *
+ * Action to set the stat index on a button press.
  */
 public class StoreStatIndexAction implements ActionListener {
 
-    private final Stat stat;
+  /**
+   * Stat enum that stores indices.
+   */
+  private final Stat stat;
 
-    /**
-     *
-     * @param stat
-     */
-    public StoreStatIndexAction(Stat stat) {
-        this.stat = stat;
-    }
+  /**
+   * Construct action with stat enum.
+   *
+   * @param newStat Stat enum.
+   */
+  public StoreStatIndexAction(final Stat newStat) {
+    this.stat = newStat;
+  }
 
-    /**
-     *
-     * @param e
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Preferences userPrefs = Preferences.userRoot();
-        userPrefs.putInt("stat", stat.getIndex());
-    }
+  /**
+   * Set the stat index when button is pressed.
+   *
+   * @param e ActionEvent object.
+   */
+  @Override
+  public void actionPerformed(final ActionEvent e) {
+    Main.getSettings().setStat(stat.getIndex());
+  }
 }

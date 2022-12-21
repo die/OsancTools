@@ -1,93 +1,113 @@
 package com.github.waifu.gui.actions;
 
 import com.github.waifu.entities.Raid;
-import com.github.waifu.gui.GUI;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.handlers.WebAppHandler;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
- *
+ * Action to grab data from the WebApp.
  */
 public class GetWebAppDataAction implements ActionListener {
 
-    private final JPanel main;
-    private final GUI gui;
+  /**
+   * Main Gui panel that shows raid metadata.
+   */
+  private final JPanel main;
+  /**
+   * Gui instance.
+   */
+  private final Gui gui;
 
-    /**
-     *
-     * @param main
-     * @param gui
-     */
-    public GetWebAppDataAction(JPanel main, GUI gui) {
-        this.main = main;
-        this.gui = gui;
+  /**
+   * Constructs the WebAppDataAction.
+   *
+   * @param newMain main panel as a JPanel.
+   * @param newGui gui instance as a Gui.
+   */
+  public GetWebAppDataAction(final JPanel newMain, final Gui newGui) {
+    this.main = newMain;
+    this.gui = newGui;
+  }
+
+  /**
+   * Function fires when the button is pressed.
+   *
+   * @param e ActionEvent object.
+   */
+  @Override
+  public void actionPerformed(final ActionEvent e) {
+    if (!Gui.checkProcessRunning()) {
+      switch (Gui.getMode()) {
+        case Gui.NORMAL_MODE, Gui.DEBUG_MODE -> getWebAppDataFromId();
+        case Gui.LAN_MODE -> getWebAppDataFromFile();
+        default -> {
+          return;
+        }
+      }
+      this.gui.updateGui();
     }
+  }
 
-    /**
-     *
-     * @param e
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (GUI.checkProcessRunning()) {
-            return;
+  /**
+   * Gets the WebApp data from a raid id.
+   */
+  private void getWebAppDataFromId() {
+    try {
+      final String s = (String) JOptionPane.showInputDialog(
+              main,
+              "Please paste in the raid id from osanc.net",
+              "Input",
+              JOptionPane.PLAIN_MESSAGE,
+              null,
+              null,
+              "");
+      final JSONObject jsonObject = WebAppHandler.getRaid(s);
+      if (jsonObject != null) {
+        Gui.setJson(jsonObject);
+        if (Gui.getRaid() != null) {
+          Gui.getRaid().deepCopy(jsonObject.getJSONObject("raid"));
         } else {
-            switch (GUI.getMode()) {
-                case GUI.NORMAL_MODE, GUI.DEBUG_MODE -> getWebAppDataFromId();
-                case GUI.LAN_MODE -> getWebAppDataFromFile();
-            }
-            this.gui.updateGUI();
+          Gui.setRaid(new Raid(jsonObject.getJSONObject("raid")));
         }
+      }
+    } catch (final Exception ex) {
+      ex.printStackTrace();
     }
+  }
 
-    /**
-     *
-     */
-    private void getWebAppDataFromId() {
-        try {
-            String s = (String) JOptionPane.showInputDialog(
-                    main,
-                    "Please paste in the raid id from osanc.net",
-                    "Input",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    "");
-            JSONObject jsonObject = WebAppHandler.getRaid(s);
-            if (jsonObject != null) {
-                GUI.setJson(jsonObject);
-                GUI.raid = new Raid(jsonObject.getJSONObject("raid"));
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+  /**
+   * Gets WebApp data by loading a local json.
+   */
+  private void getWebAppDataFromFile() {
+    final JFileChooser fc = new JFileChooser();
+    fc.setCurrentDirectory(new File(Gui.TEST_RESOURCE_PATH));
+    final Component rootPane = Gui.getFrames()[0].getComponents()[0];
+    final int returnVal = fc.showOpenDialog(rootPane);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      try {
+        final Charset charSet = StandardCharsets.UTF_8;
+        final FileInputStream fileIs = new FileInputStream(fc.getSelectedFile());
+        final InputStreamReader isr = new InputStreamReader(fileIs, charSet);
+        final JSONTokener tokener = new JSONTokener(isr);
+        final JSONObject jsonObject = new JSONObject(tokener);
+        Gui.setJson(jsonObject);
+        Gui.setRaid(new Raid(jsonObject.getJSONObject("raid")));
+      } catch (final Exception exception) {
+        exception.printStackTrace();
+      }
     }
-
-    /**
-     *
-     */
-    private void getWebAppDataFromFile() {
-        JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File(GUI.TEST_RESOURCE_PATH));
-        Component rootPane = GUI.getFrames()[0].getComponents()[0];
-        int returnVal = fc.showOpenDialog(rootPane);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                JSONObject jsonObject = new JSONObject(new JSONTokener(new InputStreamReader(new FileInputStream(fc.getSelectedFile()), StandardCharsets.UTF_8)));
-                GUI.setJson(jsonObject);
-                GUI.raid = new Raid(jsonObject.getJSONObject("raid"));
-            } catch (FileNotFoundException exception) {
-                System.out.println("Could not find file: " + fc.getSelectedFile().getName());
-            } catch (Exception exception) {
-                System.out.println("Could not parse file: " + fc.getSelectedFile().getName());
-            }
-        }
-    }
+  }
 }

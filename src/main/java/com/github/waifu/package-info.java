@@ -1,4 +1,4 @@
 /**
- * This package contains classes that retrieve data from Realmeye and operates on it.
+ * This package contains classes used by this program.
  */
 package com.github.waifu;

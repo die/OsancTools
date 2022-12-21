@@ -1,30 +1,47 @@
 package com.github.waifu.enums;
 
 /**
- *
+ * To be documented.
  */
 public enum InventorySlots {
 
-    WEAPON(0),
-    ABILITY(1),
-    ARMOR(2),
-    RING(3);
+  /**
+   * To be documented.
+   */
+  WEAPON(0),
+  /**
+   * To be documented.
+   */
+  ABILITY(1),
+  /**
+   * To be documented.
+   */
+  ARMOR(2),
+  /**
+   * To be documented.
+   */
+  RING(3);
 
-    private final int index;
+  /**
+   * To be documented.
+   */
+  private final int index;
 
-    /**
-     *
-     * @param index
-     */
-    InventorySlots(int index) {
-        this.index = index;
-    }
+  /**
+   * To be documented.
+   *
+   * @param index To be documented.
+   */
+  InventorySlots(final int index) {
+    this.index = index;
+  }
 
-    /**
-     *
-     * @return
-     */
-    public int getIndex() {
-        return index;
-    }
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public int getIndex() {
+    return index;
+  }
 }

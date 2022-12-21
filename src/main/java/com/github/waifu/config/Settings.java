@@ -4,72 +4,206 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+/**
+ * Class that stores user preferences.
+ */
 public class Settings {
 
-    private final Preferences preferences;
-    private final List<String> settings;
+  /**
+   * Preferences class to store and retrieve preferences.
+   */
+  private final Preferences preferences;
+  /**
+   * List of strings that define what settings are stored.
+   */
+  private final List<String> settings;
+  /**
+   * List of strings that define available requirement sheets.
+   */
+  private final List<String> requirementSheets;
 
-    public Settings() {
-        preferences = Preferences.userRoot();
-        settings = Arrays.asList("token",
-                "betaToken",
-                "theme",
-                "stat",
-                "requirement",
-                "showAlert");
-    }
+  /**
+   * Constructor that defines available settings and requirement sheets.
+   */
+  public Settings() {
+    preferences = Preferences.userRoot();
+    settings = Arrays.asList(
+            "token",
+            "betaToken",
+            "theme",
+            "stat",
+            "requirement",
+            "requirementSheetName",
+            "showAlert",
+            "resourceDir");
 
-    public String getToken() {
-        return preferences.get("token", "");
-    }
+    requirementSheets = Arrays.asList(
+            "OryxSanctuary",
+            "PubHallsAdvanced",
+            "PubHallsExalt",
+            "PubHallsMisc");
+  }
 
-    public void setToken(String token) {
-        preferences.put("token", token);
-    }
+  /**
+   * Retrieves WebApp token.
+   *
+   * @return WebApp token as a String.
+   */
+  public String getToken() {
+    return preferences.get("token", "");
+  }
 
-    public String getBetaToken() {
-        return preferences.get("betaToken", "");
-    }
+  /**
+   * Sets the WebApp token.
+   *
+   * @param token WebApp token as a String.
+   */
+  public void setToken(final String token) {
+    preferences.put("token", token);
+  }
 
-    public void setBetaToken(String betaToken) {
-        preferences.put("betaToken", betaToken);
-    }
+  /**
+   * Retrieves Beta WebApp token.
+   *
+   * @return Beta WebApp token as a String.
+   */
+  public String getBetaToken() {
+    return preferences.get("betaToken", "");
+  }
 
-    public String getTheme() {
-        return preferences.get("theme", "light");
-    }
+  /**
+   * Sets the Beta WebApp token.
+   *
+   * @param betaToken Beta WebApp token as a String.
+   */
+  public void setBetaToken(final String betaToken) {
+    preferences.put("betaToken", betaToken);
+  }
 
-    public void setTheme(String theme) {
-        preferences.put("theme", theme);
-    }
+  /**
+   * Retrieves current theme name.
+   *
+   * @return theme name as a String.
+   */
+  public String getTheme() {
+    return preferences.get("theme", "light");
+  }
 
-    public int getStat() {
-        return preferences.getInt("stat", 0);
-    }
+  /**
+   * Sets the current theme name.
+   *
+   * @param theme theme name as a String.
+   */
+  public void setTheme(final String theme) {
+    preferences.put("theme", theme);
+  }
 
-    public void setStat(int stat) {
-        preferences.putInt("stat", stat);
-    }
+  /**
+   * Retrieves current stat used to calculate exalts.
+   *
+   * @return Stat index (0-7) as an int.
+   */
+  public int getStat() {
+    return preferences.getInt("stat", 0);
+  }
 
-    public int getRequirement() {
-        return preferences.getInt("requirement", 100);
-    }
+  /**
+   * Sets the current stat used to calculate exalts.
+   *
+   * @param stat Stat index (0-7) as an int.
+   */
+  public void setStat(final int stat) {
+    preferences.putInt("stat", stat);
+  }
 
-    public void setRequirement(int requirement) {
-        preferences.putInt("requirement", requirement);
-    }
+  /**
+   * Retrieves current requirement used to calculate exalts.
+   *
+   * @return Requirement quantity as an int.
+   */
+  public int getRequirement() {
+    final int defaultRequirement = 100;
+    return preferences.getInt("requirement", defaultRequirement);
+  }
 
-    public boolean showAlert() {
-        return preferences.getBoolean("showAlert", true);
-    }
+  /**
+   * Sets current requirement used to calculate exalts.
+   *
+   * @param requirement Requirement quantity as an int.
+   */
+  public void setRequirement(final int requirement) {
+    preferences.putInt("requirement", requirement);
+  }
 
-    public void setShowAlert(boolean showAlert) {
-        preferences.putBoolean("showAlert", showAlert);
-    }
+  /**
+   * Retrieves boolean to show if Realm-eye is down.
+   *
+   * @return Boolean to show the alert.
+   */
+  public boolean showAlert() {
+    return preferences.getBoolean("showAlert", true);
+  }
 
-    public void clearSettings() {
-        for (String s : settings) {
-            preferences.remove(s);
-        }
+  /**
+   * Sets boolean to show if Realm-eye is down.
+   *
+   * @param showAlert Boolean to show the alert.
+   */
+  public void setShowAlert(final boolean showAlert) {
+    preferences.putBoolean("showAlert", showAlert);
+  }
+
+  /**
+   * Retrieves directory of resources.assets.
+   *
+   * @return Resource directory as a String.
+   */
+  public String getResourceDir() {
+    return preferences.get("resourceDir", "");
+  }
+
+  /**
+   * Sets directory of resources.assets.
+   *
+   * @param resourceDir Resource directory as a String.
+   */
+  public void setResourceDir(final String resourceDir) {
+    preferences.put("resourceDir", resourceDir);
+  }
+
+  /**
+   * Retrieves current requirement sheet name.
+   *
+   * @return Requirement sheet name as a String.
+   */
+  public String getRequirementSheetName() {
+    return preferences.get("requirementSheetName", requirementSheets.get(0));
+  }
+
+  /**
+   * Sets current requirement sheet name.
+   *
+   * @param name Requirement sheet name as a String.
+   */
+  public void setRequirementSheetName(final String name) {
+    preferences.put("requirementSheetName", name);
+  }
+
+  /**
+   * Retrieves list of all available requirement sheets.
+   *
+   * @return Requirement sheet names as a List.
+   */
+  public List<String> getRequirementSheets() {
+    return requirementSheets;
+  }
+
+  /**
+   * Iterates through all settings and deletes stored data.
+   */
+  public void clearSettings() {
+    for (final String s : settings) {
+      preferences.remove(s);
     }
+  }
 }

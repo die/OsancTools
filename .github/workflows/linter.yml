@@ -56,7 +56,7 @@ jobs:
           LINTER_RULES_PATH: .github/workflows/linters
           JAVA_FILE_NAME: GoogleStyle.xml
           # Change to 'master' if your main branch differs
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Run Sun Checks
@@ -67,5 +67,5 @@ jobs:
           LINTER_RULES_PATH: .github/workflows/linters
           JAVA_FILE_NAME: SunChecks.xml
           # Change to 'master' if your main branch differs
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,6 +5,7 @@
 
 package com.github.waifu.packets.packetcapture.sniff.ardikars;
 
+import com.github.waifu.annotation.AllowPublicAccess;
 import com.sun.jna.Callback;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.FunctionMapper;
@@ -1515,15 +1516,18 @@ public final class NativeMappings {
     /**
      * To be documented.
      */
-    private TimeVal ts; // struct TimeVal
+    @AllowPublicAccess
+    public TimeVal ts; // struct TimeVal
     /**
      * To be documented.
      */
-    private int caplen; // bpf_u_int32
+    @AllowPublicAccess
+    public int caplen; // bpf_u_int32
     /**
      * To be documented.
      */
-    private int len; // bpf_u_int32
+    @AllowPublicAccess
+    public int len; // bpf_u_int32
 
     /**
      * To be documented.
@@ -1594,18 +1598,20 @@ public final class NativeMappings {
 
     static {
       final TimeVal tv = new TimeVal();
-      TV_SEC_OFFSET = tv.fieldOffset("tv_sec");
-      TV_USEC_OFFSET = tv.fieldOffset("tv_usec");
+      TV_SEC_OFFSET = tv.fieldOffset("tvSec");
+      TV_USEC_OFFSET = tv.fieldOffset("tvUsec");
     }
 
     /**
      * To be documented.
      */
-    private NativeLong tvSec; // long
+    @AllowPublicAccess
+    public NativeLong tvSec; // long
     /**
      * To be documented.
      */
-    private NativeLong tvUsec; // long
+    @AllowPublicAccess
+    public NativeLong tvUsec; // long
 
     /**
      * To be documented.
@@ -1621,8 +1627,8 @@ public final class NativeMappings {
     @Override
     protected List<String> getFieldOrder() {
       final List<String> list = new ArrayList<String>();
-      list.add("tv_sec");
-      list.add("tv_usec");
+      list.add("tvSec");
+      list.add("tvUsec");
       return list;
     }
   }

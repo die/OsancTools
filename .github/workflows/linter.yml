@@ -51,7 +51,7 @@ jobs:
       - name: Run Google Style Checks
         uses: github/super-linter@v4
         env:
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
           VALIDATE_JAVA: true
           LINTER_RULES_PATH: .github/workflows/linters
           JAVA_FILE_NAME: GoogleStyle.xml
@@ -62,7 +62,7 @@ jobs:
       - name: Run Sun Checks
         uses: github/super-linter@v4
         env:
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
           VALIDATE_JAVA: true
           LINTER_RULES_PATH: .github/workflows/linters
           JAVA_FILE_NAME: SunChecks.xml

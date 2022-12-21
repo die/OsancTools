@@ -52,6 +52,8 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JAVA: true
+          LINTER_RULES_PATH: .github/workflows/linters
           JAVA_FILE_NAME: GoogleStyle.xml
           # Change to 'master' if your main branch differs
           DEFAULT_BRANCH: main
@@ -61,6 +63,8 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JAVA: true
+          LINTER_RULES_PATH: .github/workflows/linters
           JAVA_FILE_NAME: SunChecks.xml
           # Change to 'master' if your main branch differs
           DEFAULT_BRANCH: main

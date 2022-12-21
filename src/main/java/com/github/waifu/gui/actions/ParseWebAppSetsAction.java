@@ -101,8 +101,11 @@ public class ParseWebAppSetsAction implements ActionListener {
             packetProcessor = new PacketProcessor();
             packetProcessor.start();
           } else if (Gui.getRaid().isWebAppRaid()) { // webapp
-            Gui.setProcessRunning(true);
             if (RealmeyeRequestHandler.checkDirectConnect()) {
+              stopButton.setText("Stop Process");
+              Gui.setWorker(this);
+              progressBar.setValue(0);
+              Gui.setProcessRunning(true);
               final List<Raider> sets = getRealmeyeSets(Gui.getRaid(), progressBar);
               if (sets != null) {
                 new SetTable(sets);

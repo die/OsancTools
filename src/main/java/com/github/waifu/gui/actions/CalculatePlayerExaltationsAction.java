@@ -78,6 +78,9 @@ public class CalculatePlayerExaltationsAction implements ActionListener {
           exaltsResult.setForeground(Color.red);
         }
         exaltsResult.setText(username + " has " + calculator.calculateCompletions(collection) + " " + statName + " completes. (>= " + Preferences.userRoot().getInt("requirement", 100) + ")");
+      } else {
+        exaltsResult.setForeground(Color.yellow);
+        exaltsResult.setText(username + " has a Private Profile.");
       }
     }
   }

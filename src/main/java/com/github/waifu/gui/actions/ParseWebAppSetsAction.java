@@ -54,6 +54,7 @@ public class ParseWebAppSetsAction implements ActionListener {
     this.progressBar = progressBar;
     this.stopButton = stopButton;
     this.parseSetsButton = parseSetsButton;
+    this.packetProcessor = new PacketProcessor();
   }
 
 

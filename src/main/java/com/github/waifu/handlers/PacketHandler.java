@@ -126,7 +126,6 @@ public final class PacketHandler {
     final List<Item> items = new ArrayList<>();
     Collections.addAll(items, weaponItem, abilityItem, armorItem, ringItem);
     final Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, maxedMp, maxedHp, currentFame, exaltedHp, exaltedMp, dexterity);
-    System.out.println(account.getName() + " : " + account.getRecentCharacter().getInventory().printInventory());
     Gui.getRaid().addSnifferAccount(account);
   }
 

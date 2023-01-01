@@ -1,9 +1,9 @@
 {
   "metric": "points",
   "tier": {
-    "weapon": 12,
+    "weapon": 11,
     "ability": 4,
-    "armor": 12,
+    "armor": 11,
     "ring": 4
   },
   "bannedItems": {

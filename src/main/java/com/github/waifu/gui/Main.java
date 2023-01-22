@@ -49,7 +49,6 @@ public final class Main {
     final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
     final JSONTokener tokener = new JSONTokener(url.openStream());
     Utilities.setJson(new JSONObject(tokener));
-
   }
 
   /**

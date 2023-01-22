@@ -39,6 +39,7 @@ public class Settings {
 
     requirementSheets = Arrays.asList(
             "OryxSanctuary",
+            "PubHallsVeteran",
             "PubHallsAdvanced",
             "PubHallsExalt",
             "PubHallsMisc");
@@ -177,7 +178,13 @@ public class Settings {
    * @return Requirement sheet name as a String.
    */
   public String getRequirementSheetName() {
-    return preferences.get("requirementSheetName", requirementSheets.get(0));
+    // handling for anything set that isn't a valid requirement sheet on Github
+    final String name = preferences.get("requirementSheetName", requirementSheets.get(0));
+    if (!requirementSheets.contains(name)) {
+      return "OryxSanctuary";
+    } else {
+      return preferences.get("requirementSheetName", requirementSheets.get(0));
+    }
   }
 
   /**

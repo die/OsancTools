@@ -481,6 +481,46 @@
         "Divine Coronation",
         "Esben's Wedding Ring"
       ]
+    },
+    "-1": {
+      "weapon": [
+        "Agateclaw Dagger",
+        "An Icicle",
+        "Dagger of the Terrible Talon",
+        "Heartfind Dagger",
+        "Bow of Innocent Blood",
+        "Bow of Nightmares",
+        "Bow of Eternal Frost",
+        "Cupid's Bow",
+        "Staff of Astral Knowledge",
+        "Staff of Horrific Knowledge",
+        "Staff of Yuletide Carols",
+        "Staff of Adoration",
+        "Wand of Ancient Warning",
+        "Wand of Ancient Terror",
+        "Present Dispensing Wand",
+        "Wand of Egg-cellence",
+        "Wand of Budding Romance",
+        "Skysplitter Sword",
+        "Skull-splitter Sword",
+        "Frostbite",
+        "Vinesword",
+        "Muramasa",
+        "Corrupted Cleaver",
+        "Salju",
+        "Diamond-Bladed Katana",
+        "Occult Blades",
+        "Crimson Longbow",
+        "Spellblade of Starry Insight",
+        "Morning Star of Harrowing Memories",
+        "Mithril Flail",
+        "Accursed Tachi"
+      ],
+      "armor": [
+        "Hippogriff Hide Armor",
+        "Robe of the Moon Wizard",
+        "Vengeance Armor"
+      ]
     }
   }
 }

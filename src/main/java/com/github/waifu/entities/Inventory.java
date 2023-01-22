@@ -187,6 +187,7 @@ public class Inventory {
             }
           }
         }
+
         default -> {
           return this;
         }
@@ -219,11 +220,6 @@ public class Inventory {
    * @return To be documented.
    */
   private int calculatePoints(final Item item) {
-
-    final int tier = item.getTier();
-    if (tier == 11) {
-      return -1;
-    }
 
     if (item.getType().equals("weapon") && checkAllowedSTSet(item)) {
       return Utilities.getJson().getJSONObject("required points").getInt(item.getItemClass());

@@ -80,12 +80,11 @@ public class ParseWebAppSetsAction implements ActionListener {
             if (sets != null) {
               new SetTable(sets);
             }
-            Gui.setRaid(null);
             parseSetsButton.setText("Parse Sets");
             Gui.setProcessRunning(false);
           } else if (Gui.checkProcessRunning()) {
             return null;
-          } else if (Gui.getRaid() == null) {
+          } else if (Gui.getRaid() == null || !Gui.getRaid().isWebAppRaid()) {
             parseSetsButton.setEnabled(false);
             if (PacketHandler.isXMLNull()) {
               if (!PacketHandler.loadXML()) {

@@ -8,6 +8,7 @@ import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.Main;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.data.StatData;
+import com.github.waifu.packets.data.enums.UnknownItem;
 import com.github.waifu.packets.incoming.UpdatePacket;
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,7 +58,6 @@ public final class PacketHandler {
    */
   public static void handlePacket(final Packet packet) {
     final UpdatePacket updatePacket = (UpdatePacket) packet;
-
     boolean maxedMp = false;
     boolean maxedHp = false;
     int maxMpValue = 0;
@@ -90,7 +90,6 @@ public final class PacketHandler {
           case NUM_STARS_STAT -> stars = stat.getStatValue();
           case MAX_HP_STAT -> maxHpValue = stat.getStatValue();
           case HP_STAT -> currentHpValue = stat.getStatValue();
-          case LEVEL_STAT -> level = stat.getStatValue();
           case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.getNewObjects()[i].getObjectType()));
           case INVENTORY_0_STAT -> weapon = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.getStatValue()));
@@ -104,6 +103,7 @@ public final class PacketHandler {
           case EXALTED_HP -> exaltedHp = stat.getStatValue();
           case EXALTED_MP -> exaltedMp = stat.getStatValue();
           case DEXTERITY_STAT -> dexterity = stat.getStatValue();
+          case LEVEL_STAT -> level = stat.getStatValue();
           default -> {
 
           }
@@ -206,7 +206,7 @@ public final class PacketHandler {
           }
         }
       }
-      return "Failed To Parse Item UT";
+      return UnknownItem.getItemById(id);
     }
   }
 

@@ -67,7 +67,7 @@ public class CalculatePlayerExaltationsAction implements ActionListener {
           case 3 -> "MBC";
           case 4 -> "Cult";
           case 5 -> "Nest";
-          case 6 -> "Cavern";
+          case 6 -> "Steamworks";
           case 7 -> "Fungal";
           default -> "";
         };

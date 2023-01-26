@@ -6,8 +6,6 @@ import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Item;
 import com.github.waifu.gui.Gui;
 import java.awt.Component;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -42,30 +40,16 @@ public final class RealmeyeRequestHandler {
    * @throws InterruptedException To be documented.
    */
   public static Document getRealmeyeData(final String username) throws IOException, InterruptedException {
-    if (Gui.getMode() == Gui.LAN_MODE) {
-      final File html = new File(Gui.TEST_RESOURCE_PATH + "raids/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/players/" + username + "/data.html");
-      return Jsoup.parse(html, "UTF-8");
-    } else {
-      Document doc;
-      try {
-        final Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
-        doc = Jsoup.connect("https://www.realmeye.com/player/" + username).proxy(proxy).get();
-        TimeUnit.SECONDS.sleep(1);
-      } catch (final Exception e) {
-        doc = Jsoup.connect("https://www.realmeye.com/player/" + username).get();
-        TimeUnit.SECONDS.sleep(1);
-      }
-      if (Gui.getMode() == Gui.DEBUG_MODE) {
-        final File file = new File("src/test/resources/raids" + "/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/" + "players/" + username + "/data.html");
-        if (!file.exists()) {
-          file.getParentFile().mkdirs();
-          final FileWriter playerHTML = new FileWriter("src/test/resources/raids" + "/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/" + "players/" + username + "/data.html");
-          playerHTML.write(Jsoup.parse(doc.html()).toString());
-          playerHTML.close();
-        }
-      }
-      return doc;
+    Document doc;
+    try {
+      final Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
+      doc = Jsoup.connect("https://www.realmeye.com/player/" + username).proxy(proxy).get();
+      TimeUnit.SECONDS.sleep(1);
+    } catch (final Exception e) {
+      doc = Jsoup.connect("https://www.realmeye.com/player/" + username).get();
+      TimeUnit.SECONDS.sleep(1);
     }
+    return doc;
   }
 
   /**
@@ -228,26 +212,12 @@ public final class RealmeyeRequestHandler {
   public static List<String[]> GETExalts(final String username) throws IOException {
     Document document = null;
     final List<String[]> collection = new ArrayList<>();
-    if (Gui.getMode() == Gui.LAN_MODE) {
-      final File html = new File(Gui.TEST_RESOURCE_PATH + "exalts/" + username + "/data.html");
-      document = Jsoup.parse(html, "UTF-8");
-    } else {
-      if (checkDirectConnect()) {
-        try {
-          final Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
-          document = Jsoup.connect("https://www.realmeye.com/exaltations-of/" + username).proxy(proxy).get();
-        } catch (final Exception e) {
-          document = Jsoup.connect("https://www.realmeye.com/exaltations-of/" + username).get();
-        }
-        if (Gui.getMode() == Gui.DEBUG_MODE) {
-          final File file = new File("src/test/resources/exalts" + "/" + username + "/data.html");
-          if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            final FileWriter playerHTML = new FileWriter("src/test/resources/exalts" + "/" + username + "/data.html");
-            playerHTML.write(Jsoup.parse(document.html()).toString());
-            playerHTML.close();
-          }
-        }
+    if (checkDirectConnect()) {
+      try {
+        final Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9150));
+        document = Jsoup.connect("https://www.realmeye.com/exaltations-of/" + username).proxy(proxy).get();
+      } catch (final Exception e) {
+        document = Jsoup.connect("https://www.realmeye.com/exaltations-of/" + username).get();
       }
     }
     /* Handles exaltations */
@@ -322,28 +292,18 @@ public final class RealmeyeRequestHandler {
       return "";
     } else {
       try {
-        switch (request) {
-          case "Class":
-            return characterData[0];
-          case "L":
-            return characterData[1];
-          case "CQC":
-            return characterData[2];
-          case "Fame":
-            return characterData[3];
-          case "Exp":
-            return characterData[4];
-          case "Pl.":
-            return characterData[5];
-          case "Stats":
-            return characterData[6];
-          case "Last seen":
-            return characterData[7] + " " + characterData[8];
-          case "Srv.":
-            return characterData[9];
-          default:
-            return "";
-        }
+        return switch (request) {
+          case "Class" -> characterData[0];
+          case "L" -> characterData[1];
+          case "CQC" -> characterData[2];
+          case "Fame" -> characterData[3];
+          case "Exp" -> characterData[4];
+          case "Pl." -> characterData[5];
+          case "Stats" -> characterData[6];
+          case "Last seen" -> characterData[7] + " " + characterData[8];
+          case "Srv." -> characterData[9];
+          default -> "";
+        };
       } catch (final Exception e) {
         return "";
       }

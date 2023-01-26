@@ -128,10 +128,8 @@ public class Inventory {
    * parseInventory method.
    *
    * <p>Returns the Inventory after parsing each item.
-   *
-   * @return To be documented.
    */
-  public Inventory parseInventory() {
+  public void parseInventory() {
     if (items.stream().allMatch(item -> item.getName().equals("Empty slot"))) {
       issue.setProblem(Problem.PRIVATE_PROFILE);
       issue.setMessage("");
@@ -144,15 +142,13 @@ public class Inventory {
           int points = 0;
 
           for (final Item i : items) {
-            if (!parseEmptySlot(i)) {
+            if (parseEmptySlot(i)) {
               switch (i.getLabel()) {
                 case "UT", "ST" -> {
                   checkSwapout(i);
                   checkBannedItem(i);
                 }
-                default -> {
-                  checkTier(i);
-                }
+                default -> checkTier(i);
               }
             }
             final int calculatedPoints = calculatePoints(i);
@@ -174,26 +170,20 @@ public class Inventory {
 
         case "name" -> {
           for (final Item i : items) {
-            if (!parseEmptySlot(i)) {
+            if (parseEmptySlot(i)) {
               switch (i.getLabel()) {
                 case "UT", "ST" -> {
                   checkSwapout(i);
                   checkBannedItem(i);
                 }
-                default -> {
-                  checkTier(i);
-                }
+                default -> checkTier(i);
               }
             }
           }
         }
-
-        default -> {
-          return this;
-        }
+        default -> throw new IllegalStateException("Unexpected value: " + metric);
       }
     }
-    return this;
   }
 
   /**
@@ -207,9 +197,9 @@ public class Inventory {
       issue.setProblem(Problem.EMPTY_SLOT);
       item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor()));
       item.getImage().setDescription("marked");
-      return true;
-    } else {
       return false;
+    } else {
+      return true;
     }
   }
 
@@ -407,7 +397,7 @@ public class Inventory {
     int count = 0;
     for (final Item s : items) {
       final JSONArray jsonArray = dpsItems.getJSONArray(s.getType());
-      String name = "";
+      final String name;
       if (s.getName().charAt(s.getName().length() - 4) == ' ') {
         name = s.getName().substring(0, s.getName().length() - 4);
       } else {

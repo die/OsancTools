@@ -1,13 +1,10 @@
 package com.github.waifu.entities;
 
-import com.github.waifu.gui.Gui;
 import java.awt.Image;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.json.JSONArray;
 
@@ -248,36 +245,19 @@ public class Raider {
    * @return To be documented.
    */
   public ImageIcon setAvatar(final String avatar) {
-    if (Gui.getMode() == Gui.LAN_MODE) {
-      if (this.accounts != null) {
-        final String[] extensions = {".png", ".jpg", ".gif"};
-        for (final String s : extensions) {
-          final File file = new File(Gui.TEST_RESOURCE_PATH + "raids/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/players/" + this.accounts.get(0).getName() + "/avatar" + s);
-          if (file.exists()) {
-            try {
-              return new ImageIcon(ImageIO.read(file));
-            } catch (final Exception e) {
-              e.printStackTrace();
-            }
-          }
-        }
+    try {
+      final Image image;
+      if (avatar.contains(".gif")) {
+        image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_REPLICATE);
+      } else {
+        image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
       }
-    } else {
-      try {
-        final Image image;
-        if (avatar.contains(".gif")) {
-          image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_REPLICATE);
-        } else {
-          image = new ImageIcon(new URL(avatar)).getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
-        }
-        final ImageIcon icon = new ImageIcon(image);
-        icon.setDescription(id);
-        return icon;
-      } catch (final Exception e) {
-        return null;
-      }
+      final ImageIcon icon = new ImageIcon(image);
+      icon.setDescription(id);
+      return icon;
+    } catch (final Exception e) {
+      return null;
     }
-    return null;
   }
 
   /**

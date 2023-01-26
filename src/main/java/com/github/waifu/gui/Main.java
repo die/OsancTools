@@ -16,7 +16,7 @@ public final class Main {
   /**
    * To be documented.
    */
-  private static Settings settings = new Settings();
+  private static final Settings SETTINGS = new Settings();
 
   /**
    * To be documented.
@@ -46,7 +46,7 @@ public final class Main {
    * <p>Loads requirement sheets from the repository.
    */
   public static void loadRequirementSheet() throws IOException {
-    final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/sheets/" + Main.settings.getRequirementSheetName() + ".json");
+    final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/sheets/" + getSettings().getRequirementSheetName() + ".json");
     final JSONTokener tokener = new JSONTokener(url.openStream());
     Utilities.setJson(new JSONObject(tokener));
   }
@@ -57,6 +57,6 @@ public final class Main {
    * @return To be documented.
    */
   public static Settings getSettings() {
-    return settings;
+    return SETTINGS;
   }
 }

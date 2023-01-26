@@ -1,6 +1,6 @@
 package com.github.waifu.gui.listeners;
 
-import com.github.waifu.gui.AcceptFilePanel;
+import com.github.waifu.gui.AcceptFileFrame;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
 import java.awt.Image;
@@ -25,14 +25,14 @@ public class DropListener implements DropTargetListener {
   /**
    * To be documented.
    */
-  private final AcceptFilePanel frame;
+  private final AcceptFileFrame frame;
 
   /**
    * To be documented.
    *
    * @param frame To be documented.
    */
-  public DropListener(final AcceptFilePanel frame) {
+  public DropListener(final AcceptFileFrame frame) {
     this.frame = frame;
   }
 

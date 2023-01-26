@@ -2,6 +2,7 @@ package com.github.waifu.gui.actions;
 
 import com.github.waifu.entities.Raid;
 import com.github.waifu.gui.Gui;
+import com.github.waifu.gui.panels.HomePanel;
 import com.github.waifu.handlers.WebAppHandler;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -13,7 +14,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -25,21 +25,15 @@ public class GetWebAppDataAction implements ActionListener {
   /**
    * Main Gui panel that shows raid metadata.
    */
-  private final JPanel main;
-  /**
-   * Gui instance.
-   */
-  private final Gui gui;
+  private final HomePanel homePanel;
 
   /**
    * Constructs the WebAppDataAction.
    *
-   * @param newMain main panel as a JPanel.
-   * @param newGui gui instance as a Gui.
+   * @param homePanel main panel as a JPanel.
    */
-  public GetWebAppDataAction(final JPanel newMain, final Gui newGui) {
-    this.main = newMain;
-    this.gui = newGui;
+  public GetWebAppDataAction(final HomePanel homePanel) {
+    this.homePanel = homePanel;
   }
 
   /**
@@ -50,14 +44,8 @@ public class GetWebAppDataAction implements ActionListener {
   @Override
   public void actionPerformed(final ActionEvent e) {
     if (!Gui.checkProcessRunning()) {
-      switch (Gui.getMode()) {
-        case Gui.NORMAL_MODE, Gui.DEBUG_MODE -> getWebAppDataFromId();
-        case Gui.LAN_MODE -> getWebAppDataFromFile();
-        default -> {
-          return;
-        }
-      }
-      this.gui.updateGui();
+      getWebAppDataFromId();
+      homePanel.updateHomePanel();
     }
   }
 
@@ -67,7 +55,7 @@ public class GetWebAppDataAction implements ActionListener {
   private void getWebAppDataFromId() {
     try {
       final String s = (String) JOptionPane.showInputDialog(
-              main,
+              homePanel,
               "Please paste in the raid id from osanc.net",
               "Input",
               JOptionPane.PLAIN_MESSAGE,

@@ -88,6 +88,20 @@ public final class Utilities {
   }
 
   /**
+   * Inverts a provided color object.
+   *
+   * @param color the color to invert.
+   * @return inverted color.
+   */
+  public static Color invertColor(final Color color) {
+    final int max = 255;
+    final int invR = max - color.getRed();
+    final int invG = max - color.getGreen();
+    final int invB = max - color.getBlue();
+    return new Color(invR, invG, invB);
+  }
+
+  /**
    * To be documented.
    *
    * @param serverNickname to be documented.

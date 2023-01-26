@@ -1,9 +1,28 @@
-# OsancTools
-
 [![GitHub Super-Linter](https://github.com/Waifu/OsancTools/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
-A Java application containing various tools for making security work in the Oryx Sanctuary discord server much easier.
+# OsancTools
 
-This branch uses code created by [Xcom](https://github.com/X-com/RealmShark) in order to grab data from network packets to parse RoTMG sets. Credit for the packet code goes to him. This code, found in /java/main/packets/ and /java/main/util/, is under MIT License and will soon be put in a package to indicate this.
+OsancTools is a Java application containing various tools for making security work in the Oryx Sanctuary discord server much easier.
 
-This code is NOT production ready, until the functionality is finalized do not expect well documented, readable, and acceptable code.
+## Installation
+
+Download the [latest release](https://github.com/Waifu/OsancTools/releases/latest) and run the executable.
+
+## Build from Source
+
+1. Open `build.gradle` with Intellij IDEA.
+2. Add a configuration for the main function found in `com.github.waifu.gui.Main`
+3. To build, run the shadowjar task.
+
+This project uses Launch4J to build the jar, but to run the artifact without wrapping into an executable, use the command:
+```bash
+java -jar <artifact_name>
+```
+
+## Contributing
+
+Feel free to submit pull requests that handle specific issues, and when in doubt feel free to contact me to see where you can help.
+
+## License
+
+This repository is generally under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/), however certain directories will include a standalone license file that applies to the code in the current directory and its sub-directories.

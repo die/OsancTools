@@ -1,7 +1,7 @@
 package com.github.waifu.gui;
 
 import com.github.waifu.config.Settings;
-import com.github.waifu.util.Utilities;
+import com.github.waifu.handlers.RequirementSheetHandler;
 import java.io.IOException;
 import java.net.URL;
 import javax.swing.SwingUtilities;
@@ -48,7 +48,7 @@ public final class Main {
   public static void loadRequirementSheet() throws IOException {
     final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/sheets/" + getSettings().getRequirementSheetName() + ".json");
     final JSONTokener tokener = new JSONTokener(url.openStream());
-    Utilities.setJson(new JSONObject(tokener));
+    RequirementSheetHandler.setRequirementSheet(new JSONObject(tokener));
   }
 
   /**

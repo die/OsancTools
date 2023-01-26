@@ -8,7 +8,12 @@ public enum UnknownItem {
   /**
    * Kensei Ability: Snowman's Sheath.
    */
-  SNOWMAN_SHEATH("14662", "Snowman's Sheath", "UT");
+  SNOWMAN_SHEATH("14662", "Snowman's Sheath", "UT"),
+  /**
+   * Ring: Faded Heart Scarab.
+   */
+  FADED_HEART_SCARAB("14457", "Faded Heart Scarab", "UT");
+
 
   /**
    * The id of the item.

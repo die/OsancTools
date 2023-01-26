@@ -7,7 +7,7 @@ import com.github.waifu.entities.React;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.tables.ReactTable;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
-import com.github.waifu.util.Utilities;
+import com.github.waifu.handlers.RequirementSheetHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * To be documented.
@@ -102,9 +103,10 @@ public class ParseWebAppReactsAction implements ActionListener {
     if (raid.getRaiders().isEmpty()) {
       return null;
     } else {
-      final JSONArray items = (JSONArray) Utilities.getJson().get("reactItem");
-      final JSONArray classes = (JSONArray) Utilities.getJson().get("reactClass");
-      final JSONArray reactDPS = (JSONArray) Utilities.getJson().get("reactDps");
+      final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
+      final JSONArray items = (JSONArray) requirementSheet.get("reactItem");
+      final JSONArray classes = (JSONArray) requirementSheet.get("reactClass");
+      final JSONArray reactDPS = (JSONArray) requirementSheet.get("reactDps");
       final List<React> reactList = createReactObjects();
       bar.setMaximum(reactList.size());
       int count = 1;

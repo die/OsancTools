@@ -1,5 +1,6 @@
 package com.github.waifu.gui.panels;
 
+import com.github.waifu.handlers.RequirementSheetHandler;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import java.awt.Component;
@@ -27,7 +28,7 @@ public class RequiredPointsPanel extends JPanel {
    */
   private final Map<String, Integer> map = new HashMap<>() {
     {
-      final JSONObject jsonObject = Utilities.getJson().getJSONObject("required points");
+      final JSONObject jsonObject = RequirementSheetHandler.getRequirementSheet().getJSONObject("required points");
       for (final String keys : jsonObject.keySet()) {
         put(keys, jsonObject.getInt(keys));
       }
@@ -48,7 +49,7 @@ public class RequiredPointsPanel extends JPanel {
       for (int j = 0; j < columns; j++) {
         final String classType = classes.get(index);
         final JLabel jLabel = new ClassLabel(classType);
-        final int points = Utilities.getJson().getJSONObject("required points").getInt(classType);
+        final int points = RequirementSheetHandler.getRequirementSheet().getJSONObject("required points").getInt(classType);
         jLabel.setText(String.valueOf(points));
         final ImageIcon icon = new ImageIcon(new ImageIcon(Utilities.getImageResource("images/skins/" + classType + ".png")).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
         jLabel.setIcon(icon);

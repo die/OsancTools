@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONObject;
 
 /**
  * Utilities class for the program.
@@ -24,11 +23,6 @@ public final class Utilities {
   private Utilities() {
 
   }
-
-  /**
-   * Requirement sheet JSON.
-   */
-  private static JSONObject json;
 
   /**
    * markImage method.
@@ -117,23 +111,5 @@ public final class Utilities {
       }
     }
     return usernames;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public static JSONObject getJson() {
-    return json;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @param json To be documented.
-   */
-  public static void setJson(final JSONObject json) {
-    Utilities.json = json;
   }
 }

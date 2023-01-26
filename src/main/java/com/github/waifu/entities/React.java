@@ -1,6 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.enums.Problem;
+import com.github.waifu.handlers.RequirementSheetHandler;
 import com.github.waifu.util.Utilities;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -212,6 +213,7 @@ public class React {
    * @param account account of the raider.
    */
   private void parseItem(final Account account) {
+    JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
     final Inventory inventory = account.getRecentCharacter().getInventory();
     if (inventory != null) {
       final String ability = inventory.getAbility().getName();
@@ -228,7 +230,7 @@ public class React {
           }
           break;
         case "Slow":
-          final JSONObject slowItems = Utilities.getJson().getJSONObject("reacts").getJSONObject("slowItems");
+          final JSONObject slowItems = requirementSheet.getJSONObject("reacts").getJSONObject("slowItems");
           boolean good = true;
           for (final String keys : slowItems.keySet()) {
             final JSONObject jsonObject = (JSONObject) slowItems.get(keys);
@@ -404,6 +406,7 @@ public class React {
    * @param account account of the raider.
    */
   public void parseClass(final Account account) {
+    final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
     final String type = account.getRecentCharacter().getType();
     final Inventory inventory = account.getRecentCharacter().getInventory();
     if (name.equals(type)) {
@@ -415,7 +418,7 @@ public class React {
           inventory.getIssue().setWhisper("/t " + account.getName() + " Please equip your T6/T7 ability so I can confirm it. You can swap it out after");
           inventory.getAbility().setImage(Utilities.markImage(inventory.getAbility().getImage(), Problem.MISSING_REACT_CLASS_ABILITY_T6.getColor()));
         } else if (inventory.getItems().get(1).getName().endsWith("UT")) {
-          final JSONArray reskins = Utilities.getJson().getJSONObject("allowedSTSets").getJSONObject("Oryxmas").getJSONArray("items");
+          final JSONArray reskins = requirementSheet.getJSONObject("allowedSTSets").getJSONObject("Oryxmas").getJSONArray("items");
           final String ability = inventory.getAbility().getName();
           if (reskins.toList().contains(ability.substring(0, ability.length() - 3))) {
             inventory.getIssue().setWhisper("None");

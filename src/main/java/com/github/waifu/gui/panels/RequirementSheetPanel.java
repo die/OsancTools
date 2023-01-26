@@ -1,7 +1,7 @@
 package com.github.waifu.gui.panels;
 
 import com.github.waifu.gui.Main;
-import com.github.waifu.util.Utilities;
+import com.github.waifu.handlers.RequirementSheetHandler;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Insets;
@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import org.json.JSONObject;
 
 /**
  * To be documented.
@@ -63,8 +64,9 @@ public class RequirementSheetPanel extends JPanel {
       }
     }
     requirementSheetTextArea.setEnabled(false);
-    requirementSheetTextArea.setText(Utilities.getJson().toString(4));
-    changeClassPointsButton.setEnabled(Utilities.getJson().has("required points"));
+    final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
+    requirementSheetTextArea.setText(requirementSheet.toString(4));
+    changeClassPointsButton.setEnabled(requirementSheet.has("required points"));
     addActionListeners();
   }
 
@@ -73,17 +75,17 @@ public class RequirementSheetPanel extends JPanel {
       To be documented.
      */
     changeClassPointsButton.addActionListener(e -> {
-      RequiredPointsPanel requiredPointsPanel = new RequiredPointsPanel();
-      int confirm = JOptionPane.showConfirmDialog(this, requiredPointsPanel, "<html><b>Click on a class to change points</b>", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+      final RequiredPointsPanel requiredPointsPanel = new RequiredPointsPanel();
+      final int confirm = JOptionPane.showConfirmDialog(this, requiredPointsPanel, "<html><b>Click on a class to change points</b>", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
       if (confirm == JOptionPane.OK_OPTION) {
-        Map<String, Integer> map = requiredPointsPanel.getMap();
-
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-          String key = entry.getKey();
-          Object value = entry.getValue();
-          Utilities.getJson().getJSONObject("required points").put(key, value);
-          requirementSheetTextArea.setText(Utilities.getJson().toString(4));
+        final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
+        final Map<String, Integer> map = requiredPointsPanel.getMap();
+        for (final Map.Entry<String, Integer> entry : map.entrySet()) {
+          final String key = entry.getKey();
+          final Object value = entry.getValue();
+          requirementSheet.getJSONObject("required points").put(key, value);
+          requirementSheetTextArea.setText(requirementSheet.toString(4));
         }
       }
     });
@@ -97,8 +99,9 @@ public class RequirementSheetPanel extends JPanel {
       try {
         Main.loadRequirementSheet();
         TimeUnit.SECONDS.sleep(1);
-        requirementSheetTextArea.setText(Utilities.getJson().toString(4));
-        changeClassPointsButton.setEnabled(Utilities.getJson().has("required points"));
+        final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
+        requirementSheetTextArea.setText(requirementSheet.toString(4));
+        changeClassPointsButton.setEnabled(requirementSheet.has("required points"));
       } catch (final Exception ex) {
         ex.printStackTrace();
       }

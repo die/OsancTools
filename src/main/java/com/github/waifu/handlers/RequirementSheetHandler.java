@@ -111,17 +111,29 @@ public final class RequirementSheetHandler {
    */
   private static int calculatePoints(final Item item, final List<Item> items) {
     final JSONObject requirementSheet = getRequirementSheet();
+    /*
+      Excuse sets from calculations if the set is allowed.
+     */
     if (item.getType().equals("weapon") && parseAllowedSTSet(item, items)) {
       return requirementSheet.getJSONObject("required points").getInt(item.getItemClass());
     } else {
       final JSONObject jsonObject = requirementSheet.getJSONObject("items");
       for (final String keys : jsonObject.keySet()) {
         final JSONObject pointObject = jsonObject.getJSONObject(keys);
+        /*
+          If an item name is found in the list, return the number of points of the JSONObject's name.
+         */
         if (pointObject.has(item.getType()) && pointObject.getJSONArray(item.getType()).toList().contains(item.getNameWithoutLabel())) {
           return Integer.parseInt(keys);
         } else if (pointObject.has(item.getNameWithoutLabel())) {
+          /*
+            Objects with item names are for criteria where anything found with that item counts as a point.
+           */
           return parseItemRequirements(pointObject.getJSONObject(item.getNameWithoutLabel()), item, items, Integer.parseInt(keys));
         } else {
+          /*
+            Handle objects that have specific combinations.
+           */
           for (final String k : pointObject.keySet()) {
             try {
               final JSONObject combination = pointObject.getJSONObject(k);
@@ -313,23 +325,29 @@ public final class RequirementSheetHandler {
   }
 
   private static int parseItemRequirements(final JSONObject itemRequirement, final Item item, final List<Item> items, final int points) {
+    /*
+      An item = points if any combination is found in any category.
+      Used if an item = points if with a class(es) or item(s).
+     */
     if (itemRequirement.has("class") && itemRequirement.getJSONArray("class").toList().contains(item.getItemClass())) {
       return points;
     }
-
     if (itemRequirement.has("weapon")) {
       if (itemRequirement.getJSONArray("weapon").toList().contains(items.get(InventorySlots.WEAPON.getIndex()))) {
         return points;
       }
-    } else if (itemRequirement.has("ability")) {
+    }
+    if (itemRequirement.has("ability")) {
       if (itemRequirement.getJSONArray("ability").toList().contains(items.get(InventorySlots.ABILITY.getIndex()))) {
         return points;
       }
-    } else if (itemRequirement.has("armor")) {
+    }
+    if (itemRequirement.has("armor")) {
       if (itemRequirement.getJSONArray("armor").toList().contains(items.get(InventorySlots.ARMOR.getIndex()))) {
         return points;
       }
-    } else if (itemRequirement.has("ring")) {
+    }
+    if (itemRequirement.has("ring")) {
       if (itemRequirement.getJSONArray("ring").toList().contains(items.get(InventorySlots.RING.getIndex()))) {
         return points;
       }

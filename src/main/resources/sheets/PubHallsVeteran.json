@@ -216,15 +216,9 @@
         "Exalted God's Horn",
         "Omnipotence Ring"
       ],
-      "Treasurer Trickster": {
+      "Collector's Monocle": {
         "class":[
           "Rogue"
-        ],
-        "slot": [
-          "ring"
-        ],
-        "items": [
-          "Collector's Monocle"
         ]
       }
     }

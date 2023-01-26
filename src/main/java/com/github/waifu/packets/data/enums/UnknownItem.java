@@ -12,7 +12,11 @@ public enum UnknownItem {
   /**
    * Ring: Faded Heart Scarab.
    */
-  FADED_HEART_SCARAB("14457", "Faded Heart Scarab", "UT");
+  FADED_HEART_SCARAB("14457", "Faded Heart Scarab", "UT"),
+  /**
+   * Assassin Ability: Mighty Stein.
+   */
+  MIGHTY_STEIN("14149", "Mighty Stein", "UT");
 
 
   /**

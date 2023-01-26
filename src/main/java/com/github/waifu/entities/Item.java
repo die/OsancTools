@@ -1,6 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.util.Utilities;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -53,6 +54,7 @@ public class Item {
     this.type = type;
     this.itemClass = itemClass;
     createImage();
+
   }
 
   /**
@@ -146,6 +148,21 @@ public class Item {
   }
 
   /**
+   * Checks if an item name is an id and marks accordingly.
+   *
+   * @return boolean if the item is an id.
+   */
+  public boolean isUnknown() {
+    try {
+      Integer.parseInt(getNameWithoutLabel());
+      setImage(Utilities.markImage(getImage(), Color.ORANGE));
+      return true;
+    } catch (final Exception ignored) {
+      return false;
+    }
+  }
+
+  /**
    * createImage method.
    *
    * <p>Constructs the appropriate image for the item using given information.
@@ -178,6 +195,8 @@ public class Item {
         }
       }
     }
+
+    isUnknown();
   }
 
   /**

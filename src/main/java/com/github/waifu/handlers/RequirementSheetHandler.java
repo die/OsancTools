@@ -61,7 +61,7 @@ public final class RequirementSheetHandler {
           for (final Item i : items) {
             final int calculatedPoints = calculatePoints(i, items);
 
-            if (!i.getImage().getDescription().equals("marked")) {
+            if (i.getImage().getDescription() != null && !i.getImage().getDescription().equals("marked")) {
               if (calculatedPoints > 0) {
                 i.setImage(Utilities.markImage(i.getImage(), Color.CYAN));
                 i.getImage().setDescription("marked");

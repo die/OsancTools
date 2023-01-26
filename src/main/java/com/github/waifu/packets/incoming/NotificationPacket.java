@@ -67,44 +67,41 @@ public class NotificationPacket extends Packet {
     effect = NotificationEffectType.byOrdinal(buffer.readByte());
     extra = buffer.readByte();
 
-    switch (effect) {
-      case StatIncrease:
-      case ServerMessage:
-      case ErrorMessage:
-      case KeepMessage:
-      case TeleportationError:
-        message = buffer.readString();
-        return;
-      case UI:
-        message = buffer.readString();
-        uiExtra = buffer.readShort();
-        return;
-      case Queue:
-        objectId = buffer.readInt();
-        queuePos = buffer.readShort();
-        return;
-      case ObjectText:
-        message = buffer.readString();
-        objectId = buffer.readInt();
-        color = buffer.readInt();
-        return;
-      case Death:
-      case DungeonOpened:
-        message = buffer.readString();
-        pictureType = buffer.readInt();
-        return;
-      case DungeonCall:
-      case ProgressBar:
-        message = buffer.readString();
-        unknownInt1 = buffer.readInt();
-        unknownShort1 = buffer.readShort();
-        return;
-      case Behavior:
-        message = buffer.readString();
-        unknownInt2 = buffer.readInt();
-        unknownInt3 = buffer.readInt();
-        return;
-      default:
+    if (effect != null) {
+      switch (effect) {
+        case StatIncrease, ServerMessage, ErrorMessage, KeepMessage, TeleportationError -> {
+          message = buffer.readString();
+        }
+        case UI -> {
+          message = buffer.readString();
+          uiExtra = buffer.readShort();
+        }
+        case Queue -> {
+          objectId = buffer.readInt();
+          queuePos = buffer.readShort();
+        }
+        case ObjectText -> {
+          message = buffer.readString();
+          objectId = buffer.readInt();
+          color = buffer.readInt();
+        }
+        case Death, DungeonOpened -> {
+          message = buffer.readString();
+          pictureType = buffer.readInt();
+        }
+        case DungeonCall, ProgressBar -> {
+          message = buffer.readString();
+          unknownInt1 = buffer.readInt();
+          unknownShort1 = buffer.readShort();
+        }
+        case Behavior -> {
+          message = buffer.readString();
+          unknownInt2 = buffer.readInt();
+          unknownInt3 = buffer.readInt();
+        }
+        default -> {
+        }
+      }
     }
   }
 

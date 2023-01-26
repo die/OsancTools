@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+shadowJar {
+    exclude 'images.zip'
+}
+
 dependencies {
     implementation 'com.ardikars.pcap:pcap-spi:1.4.2'
     implementation 'com.ardikars.pcap:pcap-jdk7:1.4.2'

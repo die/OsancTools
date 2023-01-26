@@ -74,7 +74,7 @@ public class RequiredPointsPanel extends JPanel {
     final JButton setAll = new JButton("Set All");
     setAll.addActionListener(e -> {
       try {
-        final int number = Integer.parseInt(JOptionPane.showInputDialog(this, "Input a number", 0));
+        final int number = Integer.parseInt(JOptionPane.showInputDialog(this, "Input a number", 4));
         for (Component c : grid.getComponents()) {
           if (c instanceof ClassLabel) {
             ((ClassLabel) c).setText(String.valueOf(number));

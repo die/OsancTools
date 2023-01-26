@@ -242,7 +242,7 @@ public final class RequirementSheetHandler {
         }
       }
 
-      if (allowedStSet) {
+      if (!allowedStSet) {
         issue.setProblem(Problem.BANNED_ITEM);
         item.setImage(Utilities.markImage(item.getImage(), Problem.BANNED_ITEM.getColor()));
         item.getImage().setDescription("marked");

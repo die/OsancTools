@@ -40,6 +40,7 @@ public class Settings {
     requirementSheets = Arrays.asList(
             "OryxSanctuary",
             "PubHallsVeteran",
+            "PubHallsSemicar",
             "PubHallsAdvanced",
             "PubHallsExalt",
             "PubHallsMisc");

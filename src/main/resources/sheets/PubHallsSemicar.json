@@ -255,9 +255,6 @@
           "Sorcerer",
           "Priest",
           "Summoner",
-          "Samurai",
-          "Ninja",
-          "Kensei",
           "Bard",
           "Archer",
           "Huntress"
@@ -267,7 +264,9 @@
         "class": [
           "Warrior",
           "Knight",
-          "Paladin"
+          "Paladin",
+          "Samurai",
+          "Kensei"
         ]
       },
       "Collector's Monocle": {

@@ -87,7 +87,7 @@ public class Gui extends JFrame {
     setAlwaysOnTop(true);
     setResizable(false);
     setTitle("OsancTools");
-    setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
+    setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     pack();
     setVisible(true);

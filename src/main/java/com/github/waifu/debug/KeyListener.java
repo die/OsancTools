@@ -60,7 +60,7 @@ public class KeyListener implements java.awt.event.KeyListener {
     final boolean hasKey = gerpep.contains(e.getKeyChar());
     final boolean characterAtIndex = gerpep.get(index).equals(e.getKeyChar());
     if (keys.equals(gerpep)) {
-      final URL imageUrl = Utilities.getImageResource("images/gui/bluecat.png");
+      final URL imageUrl = Utilities.getClassResource("images/gui/bluecat.png");
       final ImageIcon blueCatIcon = new ImageIcon(imageUrl);
       final Image image = blueCatIcon.getImage();
       final int width = 50;

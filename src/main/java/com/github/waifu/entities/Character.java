@@ -85,7 +85,7 @@ public class Character {
   public Character() {
     this.type = "Wizard";
     this.skin = "";
-    this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/Wizard.png"));
+    this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));
     this.level = "";
     this.cqc = "";
     this.fame = "";
@@ -108,7 +108,7 @@ public class Character {
   public Character(final String type, final Inventory inventory) {
     this.type = type;
     this.skin = "";
-    this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/" + type + ".png"));
+    this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/" + type + ".png"));
     this.level = "";
     this.cqc = "";
     this.fame = "";
@@ -135,7 +135,7 @@ public class Character {
   public Character(final Inventory inventory, final int level, final int fame, final boolean maxedHp, final boolean maxedMp, final int dexterity, final int exaltedHp, final int exaltedMp) {
     this.type = "Wizard";
     this.skin = "";
-    this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/Wizard.png"));
+    this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));
     this.level = String.valueOf(level);
     this.cqc = "";
     this.fame = String.valueOf(fame);
@@ -172,7 +172,7 @@ public class Character {
   public Character(final String type, final String skin, final String level, final String cqc, final String fame, final String exp, final String place, final String stats, final String lastSeen, final String server, final Inventory inventory) {
     this.type = type;
     this.skin = skin;
-    this.skinImage = new ImageIcon(Utilities.getImageResource("images/skins/" + type + ".png"));
+    this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/" + type + ".png"));
     this.level = level;
     this.cqc = cqc;
     this.fame = fame;

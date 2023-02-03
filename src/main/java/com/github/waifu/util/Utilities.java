@@ -49,7 +49,7 @@ public final class Utilities {
    * @param path to be documented.
    * @return to be documented.
    */
-  public static URL getImageResource(final String path) {
+  public static URL getClassResource(final String path) {
     if (Utilities.class.getClassLoader().getResource("resources/" + path) != null) {
       return Utilities.class.getClassLoader().getResource("resources/" + path);
     } else {

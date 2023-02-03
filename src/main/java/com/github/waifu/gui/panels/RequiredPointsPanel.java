@@ -51,7 +51,7 @@ public class RequiredPointsPanel extends JPanel {
         final JLabel jLabel = new ClassLabel(classType);
         final int points = RequirementSheetHandler.getRequirementSheet().getJSONObject("required points").getInt(classType);
         jLabel.setText(String.valueOf(points));
-        final ImageIcon icon = new ImageIcon(new ImageIcon(Utilities.getImageResource("images/skins/" + classType + ".png")).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        final ImageIcon icon = new ImageIcon(new ImageIcon(Utilities.getClassResource("images/skins/" + classType + ".png")).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
         jLabel.setIcon(icon);
         final JPanel panel = this;
         jLabel.addMouseListener(new MouseAdapter() {

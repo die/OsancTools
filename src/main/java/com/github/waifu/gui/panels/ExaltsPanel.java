@@ -234,14 +234,14 @@ public class ExaltsPanel extends JPanel {
     buttonGroup.add(vitalityRadioButton);
     buttonGroup.add(attackRadioButton);
     buttonGroup.add(speedRadioButton);
-    lifePotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/life.png")));
-    manaPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/mana.png")));
-    attackPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/attack.png")));
-    defensePotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/defense.png")));
-    speedPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/speed.png")));
-    dexterityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/dexterity.png")));
-    vitalityPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/vitality.png")));
-    wisdomPotionImage.setIcon(new ImageIcon(Utilities.getImageResource("images/potions/wisdom.png")));
+    lifePotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/life.png")));
+    manaPotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/mana.png")));
+    attackPotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/attack.png")));
+    defensePotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/defense.png")));
+    speedPotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/speed.png")));
+    dexterityPotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/dexterity.png")));
+    vitalityPotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/vitality.png")));
+    wisdomPotionImage.setIcon(new ImageIcon(Utilities.getClassResource("images/potions/wisdom.png")));
     switch (Main.getSettings().getStat()) {
       case 1 -> manaRadioButton.setSelected(true);
       case 2 -> attackRadioButton.setSelected(true);

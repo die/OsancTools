@@ -105,7 +105,7 @@ public class VcParse extends JFrame {
     setAlwaysOnTop(true);
     setResizable(false);
     setTitle("OsancTools");
-    setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
+    setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
     pack();

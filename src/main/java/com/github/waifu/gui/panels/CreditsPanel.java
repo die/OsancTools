@@ -30,7 +30,7 @@ public class CreditsPanel extends JPanel {
     final JLabel creditsImage = new JLabel();
     creditsImage.setHorizontalAlignment(0);
     creditsImage.setHorizontalTextPosition(0);
-    creditsImage.setIcon(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")));
+    creditsImage.setIcon(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")));
     creditsImage.setText("<html>Made with ♡ by Su<br><center>su#4008</html>");
     creditsImage.setToolTipText("https://discord.gg/oryx");
     creditsImage.setVerticalAlignment(0);

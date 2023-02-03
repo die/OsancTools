@@ -8,10 +8,12 @@ import com.github.waifu.enums.Problem;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
+import java.net.URL;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * To be documented.
@@ -239,7 +241,7 @@ public final class RequirementSheetHandler {
    * @param items to be documented.
    * @return To be documented.
    */
-  private static boolean parseBannedItem(final Item item, final List<Item> items, final Issue issue) {
+  public static boolean parseBannedItem(final Item item, final List<Item> items, final Issue issue) {
     final JSONObject requirementSheet = getRequirementSheet();
     if (requirementSheet.has("bannedItems")) {
       final JSONObject bannedItems = requirementSheet.getJSONObject("bannedItems");
@@ -272,7 +274,7 @@ public final class RequirementSheetHandler {
    * @param items To be documented.
    * @return true if it is part of an allowed ST set that is equipped
    */
-  private static boolean parseAllowedSTSet(final Item item, final List<Item> items) {
+  public static boolean parseAllowedSTSet(final Item item, final List<Item> items) {
     JSONObject requirementSheet = getRequirementSheet();
     if (requirementSheet.has("allowedSTSets")) {
       final JSONObject allowedSts = requirementSheet.getJSONObject("allowedSTSets");
@@ -307,7 +309,7 @@ public final class RequirementSheetHandler {
    * @param issue To be documented.
    * @return To be documented.
    */
-  private static boolean parseSwapout(final Item item, final Issue issue) {
+  public static boolean parseSwapout(final Item item, final Issue issue) {
     final JSONObject requirementSheet = getRequirementSheet();
     if (requirementSheet.has("swapoutItems")) {
       final JSONArray swapouts = requirementSheet.getJSONArray("swapoutItems");
@@ -365,11 +367,23 @@ public final class RequirementSheetHandler {
   }
 
   /**
-   * To be documented.
+   * Sets the current requirement sheet.
    *
-   * @param sheet to be documented.
+   * @param o can be of type String or JSONObject. If o is a path String, a JSONObject
+   *          is constructed by loading a requirement sheet in the class path.
    */
-  public static void setRequirementSheet(final JSONObject sheet) {
-    requirementSheet = sheet;
+  public static void setRequirementSheet(final Object o) {
+    if (o instanceof String) {
+      try {
+        final String path = (String) o;
+        final URL url = Utilities.getClassResource(path);
+        final JSONTokener tokener = new JSONTokener(url.openStream());
+        requirementSheet = new JSONObject(tokener);
+      } catch (final Exception exception) {
+        exception.printStackTrace();
+      }
+    } else if (o instanceof JSONObject) {
+      requirementSheet = (JSONObject) o;
+    }
   }
 }

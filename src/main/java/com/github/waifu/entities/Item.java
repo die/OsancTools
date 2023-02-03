@@ -15,11 +15,11 @@ public class Item {
   /**
    * To be documented.
    */
-  private final String name;
+  private String name;
   /**
    * To be documented.
    */
-  private final String type;
+  private String type;
   /**
    * To be documented.
    */
@@ -71,7 +71,7 @@ public class Item {
     this.name = name.replace(":", "");
     this.type = type;
     this.itemClass = itemClass;
-    final BufferedImage image = ImageIO.read(Utilities.getImageResource("images/items/renders.png"));
+    final BufferedImage image = ImageIO.read(Utilities.getClassResource("images/items/renders.png"));
     final BufferedImage image1 = image.getSubimage(x, y, 46, 46);
     System.out.println("obtained image");
     this.image = new ImageIcon(image1);
@@ -84,6 +84,15 @@ public class Item {
    */
   public String getName() {
     return this.name;
+  }
+
+  /**
+   * Sets the name of the item.
+   *
+   * @param name the name as a String, which should include the label (UT/ST/TX).
+   */
+  public void setName(final String name) {
+    this.name = name;
   }
 
   /**
@@ -139,6 +148,15 @@ public class Item {
   }
 
   /**
+   * Sets the type of item.
+   *
+   * @param type type as in weapon, ability, armor, and ring.
+   */
+  public void setType(final String type) {
+    this.type = type;
+  }
+
+  /**
    * To be documented.
    *
    * @return To be documented.
@@ -168,10 +186,10 @@ public class Item {
    * <p>Constructs the appropriate image for the item using given information.
    */
   public void createImage() {
-    if (Utilities.getImageResource("images/items/" + name + ".png") != null) {
-      image = new ImageIcon(Utilities.getImageResource("images/items/" + name + ".png"));
-    } else if (Utilities.getImageResource("images/items/" + name.replace("UT", "ST") + ".png") != null) {
-      image = new ImageIcon(Utilities.getImageResource("images/items/" + name.replace("UT", "ST") + ".png"));
+    if (Utilities.getClassResource("images/items/" + name + ".png") != null) {
+      image = new ImageIcon(Utilities.getClassResource("images/items/" + name + ".png"));
+    } else if (Utilities.getClassResource("images/items/" + name.replace("UT", "ST") + ".png") != null) {
+      image = new ImageIcon(Utilities.getClassResource("images/items/" + name.replace("UT", "ST") + ".png"));
     } else {
       if (itemClass != null) {
         switch (type) {
@@ -208,12 +226,12 @@ public class Item {
    */
   private void setEmptyWeaponImage(final String itemClass) {
     switch (itemClass) {
-      case "Rogue", "Assassin", "Trickster" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyDagger.png"));
-      case "Archer", "Huntress", "Bard" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyBow.png"));
-      case "Wizard", "Necromancer", "Mystic" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyStaff.png"));
-      case "Priest", "Sorcerer", "Summoner" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyWand.png"));
-      case "Warrior", "Knight", "Paladin" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptySword.png"));
-      case "Ninja", "Samurai", "Kensei" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyKatana.png"));
+      case "Rogue", "Assassin", "Trickster" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyDagger.png"));
+      case "Archer", "Huntress", "Bard" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyBow.png"));
+      case "Wizard", "Necromancer", "Mystic" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyStaff.png"));
+      case "Priest", "Sorcerer", "Summoner" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyWand.png"));
+      case "Warrior", "Knight", "Paladin" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptySword.png"));
+      case "Ninja", "Samurai", "Kensei" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyKatana.png"));
       default -> {
 
       }
@@ -228,7 +246,7 @@ public class Item {
    * @param itemClass class that can use the Item
    */
   private void setEmptyAbilityImage(final String itemClass) {
-    image = new ImageIcon(Utilities.getImageResource("images/items/Empty" + itemClass + "Ability.png"));
+    image = new ImageIcon(Utilities.getClassResource("images/items/Empty" + itemClass + "Ability.png"));
   }
 
   /**
@@ -240,9 +258,9 @@ public class Item {
    */
   private void setEmptyArmorImage(final String itemClass) {
     switch (itemClass) {
-      case "Rogue", "Assassin", "Trickster", "Archer", "Huntress", "Ninja" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyLeatherArmor.png"));
-      case "Wizard", "Necromancer", "Mystic", "Priest", "Sorcerer", "Summoner", "Bard" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyRobe.png"));
-      case "Warrior", "Knight", "Paladin", "Samurai", "Kensei" -> image = new ImageIcon(Utilities.getImageResource("images/items/EmptyHeavyArmor.png"));
+      case "Rogue", "Assassin", "Trickster", "Archer", "Huntress", "Ninja" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyLeatherArmor.png"));
+      case "Wizard", "Necromancer", "Mystic", "Priest", "Sorcerer", "Summoner", "Bard" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyRobe.png"));
+      case "Warrior", "Knight", "Paladin", "Samurai", "Kensei" -> image = new ImageIcon(Utilities.getClassResource("images/items/EmptyHeavyArmor.png"));
       default -> {
 
       }
@@ -255,7 +273,7 @@ public class Item {
    * <p>Sets the appropriate image for the item, where all classes can use rings.
    */
   private void setEmptyRingImage() {
-    image = new ImageIcon(Utilities.getImageResource("images/items/EmptyRing.png"));
+    image = new ImageIcon(Utilities.getClassResource("images/items/EmptyRing.png"));
   }
 
   /**

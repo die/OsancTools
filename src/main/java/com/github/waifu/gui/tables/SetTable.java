@@ -94,7 +94,7 @@ public class SetTable extends JFrame {
     setResizable(false);
     setTitle("OsancTools");
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
+    setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setVisible(true);
     new TableCopyAction(setsTable);
 

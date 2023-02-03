@@ -77,6 +77,15 @@ public class Inventory {
   /**
    * To be documented.
    *
+   * @param item to be documented.
+   */
+  public void setWeapon(final Item item) {
+    this.items.set(InventorySlots.WEAPON.getIndex(), item);
+  }
+
+  /**
+   * To be documented.
+   *
    * @return To be documented.
    */
   public Item getAbility() {

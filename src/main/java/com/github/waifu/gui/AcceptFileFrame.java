@@ -90,11 +90,10 @@ public class AcceptFileFrame extends JDialog {
     setAlwaysOnTop(true);
     setResizable(false);
     setTitle("OsancTools");
-    setIconImage(new ImageIcon(Utilities.getImageResource("images/gui/Gravestone.png")).getImage());
+    setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     setMinimumSize(new Dimension(screenSize.width / 4, screenSize.height / 4));
-    setVisible(true);
     pack();
 
     width = panel.getWidth();
@@ -164,6 +163,9 @@ public class AcceptFileFrame extends JDialog {
         ex.printStackTrace();
       }
     });
+
+    // must be last for modality
+    setVisible(true);
   }
 
   /**
@@ -188,6 +190,7 @@ public class AcceptFileFrame extends JDialog {
     chooseButton = new JButton();
     chooseButton.setText("Choose");
     main.add(chooseButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    add(main);
   }
 
   /**

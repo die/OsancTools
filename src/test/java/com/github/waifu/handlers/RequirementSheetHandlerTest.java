@@ -1,5 +1,10 @@
 package com.github.waifu.handlers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Item;
 import com.github.waifu.enums.InventorySlots;
@@ -9,9 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RequirementSheetHandlerTest {
 

@@ -7,7 +7,7 @@
     "ring": 4
   },
   "maxedStats": {
-    "metric": "any",
+    "metric": "required",
     "stats": [
       "Dexterity",
       "Attack"

@@ -6,6 +6,19 @@
     "armor": 12,
     "ring": 4
   },
+  "maxedStats": {
+    "metric": "required",
+    "stats": [
+      "Life",
+      "Mana",
+      "Attack",
+      "Defense",
+      "Speed",
+      "Dexterity",
+      "Vitality",
+      "Wisdom"
+    ]
+  },
   "bannedItems": {
     "weapon": [
       "Bone Dagger",

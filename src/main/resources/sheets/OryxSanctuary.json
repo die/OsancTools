@@ -6,6 +6,15 @@
     "armor": 12,
     "ring": 4
   },
+  "maxedStats": {
+    "metric": "required",
+    "stats": [
+      "Dexterity",
+      "Attack",
+      "Defense",
+      "Speed"
+    ]
+  },
   "bannedItems": {
     "weapon": [
       "Toy Knife",

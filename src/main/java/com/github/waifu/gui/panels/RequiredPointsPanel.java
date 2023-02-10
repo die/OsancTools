@@ -57,7 +57,7 @@ public class RequiredPointsPanel extends JPanel {
         jLabel.addMouseListener(new MouseAdapter() {
           public void mouseClicked(final MouseEvent e) {
             try {
-              final int number = Integer.parseInt(JOptionPane.showInputDialog(panel, "Input a number", points));
+              final int number = Integer.parseInt((String) JOptionPane.showInputDialog(panel, "Input a number", " ", JOptionPane.INFORMATION_MESSAGE, jLabel.getIcon(), null, points));
               final ClassLabel label = (ClassLabel) e.getSource();
               label.setText(String.valueOf(number));
               map.put(label.getClassType(), number);

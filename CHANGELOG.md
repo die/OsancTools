@@ -17,7 +17,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ### Changed
 - You can no longer view account information through a button on the SetTable.
-- 
+
 ### Fixed
 - Changed Fungal to Steamworks in Exalt Calculator
 

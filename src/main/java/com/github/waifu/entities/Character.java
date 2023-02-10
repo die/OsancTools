@@ -1,5 +1,7 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.handlers.RequirementSheetHandler;
+import com.github.waifu.packets.data.enums.Class;
 import com.github.waifu.util.Utilities;
 import javax.swing.ImageIcon;
 
@@ -8,6 +10,10 @@ import javax.swing.ImageIcon;
  */
 public class Character {
 
+  /**
+   * Class enum.
+   */
+  private final Class characterClass;
   /**
    * Class of the character.
    */
@@ -57,25 +63,9 @@ public class Character {
    */
   private ImageIcon skinImage;
   /**
-   * Boolean if the HP stat is maxed.
+   * Character stats.
    */
-  private boolean maxedHp;
-  /**
-   * Boolean if the MP stat is maxed.
-   */
-  private boolean maxedMp;
-  /**
-   * Unknown.
-   */
-  private String exaltedHp;
-  /**
-   * Unknown.
-   */
-  private String exaltedMp;
-  /**
-   * Unknown.
-   */
-  private String dexterity;
+  private CharacterStats characterStats;
 
   /**
    * Character method.
@@ -83,6 +73,7 @@ public class Character {
    * <p>Constructs a default Character as a level 0 Wizard.
    */
   public Character() {
+    this.characterClass = Class.Wizard;
     this.type = "Wizard";
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));
@@ -106,6 +97,7 @@ public class Character {
    * @param inventory Inventory of the Character.
    */
   public Character(final String type, final Inventory inventory) {
+    this.characterClass = Class.findClassByName(type);
     this.type = type;
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/" + type + ".png"));
@@ -126,14 +118,11 @@ public class Character {
    * @param inventory To be documented.
    * @param level To be documented.
    * @param fame To be documented.
-   * @param maxedHp To be documented.
-   * @param maxedMp To be documented.
-   * @param dexterity To be documented.
-   * @param exaltedHp To be documented.
-   * @param exaltedMp To be documented.
+   * @param characterClass To be documented.
+   * @param characterStats stats.
    */
-  public Character(final Inventory inventory, final int level, final int fame, final boolean maxedHp, final boolean maxedMp, final int dexterity, final int exaltedHp, final int exaltedMp) {
-    this.type = "Wizard";
+  public Character(final Inventory inventory, final int level, final int fame, final Class characterClass, final CharacterStats characterStats) {
+    this.type = characterClass.name();
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));
     this.level = String.valueOf(level);
@@ -145,11 +134,8 @@ public class Character {
     this.lastSeen = "";
     this.server = "";
     this.inventory = inventory;
-    this.maxedHp = maxedHp;
-    this.maxedMp = maxedMp;
-    this.exaltedHp = String.valueOf(exaltedHp);
-    this.exaltedMp = String.valueOf(exaltedMp);
-    this.dexterity = String.valueOf(dexterity);
+    this.characterClass = characterClass;
+    this.characterStats = characterStats;
   }
 
   /**
@@ -182,6 +168,7 @@ public class Character {
     this.lastSeen = lastSeen;
     this.server = server;
     this.inventory = inventory;
+    this.characterClass = Class.findClassByName(type);
   }
 
   /**
@@ -212,6 +199,24 @@ public class Character {
             + "\nServer: "
             + this.server
             + "\n";
+  }
+
+  /**
+   * Get character class.
+   *
+   * @return class enum.
+   */
+  public Class getCharacterClass() {
+    return characterClass;
+  }
+
+  /**
+   * Get character stats.
+   *
+   * @return character stats.
+   */
+  public CharacterStats getCharacterStats() {
+    return characterStats;
   }
 
   /**
@@ -311,5 +316,13 @@ public class Character {
    */
   public Inventory getInventory() {
     return this.inventory;
+  }
+
+  /**
+   * Parses character stat.
+   *
+   */
+  public void parseCharacter() {
+    RequirementSheetHandler.parseMaxedStats(this);
   }
 }

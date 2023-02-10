@@ -64,17 +64,7 @@ public class Issue {
    * @param string message as a String.
    */
   public void setMessage(final String string) {
-    switch (this.problem) {
-      case UNDER_REQS -> this.message = "Under reqs, brought " + string;
-      case EMPTY_SLOT -> this.message = "Under reqs, brought an " + string;
-      case BANNED_ITEM -> this.message = "Under reqs, brought banned item " + string;
-      case MISSING_REACT, MISSING_REACT_DPS -> this.message = "Fake reacting " + string;
-      case SWAPOUT_ITEM -> this.message = "Under reqs, brought swapout item " + string + " without an item that meets reqs";
-      case PRIVATE_PROFILE -> this.message = "Hiding character information";
-      case MISSING_REACT_TRADE -> this.message = "Fake reacting " + string + ", didn't bring to the run";
-      case NONE -> this.message = "None";
-      default -> this.message = "";
-    }
+    this.message = string;
   }
 
   /**

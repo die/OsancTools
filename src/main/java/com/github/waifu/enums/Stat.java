@@ -60,4 +60,34 @@ public enum Stat {
   public int getIndex() {
     return index;
   }
+
+  /**
+   * Gets a stat by an index.
+   *
+   * @param index stat index.
+   * @return stat enum.
+   */
+  public static Stat getStatByIndex(final int index) {
+    for (Stat s : values()) {
+      if (s.index == index) {
+        return s;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Gets a stat by an index.
+   *
+   * @param name stat name.
+   * @return stat enum.
+   */
+  public static Stat getStatByName(final String name) {
+    for (Stat s : values()) {
+      if (s.name().equals(name)) {
+        return s;
+      }
+    }
+    return null;
+  }
 }

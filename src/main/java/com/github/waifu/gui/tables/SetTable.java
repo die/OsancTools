@@ -150,7 +150,11 @@ public class SetTable extends JFrame {
         final Inventory inventory = account.getCharacters().get(0).getInventory();
         final Object[] array = new Object[6];
         final ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
-        result.setDescription(inventory.printInventory());
+        String description = inventory.printInventory();
+        if (!inventory.getIssue().getMessage().equals("")) {
+          description += " | Message: " + inventory.getIssue().getMessage();
+        }
+        result.setDescription(description);
         width = result.getIconWidth();
         array[0] = inventory.getIssue().getProblem().getProblem();
         array[1] = account.getName();

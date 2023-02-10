@@ -1,10 +1,12 @@
 package com.github.waifu.handlers;
 
+import com.github.waifu.entities.Character;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Issue;
 import com.github.waifu.entities.Item;
 import com.github.waifu.enums.InventorySlots;
 import com.github.waifu.enums.Problem;
+import com.github.waifu.enums.Stat;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
@@ -52,7 +54,7 @@ public final class RequirementSheetHandler {
         issue.setWhisper("");
       }
     } else {
-      JSONObject requirementSheet = getRequirementSheet();
+      final JSONObject requirementSheet = getRequirementSheet();
 
       final String metric = requirementSheet.getString("metric");
 
@@ -99,6 +101,52 @@ public final class RequirementSheetHandler {
             parseBannedItem(i, items, issue);
           }
           default -> RequirementSheetHandler.parseTier(i, issue);
+        }
+      }
+    }
+  }
+
+  /**
+   * Parses maxed stats.
+   *
+   * @param character character object.
+   */
+  public static void parseMaxedStats(final Character character) {
+    if (requirementSheet.has("maxedStats")) {
+      final String metric = requirementSheet.getJSONObject("maxedStats").getString("metric");
+      final JSONArray maxedStats = requirementSheet.getJSONObject("maxedStats").getJSONArray("stats");
+      if (metric.equals("any")) {
+        final Integer[] maxedStatIndices = character.getCharacterStats().getMaxedStatIndices(character.getCharacterClass());
+
+        boolean found = false;
+        for (int i = 0; i < maxedStats.length(); i++) {
+          final Stat stat = Stat.getStatByName(maxedStats.getString(i).toUpperCase());
+          assert stat != null;
+          System.out.println(stat.getIndex());
+          if (maxedStatIndices[stat.getIndex()] == 1) {
+            found = true;
+          }
+
+          if (!found) {
+            character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
+            character.getInventory().getIssue().setMessage("Not maxed in: " + stat.name());
+          }
+        }
+      } else if (metric.equals("required")) {
+        final Integer[] maxedStatIndices = character.getCharacterStats().getMaxedStatIndices(character.getCharacterClass());
+
+        final StringBuilder statsNotMaxed = new StringBuilder();
+        for (int i = 0; i < maxedStats.length(); i++) {
+          final Stat stat = Stat.getStatByName(maxedStats.getString(i).toUpperCase());
+          assert stat != null;
+          if (maxedStatIndices[stat.getIndex()] != 1) {
+            character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
+            statsNotMaxed.append(stat.name()).append(" ");
+
+            if (i == maxedStats.length() - 1) {
+              character.getInventory().getIssue().setMessage("Not maxed in: " + statsNotMaxed);
+            }
+          }
         }
       }
     }

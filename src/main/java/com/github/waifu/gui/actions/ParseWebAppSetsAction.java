@@ -176,10 +176,12 @@ public class ParseWebAppSetsAction implements ActionListener {
       for (int j = 0; j < raiders.get(i).getAccounts().size(); j++) {
         if (raiders.get(i).getAccounts().get(j).getCharacters() != null) {
           raiders.get(i).getAccounts().get(j).getRecentCharacter().getInventory().parseInventory();
+          raiders.get(i).getAccounts().get(j).getRecentCharacter().parseCharacter();
         } else {
           final List<Character> characters = new ArrayList<>();
           final Character character = new Character();
           character.getInventory().parseInventory();
+          character.parseCharacter();
           characters.add(character);
           raiders.get(i).getAccounts().set(j, new Account(raiders.get(i).getAccounts().get(j).getName(), characters));
         }

@@ -2,12 +2,14 @@ package com.github.waifu.handlers;
 
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Character;
+import com.github.waifu.entities.CharacterStats;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Item;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.Main;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.data.StatData;
+import com.github.waifu.packets.data.enums.Class;
 import com.github.waifu.packets.data.enums.UnknownItem;
 import com.github.waifu.packets.incoming.UpdatePacket;
 import java.io.BufferedReader;
@@ -58,12 +60,6 @@ public final class PacketHandler {
    */
   public static void handlePacket(final Packet packet) {
     final UpdatePacket updatePacket = (UpdatePacket) packet;
-    boolean maxedMp = false;
-    boolean maxedHp = false;
-    int maxMpValue = 0;
-    int maxHpValue = 0;
-    int currentHpValue = 0;
-    int currentMpValue = 0;
     int stars = 0;
     int level = 0;
     String charClass = "";
@@ -76,20 +72,29 @@ public final class PacketHandler {
     String guildRank = "";
     int fame = 0;
     int currentFame = 0;
-    int exaltedHp = 0;
-    int exaltedMp = 0;
-    int dexterity = 0;
+    int boostHp = 0;
+    int boostMp = 0;
+    int boostAtt = 0;
+    int boostDef = 0;
+    int boostSpd = 0;
+    int boostDex = 0;
+    int boostVit = 0;
+    int boostWis = 0;
+    int hp = 0;
+    int mp = 0;
+    int att = 0;
+    int def = 0;
+    int spd = 0;
+    int dex = 0;
+    int vit = 0;
+    int wis = 0;
 
     for (int i = 0; i < updatePacket.getNewObjects().length; i++) {
       final StatData[] stats = updatePacket.getNewObjects()[i].getStatus().getStatData();
 
       for (final StatData stat : stats) {
         switch (stat.getStatType()) {
-          case MAX_MP_STAT -> maxMpValue = stat.getStatValue();
-          case MP_STAT -> currentMpValue = stat.getStatValue();
           case NUM_STARS_STAT -> stars = stat.getStatValue();
-          case MAX_HP_STAT -> maxHpValue = stat.getStatValue();
-          case HP_STAT -> currentHpValue = stat.getStatValue();
           case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.getNewObjects()[i].getObjectType()));
           case INVENTORY_0_STAT -> weapon = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.getStatValue()));
@@ -100,10 +105,23 @@ public final class PacketHandler {
           case GUILD_RANK_STAT -> guildRank = stat.getStringStatValue();
           case FAME_STAT -> fame = stat.getStatValue();
           case CURR_FAME_STAT -> currentFame = stat.getStatValue();
-          case EXALTED_HP -> exaltedHp = stat.getStatValue();
-          case EXALTED_MP -> exaltedMp = stat.getStatValue();
-          case DEXTERITY_STAT -> dexterity = stat.getStatValue();
           case LEVEL_STAT -> level = stat.getStatValue();
+          case MAX_HP_BOOST_STAT -> boostHp = stat.getStatValue();
+          case MAX_MP_BOOST_STAT -> boostMp = stat.getStatValue();
+          case ATTACK_BOOST_STAT -> boostAtt = stat.getStatValue();
+          case DEFENSE_BOOST_STAT -> boostDef = stat.getStatValue();
+          case SPEED_BOOST_STAT -> boostSpd = stat.getStatValue();
+          case DEXTERITY_BOOST_STAT -> boostDex = stat.getStatValue();
+          case VITALITY_BOOST_STAT -> boostVit = stat.getStatValue();
+          case WISDOM_BOOST_STAT -> boostWis = stat.getStatValue();
+          case MAX_HP_STAT -> hp = stat.getStatValue();
+          case MAX_MP_STAT -> mp = stat.getStatValue();
+          case ATTACK_STAT -> att = stat.getStatValue();
+          case DEFENSE_STAT -> def = stat.getStatValue();
+          case SPEED_STAT -> spd = stat.getStatValue();
+          case DEXTERITY_STAT -> dex = stat.getStatValue();
+          case VITALITY_STAT -> vit = stat.getStatValue();
+          case WISDOM_STAT -> wis = stat.getStatValue();
           default -> {
 
           }
@@ -113,19 +131,20 @@ public final class PacketHandler {
     if (userName.equals("") || weapon.equals("")) {
       return;
     }
-    if (maxHpValue != 0 || maxHpValue == currentHpValue) {
-      maxedHp = true;
-    }
-    if (maxMpValue != 0 || maxMpValue == currentMpValue) {
-      maxedMp = true;
-    }
+
+    final List<Integer> stats = new ArrayList<>();
+    Collections.addAll(stats, hp, mp, att, def, spd, dex, vit, wis);
+    final List<Integer> statBoosts = new ArrayList<>();
+    Collections.addAll(statBoosts, boostHp, boostMp, boostAtt, boostDef, boostSpd, boostDex, boostVit, boostWis);
+    final CharacterStats characterStats = new CharacterStats(stats, statBoosts);
+    final Class characterClass = Class.findClassByName(charClass);
     final Item weaponItem = new Item(weapon, "weapon", charClass);
     final Item abilityItem = new Item(ability, "ability", charClass);
     final Item armorItem = new Item(armor, "armor", charClass);
     final Item ringItem = new Item(ring, "ring", charClass);
     final List<Item> items = new ArrayList<>();
     Collections.addAll(items, weaponItem, abilityItem, armorItem, ringItem);
-    final Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, maxedMp, maxedHp, currentFame, exaltedHp, exaltedMp, dexterity);
+    final Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, currentFame, characterClass, characterStats);
     Gui.getRaid().addSnifferAccount(account);
   }
 
@@ -220,18 +239,15 @@ public final class PacketHandler {
    * @param guildRank To be documented.
    * @param items To be documented.
    * @param level To be documented.
-   * @param maxedMp To be documented.
-   * @param maxedHp To be documented.
    * @param currentFame To be documented.
-   * @param exaltedHp To be documented.
-   * @param exaltedMp To be documented.
-   * @param dexterity To be documented.
+   * @param characterClass To be documented.
+   * @param characterStats stats.
    * @return To be documented.
    */
-  public static Account createAccount(final String userName, final int stars, final int fame, final String guildName, final String guildRank, final List<Item> items, final int level, final boolean maxedMp, final boolean maxedHp, final int currentFame, final int exaltedHp, final int exaltedMp, final int dexterity) {
+  public static Account createAccount(final String userName, final int stars, final int fame, final String guildName, final String guildRank, final List<Item> items, final int level, final int currentFame, final Class characterClass, final CharacterStats characterStats) {
 
     final Inventory inventory = new Inventory(items);
-    final Character character = new Character(inventory, level, currentFame, maxedHp, maxedMp, dexterity, exaltedHp, exaltedMp);
+    final Character character = new Character(inventory, level, currentFame, characterClass, characterStats);
 
     final List<Character> characterlist = new ArrayList<>();
     characterlist.add(character);

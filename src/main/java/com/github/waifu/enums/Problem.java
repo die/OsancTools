@@ -12,6 +12,10 @@ public enum Problem {
    */
   PRIVATE_PROFILE("Private Profile", 0, Color.WHITE),
   /**
+   * When a character isn't maxed in stats.
+   */
+  NOT_MAXED("Not Maxed", 1, Color.RED),
+  /**
    * The react was not fulfilled.
    */
   MISSING_REACT("Missing React", 1, Color.RED),
@@ -63,7 +67,7 @@ public enum Problem {
   /**
    * Name of the problem shown in the table.
    */
-  private final String problem;
+  private String problem;
   /**
    * The severity level.
    */
@@ -93,6 +97,15 @@ public enum Problem {
    */
   public String getProblem() {
     return problem;
+  }
+
+  /**
+   * Sets the problem.
+   *
+   * @param problem problem.
+   */
+  public void setProblem(final String problem) {
+    this.problem = problem;
   }
 
   /**

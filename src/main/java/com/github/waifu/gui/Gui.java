@@ -200,20 +200,27 @@ public class Gui extends JFrame {
       final URL url = new URL("https://api.github.com/repos/waifu/osanctools/releases");
       final JSONTokener tokener = new JSONTokener(url.openStream());
       final JSONArray jsonArray = new JSONArray(tokener);
-      final String recentVersion = jsonArray.getJSONObject(0).getString("tag_name");
-      final int parseVersion = parseVersion(recentVersion);
-      final String version = "v1.0.0.4";
-      final int currentVersion = parseVersion(version);
+      for (int i = 0; i < jsonArray.length(); i++) {
+        if (!jsonArray.getJSONObject(i).getBoolean("prerelease") && !jsonArray.getJSONObject(i).getBoolean("draft")) {
+          final JSONObject release = jsonArray.getJSONObject(i);
 
-      if (currentVersion < parseVersion) {
-        final JTextArea textarea = new JTextArea("> https://github.com/Waifu/OsancTools/releases/tag/" + recentVersion);
-        textarea.setEditable(false);
-        final String text = "<html>Note: previous versions are <b>deprecated</b>. Please update immediately.";
-        final JLabel label = new JLabel(text);
-        final Object[] params = {"A new version was found. Please download it here:", textarea, label};
+          final String recentVersion = release.getString("tag_name");
+          final int parseVersion = parseVersion(recentVersion);
+          final String version = "v1.0.0.4";
+          final int currentVersion = parseVersion(version);
 
-        JOptionPane.showMessageDialog(this,
-                params, "New release version found", JOptionPane.WARNING_MESSAGE);
+          if (currentVersion < parseVersion) {
+            final JTextArea textarea = new JTextArea("> https://github.com/Waifu/OsancTools/releases/tag/" + recentVersion);
+            textarea.setEditable(false);
+            final String text = "<html>Note: previous versions are <b>deprecated</b>. Please update immediately.";
+            final JLabel label = new JLabel(text);
+            final Object[] params = {"A new version was found. Please download it here:", textarea, label};
+
+            JOptionPane.showMessageDialog(this,
+                    params, "New release version found", JOptionPane.WARNING_MESSAGE);
+          }
+          break;
+        }
       }
     } catch (final Exception e) {
       e.printStackTrace();

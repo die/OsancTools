@@ -6,7 +6,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleasd]
 
-## [1.0.0.5 Pre-Release] 2023-02-10
+## [1.0.0.5 Pre-Release] - 2023-02-10
 ### Added
 - Multiple requirement sheets to be used with the sniffer to parse.
 - Parse Veteran sheets that use a point system.

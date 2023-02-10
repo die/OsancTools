@@ -4,7 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleasd]
+
+## [1.0.0.5 Pre-Release] - 2023-02-10
+### Added
+- Multiple requirement sheets to be used with the sniffer to parse.
+- Parse Veteran sheets that use a point system.
+- Ability to add custom points for each class to a requirement sheet.
+- Parse maxed stats of players sniffed based on the requirement sheet.
+- Copying the inventory image now displays custom messages.
+- Added custom item ids for items that aren't stored by DECA.
+
+### Changed
+- You can no longer view account information through a button on the SetTable.
+
+### Fixed
+- Changed Fungal to Steamworks in Exalt Calculator
 
 ## [1.0.0.4] - 2022-11-16
 ### Added
@@ -12,6 +27,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 - Added images for new ST sets.
 - Checks Realmeye on launch to alert servers that cannot be accessed.
 - Checks Github on launch to alert if there is a new version of OsancTools.
+- New item images.
 
 ### Changed
 - Fixed the slow react not displaying properly (https://github.com/Waifu/OsancTools/issues/7)

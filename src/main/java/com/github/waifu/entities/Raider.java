@@ -287,4 +287,31 @@ public class Raider {
     resized.setDescription(avatar.getDescription());
     return resized;
   }
+
+  /**
+   * Gets guild names for all accounts linked to the Raider.
+   *
+   * @return list of guild names as strings.
+   */
+  public List<String> getAccountGuildNames() {
+    final List<String> guilds = new ArrayList<>();
+    for (final Account a : accounts) {
+      guilds.add(a.getGuild());
+    }
+    return guilds;
+  }
+
+  /**
+   * Get the account that was updated by the sniffer.
+   *
+   * @return account of the raider.
+   */
+  public Account getSniffedAccount() {
+    for (final Account a : accounts) {
+      if (a.getCharacters().get(0).getCharacterStats() != null) {
+        return a;
+      }
+    }
+    return null;
+  }
 }

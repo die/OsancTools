@@ -274,10 +274,20 @@ public class Gui extends JFrame {
     tabbedPane = new JTabbedPane();
     main.add(tabbedPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 
-    tabbedPane.addTab("Home", new HomePanel());
+    tabbedPane.addTab("Home", new HomePanel(this));
     tabbedPane.addTab("Sheets", new RequirementSheetPanel());
     tabbedPane.addTab("Exalts", new ExaltsPanel());
     tabbedPane.addTab("Options", new OptionsPanel());
     tabbedPane.addTab("Credits", new CreditsPanel());
+  }
+
+  /**
+   * Displays a modal message panel.
+   *
+   * @param message the message to tell the user.
+   * @param type the type of message value [INFORMATION, WARNING, ERROR]
+   */
+  public static void displayMessage(final String message, final int type) {
+    JOptionPane.showMessageDialog(Gui.getFrames()[0], message, null, type);
   }
 }

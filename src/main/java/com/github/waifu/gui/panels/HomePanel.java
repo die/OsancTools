@@ -91,11 +91,18 @@ public class HomePanel extends JPanel {
    * To be documented.
    */
   private final TitledBorder border;
+  /**
+   * Gui reference.
+   */
+  private final Gui gui;
 
   /**
    * To be documented.
+   *
+   * @param gui instance.
    */
-  public HomePanel() {
+  public HomePanel(final Gui gui) {
+    this.gui = gui;
     setLayout(new GridLayoutManager(2, 2, new Insets(5, 5, 5, 5), -1, -1));
     connectionPanel = new JPanel();
     connectionPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 5, 0, 0), -1, -1));
@@ -199,15 +206,17 @@ public class HomePanel extends JPanel {
         final String textId = "ID: " + raid.getId();
         final String textStatus = " Status: " + raid.getStatus();
         final String textLocation = " Location: " + raid.getLocation();
-        final String raidMetadata = textId + textStatus + textLocation;
+        final String raidMetadata = "<html><center>" + textId + textStatus + "<br>" + textLocation;
         metadataLabel.setText(raidMetadata);
 
         String raidDescription = raid.getDescription();
-        if (raidDescription.length() > raidMetadata.length()) {
-          raidDescription = raidDescription.substring(0, raidMetadata.length()) + "...";
+        final int MAX_LENGTH = 40;
+        if (raidDescription.length() > MAX_LENGTH) {
+          raidDescription = raidDescription.substring(0, MAX_LENGTH) + "...";
         }
         descriptionLabel.setText(raidDescription);
         // todo: pack GUI if necessary.
+        gui.pack();
       }
     } catch (final JSONException exception) {
       System.out.println("Cannot find assets from JSON, did you select the right file?");

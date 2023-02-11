@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 import org.json.JSONArray;
@@ -67,6 +68,11 @@ public class ParseWebAppReactsAction implements ActionListener {
             return null;
           } else if (Gui.getRaid() != null && Gui.getRaid().isWebAppRaid()) { // webapp
             if (RealmeyeRequestHandler.checkDirectConnect()) {
+              // check if the requirement sheet supports reacts
+              if (!RequirementSheetHandler.getRequirementSheet().has("reacts")) {
+                Gui.displayMessage("The current requirement sheet does not support react parsing.", JOptionPane.ERROR_MESSAGE);
+                return null;
+              }
               stopButton.setText("Stop Process");
               Gui.setWorker(this);
               progressBar.setValue(0);

@@ -40,7 +40,11 @@ public final class NativeBridge {
       field.setAccessible(true);
       final Pointer p = (Pointer) field.get(pcap);
 
-      NativeMappings.pcap_loop(p, packetCount, new GotPacketFuncExecutor(listener, SimpleExecutor.getInstance()), null);
+      try {
+        NativeMappings.pcap_loop(p, packetCount, new GotPacketFuncExecutor(listener, SimpleExecutor.getInstance()), null);
+      } catch (final Error error) {
+        error.printStackTrace();
+      }
     } catch (final Exception e) {
       //e.printStackTrace();
     }

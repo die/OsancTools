@@ -16,6 +16,11 @@ public class Raid {
    * To be documented.
    */
   private final List<Raider> raiders;
+
+  /**
+   * List of those found not in the raid.
+   */
+  private List<Account> crashers;
   /**
    * To be documented.
    */
@@ -126,9 +131,16 @@ public class Raid {
     if (pair == null) {
       if (json == null) {
         raiders.add(new Raider(account));
+      } else {
+        if (crashers == null) {
+          crashers = new ArrayList<>();
+        }
+        crashers.add(account);
+        System.out.println("added crasher " + account.getName());
       }
     } else {
       raiders.get(pair.left()).getAccounts().set(pair.right(), account);
+      System.out.println("added raider " + account.getName());
     }
   }
 
@@ -272,6 +284,15 @@ public class Raid {
    *
    * @return To be documented.
    */
+  public List<Account> getCrashers() {
+    return crashers;
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
   public List<String> getAllUsernames() {
     final List<String> usernames = new ArrayList<>();
     for (final Raider r : raiders) {
@@ -306,7 +327,7 @@ public class Raid {
   public Raider findRaiderByUsername(final String username) {
     for (final Raider r : raiders) {
       for (final Account a : r.getAccounts()) {
-        if (a.getName().equals(username)) {
+        if (a.getName().equalsIgnoreCase(username)) {
           return r;
         }
       }
@@ -323,7 +344,7 @@ public class Raid {
   public Pair<Integer, Integer> findRaiderAccountByUsername(final String username) {
     for (final Raider r : raiders) {
       for (final Account a : r.getAccounts()) {
-        if (a.getName().equals(username)) {
+        if (a.getName().equalsIgnoreCase(username)) {
           return new Pair<>(raiders.indexOf(r), r.getAccounts().indexOf(a));
         }
       }

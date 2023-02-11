@@ -4,6 +4,7 @@ import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.Gui;
+import com.github.waifu.gui.actions.ParseGuildLeakersAction;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.SetTableModel;
 import com.github.waifu.util.Utilities;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -59,6 +61,10 @@ public class SetTable extends JFrame {
   /**
    * To be documented.
    */
+  private JButton parseGuildLeaksButton;
+  /**
+   * To be documented.
+   */
   private RowFilter<Object, Object> removeGoodSets = RowFilter.regexFilter("");
   /**
    * To be documented.
@@ -87,6 +93,7 @@ public class SetTable extends JFrame {
    */
   public SetTable(final List<Raider> accountInventoryMap) {
     $$$setupUI$$$();
+    createUIComponents();
     createTable(accountInventoryMap);
     addActionListeners();
     setContentPane(main);
@@ -97,40 +104,7 @@ public class SetTable extends JFrame {
     setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setVisible(true);
     new TableCopyAction(setsTable);
-
     pack();
-  }
-
-  /**
-   * createTable method.
-   *
-   * <p>Creates the table model, adds rows to the model, and applies the model to the table.
-   *
-   * @param accountInventoryMap Map containing an Account object as the key
-   *                            and its Inventory as the value.
-   */
-  private void createTableSniffer(final List<Raider> accountInventoryMap) {
-    final DefaultTableModel tableModel = new SetTableModel();
-    int width = 0;
-    for (final Raider raider : accountInventoryMap) {
-      final Account account = raider.getAccounts().get(0);
-      final Inventory inventory = account.getCharacters().get(0).getInventory();
-      final Object[] array = new Object[6];
-      final ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
-      result.setDescription(inventory.printInventory());
-      width = result.getIconWidth();
-      // array[0] = inventory.getIssue().getWhisper();
-      array[0] = inventory.getIssue().getProblem().getProblem();
-      array[1] = account.getName();
-      array[2] = result;
-      array[3] = false;
-      tableModel.addRow(array);
-    }
-    setsTable.setDefaultRenderer(Object.class, new ColorTableRenderer(accountInventoryMap));
-    sorter = new TableRowSorter<>(tableModel);
-    setsTable.setRowSorter(sorter);
-    setsTable.setModel(tableModel);
-    setsTable.getColumnModel().getColumn(2).setMinWidth(width);
   }
 
   /**
@@ -261,7 +235,7 @@ public class SetTable extends JFrame {
    */
   private void $$$setupUI$$$() {
     main = new JPanel();
-    main.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
+    main.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
     final JScrollPane scrollPane1 = new JScrollPane();
     main.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "Sets", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
@@ -280,13 +254,16 @@ public class SetTable extends JFrame {
     removeMarkedSetsCheckBox = new JCheckBox();
     removeMarkedSetsCheckBox.setText("Remove Marked Sets");
     main.add(removeMarkedSetsCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    parseGuildLeaksButton = new JButton();
+    parseGuildLeaksButton.setText("Parse Guild Leaks");
+    main.add(parseGuildLeaksButton, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
   /**
-   * To be documented.
+   * Document.
    *
    * @noinspection ALL.
-   * @return To be documented.
+   * @return c.
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
@@ -312,6 +289,8 @@ public class SetTable extends JFrame {
    */
   private void createUIComponents() {
     // todo: place custom component creation code here
+    parseGuildLeaksButton.addActionListener(new ParseGuildLeakersAction(main));
+    parseGuildLeaksButton.setEnabled(Gui.getRaid().getCrashers() != null);
   }
 
   /**

@@ -66,7 +66,9 @@ public class GetWebAppDataAction implements ActionListener {
       if (jsonObject != null) {
         Gui.setJson(jsonObject);
         if (Gui.getRaid() != null) {
-          Gui.getRaid().deepCopy(jsonObject.getJSONObject("raid"));
+          // todo: efficient copy
+          // Gui.getRaid().deepCopy(jsonObject.getJSONObject("raid"));
+          Gui.setRaid(new Raid(jsonObject.getJSONObject("raid")));
         } else {
           Gui.setRaid(new Raid(jsonObject.getJSONObject("raid")));
         }

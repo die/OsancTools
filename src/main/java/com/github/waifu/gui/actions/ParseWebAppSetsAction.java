@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
@@ -70,9 +71,7 @@ public class ParseWebAppSetsAction implements ActionListener {
       protected Void doInBackground() {
         try {
           if (parseSetsButton.getText().equals("Stop Sniffer")) {
-            if (Gui.getRaid().isWebAppRaid() && !Gui.getRaid().getStatus().equals("RUNNING")) {
-              return null;
-            }
+            // if (Gui.getRaid().isWebAppRaid()) { //&& !Gui.getRaid().getStatus().equals("RUNNING"))
             packetProcessor.closeSniffer();
             packetProcessor = null;
             Register.setInstance(new Register());
@@ -85,36 +84,40 @@ public class ParseWebAppSetsAction implements ActionListener {
           } else if (Gui.checkProcessRunning()) {
             return null;
           } else if (Gui.getRaid() == null || !Gui.getRaid().isWebAppRaid()) {
-            parseSetsButton.setEnabled(false);
-            if (PacketHandler.isXMLNull()) {
-              if (!PacketHandler.loadXML()) {
-                parseSetsButton.setEnabled(true);
-                return null;
-              }
+            if (!startSniffer()) {
+              return null;
             }
-            parseSetsButton.setEnabled(true);
-            parseSetsButton.setText("Stop Sniffer");
-            Gui.setWorker(this);
-            progressBar.setValue(0);
             Gui.setRaid(new Raid());
             Register.getInstance().register(PacketType.UPDATE, PacketHandler::handlePacket);
             packetProcessor = new PacketProcessor();
             packetProcessor.start();
           } else if (Gui.getRaid().isWebAppRaid()) { // webapp
-            if (RealmeyeRequestHandler.checkDirectConnect()) {
-              stopButton.setText("Stop Process");
-              Gui.setWorker(this);
-              progressBar.setValue(0);
-              Gui.setProcessRunning(true);
-              final List<Raider> sets = getRealmeyeSets(Gui.getRaid(), progressBar);
-              if (sets != null) {
-                new SetTable(sets);
+            final String[] options = {"Sniffer", "Realmeye"};
+            final int result = JOptionPane.showOptionDialog(Gui.getFrames()[0], "Do you want to use the sniffer?", "s", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            Gui.setWorker(this);
+            Gui.setProcessRunning(true);
+            if (result == 0) {
+              if (!startSniffer()) {
+                return null;
               }
-              Gui.setProcessRunning(false);
-              stopButton.setText("Finished");
+              Register.getInstance().register(PacketType.UPDATE, PacketHandler::handlePacket);
+              packetProcessor = new PacketProcessor();
+              packetProcessor.start();
+            } else if (result == 1) {
+              if (RealmeyeRequestHandler.checkDirectConnect()) {
+                stopButton.setText("Stop Process");
+                Gui.setWorker(this);
+                progressBar.setValue(0);
+                Gui.setProcessRunning(true);
+                final List<Raider> sets = getRealmeyeSets(Gui.getRaid(), progressBar);
+                if (sets != null) {
+                  new SetTable(sets);
+                }
+                Gui.setProcessRunning(false);
+                stopButton.setText("Finished");
+              }
             } else {
               Gui.setProcessRunning(false);
-              stopButton.setText("Finished");
               return null;
             }
           }
@@ -123,6 +126,26 @@ public class ParseWebAppSetsAction implements ActionListener {
           Gui.setProcessRunning(false);
         }
         return null;
+      }
+
+      /**
+       * Starts the sniffer.
+       *
+       * @return if the sniffer was able to start.
+       */
+      private boolean startSniffer() {
+        parseSetsButton.setEnabled(false);
+        if (PacketHandler.isXMLNull()) {
+          if (!PacketHandler.loadXML()) {
+            parseSetsButton.setEnabled(true);
+            return false;
+          }
+        }
+        parseSetsButton.setEnabled(true);
+        parseSetsButton.setText("Stop Sniffer");
+        Gui.setWorker(this);
+        progressBar.setValue(0);
+        return true;
       }
     }.execute();
   }

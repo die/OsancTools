@@ -144,7 +144,8 @@ public class Account {
    *
    * @return a string that contains all variable values.
    */
-  public String printAccount() {
+  @Override
+  public String toString() {
     return "Name: " + this.name + "\n" + "Stars: " + this.stars + "\n" + "Skins: " + this.skins + "\n" + "Exaltations: " + this.exaltations + "\n" + "Account Fame: " + this.accountFame + "\n" + "Guild: " + this.guild + "\n" + "Guild Rank: " + this.guildRank + "\n" + "Creation Date: " + this.creationDate + "\n" + "Last Seen: " + this.lastSeen + "\n" + "Characters: " + this.characters.size() + "\n";
   }
 

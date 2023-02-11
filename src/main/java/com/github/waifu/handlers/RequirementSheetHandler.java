@@ -112,6 +112,9 @@ public final class RequirementSheetHandler {
    * @param character character object.
    */
   public static void parseMaxedStats(final Character character) {
+    if (character.getCharacterStats() == null) {
+      return;
+    }
     if (requirementSheet.has("maxedStats")) {
       final String metric = requirementSheet.getJSONObject("maxedStats").getString("metric");
       final JSONArray maxedStats = requirementSheet.getJSONObject("maxedStats").getJSONArray("stats");

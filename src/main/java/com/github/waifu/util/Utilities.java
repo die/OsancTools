@@ -105,7 +105,7 @@ public final class Utilities {
     final List<String> usernames = new ArrayList<>();
     final String[] split = serverNickname.split(" ");
     for (final String s : split) {
-      final String username = s.replaceAll("[^\\p{L}]", "");
+      final String username = s.replaceAll("[^\\p{L}]", "").replaceAll("[^A-Za-z]", "");
       if (!username.equals("")) {
         usernames.add(username);
       }

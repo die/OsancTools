@@ -11,12 +11,14 @@ import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.packets.PacketType;
 import com.github.waifu.packets.packetcapture.PacketProcessor;
 import com.github.waifu.packets.packetcapture.register.Register;
+import com.github.waifu.util.Utilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -93,7 +95,8 @@ public class ParseWebAppSetsAction implements ActionListener {
             packetProcessor.start();
           } else if (Gui.getRaid().isWebAppRaid()) { // webapp
             final String[] options = {"Sniffer", "Realmeye"};
-            final int result = JOptionPane.showOptionDialog(Gui.getFrames()[0], "Do you want to use the sniffer?", "s", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            final String message = "Please choose the method to parse:\n\nNote: You can parse through Realmeye\nand then parse with the sniffer,\nbut not the other way around.";
+            final int result = JOptionPane.showOptionDialog(Gui.getFrames()[0], message, "", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")), options, options[1]);
             Gui.setWorker(this);
             Gui.setProcessRunning(true);
             if (result == 0) {

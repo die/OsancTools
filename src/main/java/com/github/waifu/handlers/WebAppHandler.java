@@ -1,8 +1,11 @@
 package com.github.waifu.handlers;
 
 import com.github.waifu.gui.Main;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
+import org.json.JSONTokener;
 
 /**
  * Handler to work with the WebApp API.
@@ -54,8 +57,20 @@ public final class WebAppHandler {
       request.put("access_token", token);
       request.put("raid_id", id);
       try {
-        final String data = Jsoup.connect("https://api.osanc.net/getRaid").requestBody(request.toString()).header("Content-Type", "application/json").ignoreContentType(true).post().body().text().replace("<", "&lt").replace(">", "&gt");
-        return new JSONObject(data);
+        final URL url = new URL("https://api.osanc.net/getRaid");
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+        con.setDoOutput(true);
+        final OutputStreamWriter osw = new OutputStreamWriter(con.getOutputStream());
+        osw.write(request.toString());
+        osw.flush();
+        osw.close();
+        final JSONObject raid = new JSONObject(new JSONTokener(con.getInputStream()));
+        con.getInputStream().close();
+        con.disconnect();
+        return raid;
       } catch (final Exception e) {
         return null;
       }

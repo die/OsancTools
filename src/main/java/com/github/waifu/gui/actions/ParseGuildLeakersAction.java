@@ -1,15 +1,13 @@
 package com.github.waifu.gui.actions;
 
 import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Leak;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.Gui;
-import com.github.waifu.util.Pair;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -22,11 +20,15 @@ public class ParseGuildLeakersAction implements ActionListener {
   /**
    * Panel for the SetTable.
    */
-  private JPanel setTablePanel;
+  private final JPanel setTablePanel;
   /**
    * Text area.
    */
   private final JLabel label;
+  /**
+   * List of leaks.
+   */
+  private final List<Leak> leaks;
 
   /**
    * Create action.
@@ -36,6 +38,7 @@ public class ParseGuildLeakersAction implements ActionListener {
   public ParseGuildLeakersAction(final JPanel setTablePanel) {
     this.setTablePanel = setTablePanel;
     this.label = new JLabel();
+    this.leaks = new ArrayList<>();
   }
 
   /**
@@ -46,50 +49,62 @@ public class ParseGuildLeakersAction implements ActionListener {
   @Override
   public void actionPerformed(final ActionEvent e) {
     if (Gui.getRaid() != null) {
-      final Map<String, Pair<List<Raider>, List<Account>>> map = new HashMap<>();
       final List<Raider> raiders = Gui.getRaid().getRaiders();
       final List<Account> crashers = Gui.getRaid().getCrashers();
 
       if (raiders != null && crashers != null) {
         for (final Raider r : raiders) {
+          final Leak leak = new Leak();
           final List<String> guilds = r.getAccountGuildNames();
           for (final Account a : crashers) {
-            String guild = a.getGuild();
+            final String guild = a.getGuild();
             if (!guild.equals("") && guilds.contains(guild)) {
-              System.out.println("Found connection " + r.getServerNickname() + " | " + a.getName() + " | " + a.getGuild());
-              if (map.containsKey(guild)) {
-                map.get(guild).left().add(r);
-                map.get(guild).right().add(a);
+              final Leak l = getLeakByRaiderName(r.getServerNickname());
+              if (l == null) {
+                leak.setLeaker(r);
+                leak.setGuild(guild);
+                leak.addCrasher(a);
+                leaks.add(leak);
               } else {
-                final List<Raider> guildLeakers = new ArrayList<>();
-                final List<Account> guildCrashers = new ArrayList<>();
-                guildLeakers.add(r);
-                guildCrashers.add(a);
-
-                map.put(guild, new Pair(guildLeakers, guildCrashers));
+                l.addCrasher(a);
               }
             }
           }
-        }
-
-        if (map.isEmpty()) {
-          JOptionPane.showMessageDialog(setTablePanel, "Found no leakers.", "Parse Guild Leakers", JOptionPane.PLAIN_MESSAGE);
-        } else {
-          for (String key : map.keySet()) {
-            StringBuilder output = new StringBuilder(label.getText());
-            output.append("<html><u>Guild:</u> <b>").append(key).append("</b><br>");
-            for (final Raider r : map.get(key).left()) {
-              for (final Account a : map.get(key).right()) {
-                output.append(r.getSniffedAccount().getName()).append(" ⇒ ").append(a.getName()).append("<br>");
-                System.out.println(output.toString());
-              }
-            }
-            output.append("<br></html>");
-            label.setText(output.toString());
-          }
-          JOptionPane.showMessageDialog(setTablePanel, label, "Parse Guild Leakers", JOptionPane.WARNING_MESSAGE);
         }
       }
+
+      if (leaks.isEmpty()) {
+        JOptionPane.showMessageDialog(setTablePanel, "Found no leakers.", "Parse Guild Leakers", JOptionPane.PLAIN_MESSAGE);
+      } else {
+        final StringBuilder output = new StringBuilder();
+        leaks.sort((l1, l2) -> CharSequence.compare(l1.getGuild(), l2.getGuild()));
+        String currentGuild = "";
+        for (final Leak l : leaks) {
+          final String guild = l.getGuild();
+          final StringBuilder result = new StringBuilder();
+          if (!guild.equalsIgnoreCase(currentGuild)) {
+            currentGuild = guild;
+            result.append("<html><br>Guild: <b>").append(guild).append("</b><br>");
+          }
+          final String leaker = l.getLeaker().getSniffedAccount().getName();
+          for (final Account a : l.getCrashers()) {
+            result.append(leaker).append(" ⇒ ").append(a.getName()).append("<br>");
+          }
+          output.append(result);
+        }
+        output.append("<br></html>");
+        label.setText(output.toString());
+        JOptionPane.showMessageDialog(setTablePanel, label, "Parse Guild Leakers", JOptionPane.WARNING_MESSAGE);
+      }
     }
+  }
+
+  private Leak getLeakByRaiderName(final String serverNickname) {
+    for (final Leak l : leaks) {
+      if (l.getLeaker().getServerNickname().equalsIgnoreCase(serverNickname)) {
+        return l;
+      }
+    }
+    return null;
   }
 }

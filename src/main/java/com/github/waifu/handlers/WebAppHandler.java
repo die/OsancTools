@@ -54,7 +54,7 @@ public final class WebAppHandler {
       request.put("access_token", token);
       request.put("raid_id", id);
       try {
-        final String data = Jsoup.connect("https://api.osanc.net/getRaid").requestBody(request.toString()).header("Content-Type", "application/json").ignoreContentType(true).post().body().text();
+        final String data = Jsoup.connect("https://api.osanc.net/getRaid").requestBody(request.toString()).header("Content-Type", "application/json").ignoreContentType(true).post().body().text().replace("<", "&lt").replace(">", "&gt");
         return new JSONObject(data);
       } catch (final Exception e) {
         return null;

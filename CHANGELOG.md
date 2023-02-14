@@ -6,7 +6,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleasd]
 
-## [1.0.0.5 Pre-Release] - 2023-02-10
+## [1.0.0.5] - 2023-02-14
 ### Added
 - Multiple requirement sheets to be used with the sniffer to parse.
 - Parse Veteran sheets that use a point system.
@@ -14,6 +14,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 - Parse maxed stats of players sniffed based on the requirement sheet.
 - Copying the inventory image now displays custom messages.
 - Added custom item ids for items that aren't stored by DECA.
+- Added a guild parse with the WebApp.
 
 ### Changed
 - You can no longer view account information through a button on the SetTable.

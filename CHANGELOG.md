@@ -6,6 +6,13 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleasd]
 
+## [1.0.0.6] - 2023-02-14
+
+### Fixed
+- Items such as Sulfuric Stone not displaying properly due to Deca.
+- Class data updates dynamically for future class stat changes.
+- Stats that are not maxed now show properly when copied in the table.
+
 ## [1.0.0.5] - 2023-02-14
 ### Added
 - Multiple requirement sheets to be used with the sniffer to parse.

@@ -47,6 +47,22 @@ public class ClassData {
   private final int maxWis;
 
   /**
+   * Construct default ClassData.
+   */
+  public ClassData() {
+    this.id = 0;
+    this.name = "Wizard";
+    this.maxHp = 0;
+    this.maxMp = 0;
+    this.maxAtt = 0;
+    this.maxDef = 0;
+    this.maxDex = 0;
+    this.maxSpd = 0;
+    this.maxVit = 0;
+    this.maxWis = 0;
+  }
+
+  /**
    * Stores data about a RoTMG class.
    *
    * @param id the id of the class.

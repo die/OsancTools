@@ -73,7 +73,7 @@ public class Character {
    * <p>Constructs a default Character as a level 0 Wizard.
    */
   public Character() {
-    this.characterClass = ClassDataHandler.getClassDataList().get(0);
+    this.characterClass = new ClassData();
     this.type = "Wizard";
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));

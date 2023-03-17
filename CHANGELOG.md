@@ -6,7 +6,7 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleasd]
 
-## [1.0.0.6] - 2023-02-14
+## [1.0.0.6] - 2023-03-17
 
 ### Fixed
 - Items such as Sulfuric Stone not displaying properly due to Deca.

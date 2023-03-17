@@ -97,7 +97,7 @@ public final class PacketHandler {
           case NUM_STARS_STAT -> stars = stat.getStatValue();
           case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.getNewObjects()[i].getObjectType()));
           case INVENTORY_0_STAT -> weapon = getItemName(String.valueOf(stat.getStatValue()));
-          case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(0x6611));
+          case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_2_STAT -> armor = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_3_STAT -> ring = getItemName(String.valueOf(stat.getStatValue()));
           case NAME_STAT -> userName = stat.getStringStatValue();

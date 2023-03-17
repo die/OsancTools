@@ -136,11 +136,9 @@ public class Raid {
           crashers = new ArrayList<>();
         }
         crashers.add(account);
-        System.out.println("added crasher " + account.getName());
       }
     } else {
       raiders.get(pair.left()).getAccounts().set(pair.right(), account);
-      System.out.println("added raider " + account.getName());
     }
   }
 

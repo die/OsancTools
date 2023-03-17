@@ -219,7 +219,8 @@ public class HomePanel extends JPanel {
         gui.pack();
       }
     } catch (final JSONException exception) {
-      System.out.println("Cannot find assets from JSON, did you select the right file?");
+      exception.printStackTrace();
+      // System.out.println("Cannot find assets from JSON, did you select the right file?");
     }
   }
 }

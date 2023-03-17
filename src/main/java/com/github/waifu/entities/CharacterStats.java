@@ -1,7 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.enums.Stat;
-import com.github.waifu.packets.data.enums.Class;
+import com.github.waifu.handlers.ClassDataHandler;
 import java.util.List;
 
 /**
@@ -35,7 +35,7 @@ public class CharacterStats {
    * @param c class enum.
    * @return int.
    */
-  public Integer[] getMaxedStatIndices(final Class c) {
+  public Integer[] getMaxedStatIndices(final ClassData c) {
     final int maxHp = this.stats.get(Stat.LIFE.getIndex()) - this.statBoosts.get(Stat.LIFE.getIndex());
     final int maxMp = this.stats.get(Stat.MANA.getIndex()) - this.statBoosts.get(Stat.MANA.getIndex());
     final int maxAtt = this.stats.get(Stat.ATTACK.getIndex()) - this.statBoosts.get(Stat.ATTACK.getIndex());
@@ -45,6 +45,6 @@ public class CharacterStats {
     final int maxVit = this.stats.get(Stat.VITALITY.getIndex()) - this.statBoosts.get(Stat.VITALITY.getIndex());
     final int maxWis = this.stats.get(Stat.WISDOM.getIndex()) - this.statBoosts.get(Stat.WISDOM.getIndex());
 
-    return Class.getMaxedStatIndices(c, maxHp, maxMp, maxAtt, maxDef, maxSpd, maxDex, maxVit, maxWis);
+    return ClassDataHandler.getMaxedStatIndices(c, maxHp, maxMp, maxAtt, maxDef, maxSpd, maxDex, maxVit, maxWis);
   }
 }

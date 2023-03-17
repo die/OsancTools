@@ -3,13 +3,13 @@ package com.github.waifu.handlers;
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Character;
 import com.github.waifu.entities.CharacterStats;
+import com.github.waifu.entities.ClassData;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Item;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.Main;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.data.StatData;
-import com.github.waifu.packets.data.enums.Class;
 import com.github.waifu.packets.data.enums.UnknownItem;
 import com.github.waifu.packets.incoming.UpdatePacket;
 import java.io.BufferedReader;
@@ -137,7 +137,7 @@ public final class PacketHandler {
     final List<Integer> statBoosts = new ArrayList<>();
     Collections.addAll(statBoosts, boostHp, boostMp, boostAtt, boostDef, boostSpd, boostDex, boostVit, boostWis);
     final CharacterStats characterStats = new CharacterStats(stats, statBoosts);
-    final Class characterClass = Class.findClassByName(charClass);
+    final ClassData characterClass = ClassDataHandler.findClassByName(charClass);
     final Item weaponItem = new Item(weapon, "weapon", charClass);
     final Item abilityItem = new Item(ability, "ability", charClass);
     final Item armorItem = new Item(armor, "armor", charClass);
@@ -244,7 +244,7 @@ public final class PacketHandler {
    * @param characterStats stats.
    * @return To be documented.
    */
-  public static Account createAccount(final String userName, final int stars, final int fame, final String guildName, final String guildRank, final List<Item> items, final int level, final int currentFame, final Class characterClass, final CharacterStats characterStats) {
+  public static Account createAccount(final String userName, final int stars, final int fame, final String guildName, final String guildRank, final List<Item> items, final int level, final int currentFame, final ClassData characterClass, final CharacterStats characterStats) {
 
     final Inventory inventory = new Inventory(items);
     final Character character = new Character(inventory, level, currentFame, characterClass, characterStats);
@@ -335,11 +335,56 @@ public final class PacketHandler {
       equipmentData = builder.parse(is);
       final InputSource is1 = new InputSource(new StringReader(classXml.toString()));
       classData = builder.parse(is1);
+      createClassDataObjects();
+
     } catch (final Exception e) {
+      e.printStackTrace();
       JOptionPane.showMessageDialog(Gui.getFrames()[0], "Select the resources.assets in your Documents folder!");
       return false;
     }
     return true;
+  }
+
+  private static void createClassDataObjects() throws Exception {
+    final NodeList nodeList = classData.getElementsByTagName("Object");
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      final Node currentNode = nodeList.item(i);
+      if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+        //calls this method for all the children which is Element
+        final int id = Integer.decode(currentNode.getAttributes().getNamedItem("type").getTextContent());
+        final String name = currentNode.getAttributes().getNamedItem("id").getTextContent();
+        int hp = 0;
+        int mp = 0;
+        int att = 0;
+        int def = 0;
+        int spd = 0;
+        int dex = 0;
+        int vit = 0;
+        int wis = 0;
+        int index = 0;
+        for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
+          if (currentNode.getChildNodes().item(j).hasAttributes() && !currentNode.getChildNodes().item(j).getNodeName().equals("LevelIncrease")) {
+            if (currentNode.getChildNodes().item(j).getAttributes().getNamedItem("max") != null) {
+              final int maxStat = Integer.parseInt(currentNode.getChildNodes().item(j).getAttributes().getNamedItem("max").getTextContent());
+
+              switch (index) {
+                case 0 -> hp = maxStat;
+                case 1 -> mp = maxStat;
+                case 2 -> att = maxStat;
+                case 3 -> def = maxStat;
+                case 4 -> spd = maxStat;
+                case 5 -> dex = maxStat;
+                case 6 -> vit = maxStat;
+                case 7 -> wis = maxStat;
+                default -> throw new Exception();
+              }
+              index++;
+            }
+          }
+        }
+        ClassDataHandler.getClassDataList().add(new ClassData(id, name, hp, mp, att, def, spd, dex, vit, wis));
+      }
+    }
   }
 
   /**

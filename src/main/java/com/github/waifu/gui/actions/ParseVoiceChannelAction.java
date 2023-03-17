@@ -71,13 +71,11 @@ public class ParseVoiceChannelAction implements ActionListener {
         final BufferedImage image = (BufferedImage) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.imageFlavor);
         final File outputfile = new File("src/test/resources/raids" + "/" + id + "/who.png");
         if (outputfile.exists()) {
-          System.out.println("Image already exists");
           return;
         }
         ImageIO.write(image, "png", outputfile);
-        System.out.println("/who saved");
       } catch (final Exception e) {
-        System.out.println("No image in clipboard.");
+        e.printStackTrace();
       }
     } catch (final UnsupportedFlavorException | IOException ex) {
       ex.printStackTrace();

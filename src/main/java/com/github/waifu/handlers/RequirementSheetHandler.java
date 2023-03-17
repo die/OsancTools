@@ -125,7 +125,6 @@ public final class RequirementSheetHandler {
         for (int i = 0; i < maxedStats.length(); i++) {
           final Stat stat = Stat.getStatByName(maxedStats.getString(i).toUpperCase());
           assert stat != null;
-          System.out.println(stat.getIndex());
           if (maxedStatIndices[stat.getIndex()] == 1) {
             found = true;
           }
@@ -145,11 +144,11 @@ public final class RequirementSheetHandler {
           if (maxedStatIndices[stat.getIndex()] != 1) {
             character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
             statsNotMaxed.append(stat.name()).append(" ");
-
-            if (i == maxedStats.length() - 1) {
-              character.getInventory().getIssue().setMessage("Not maxed in: " + statsNotMaxed);
-            }
           }
+        }
+
+        if (character.getInventory().getIssue().getProblem().equals(Problem.NOT_MAXED)) {
+          character.getInventory().getIssue().setMessage("Not maxed in: " + statsNotMaxed);
         }
       }
     }

@@ -73,7 +73,6 @@ public class Item {
     this.itemClass = itemClass;
     final BufferedImage image = ImageIO.read(Utilities.getClassResource("images/items/renders.png"));
     final BufferedImage image1 = image.getSubimage(x, y, 46, 46);
-    System.out.println("obtained image");
     this.image = new ImageIcon(image1);
   }
 

@@ -213,7 +213,6 @@ public class OptionsPanel extends JPanel {
 
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         Main.getSettings().setResourceDir(fc.getSelectedFile().getAbsolutePath());
-        System.out.println(fc.getSelectedFile().getAbsolutePath());
       }
     });
   }

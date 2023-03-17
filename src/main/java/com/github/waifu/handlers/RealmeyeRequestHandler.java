@@ -177,7 +177,6 @@ public final class RealmeyeRequestHandler {
         }
         return new Account(username, stars, numberOfSkins, exaltations, accountFame, guild, guildRank, creationDate, lastSeen, characters);
       } catch (final Exception e) {
-        System.out.println(username);
         e.printStackTrace();
         return getPrivateAccount(username);
       }

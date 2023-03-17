@@ -1,7 +1,7 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.handlers.ClassDataHandler;
 import com.github.waifu.handlers.RequirementSheetHandler;
-import com.github.waifu.packets.data.enums.Class;
 import com.github.waifu.util.Utilities;
 import javax.swing.ImageIcon;
 
@@ -13,7 +13,7 @@ public class Character {
   /**
    * Class enum.
    */
-  private final Class characterClass;
+  private final ClassData characterClass;
   /**
    * Class of the character.
    */
@@ -73,7 +73,7 @@ public class Character {
    * <p>Constructs a default Character as a level 0 Wizard.
    */
   public Character() {
-    this.characterClass = Class.Wizard;
+    this.characterClass = ClassDataHandler.getClassDataList().get(0);
     this.type = "Wizard";
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));
@@ -97,7 +97,7 @@ public class Character {
    * @param inventory Inventory of the Character.
    */
   public Character(final String type, final Inventory inventory) {
-    this.characterClass = Class.findClassByName(type);
+    this.characterClass = ClassDataHandler.findClassByName(type);
     this.type = type;
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/" + type + ".png"));
@@ -121,8 +121,8 @@ public class Character {
    * @param characterClass To be documented.
    * @param characterStats stats.
    */
-  public Character(final Inventory inventory, final int level, final int fame, final Class characterClass, final CharacterStats characterStats) {
-    this.type = characterClass.name();
+  public Character(final Inventory inventory, final int level, final int fame, final ClassData characterClass, final CharacterStats characterStats) {
+    this.type = characterClass.getName();
     this.skin = "";
     this.skinImage = new ImageIcon(Utilities.getClassResource("images/skins/Wizard.png"));
     this.level = String.valueOf(level);
@@ -168,7 +168,7 @@ public class Character {
     this.lastSeen = lastSeen;
     this.server = server;
     this.inventory = inventory;
-    this.characterClass = Class.findClassByName(type);
+    this.characterClass = ClassDataHandler.findClassByName(type);
   }
 
   /**
@@ -206,7 +206,7 @@ public class Character {
    *
    * @return class enum.
    */
-  public Class getCharacterClass() {
+  public ClassData getCharacterClass() {
     return characterClass;
   }
 

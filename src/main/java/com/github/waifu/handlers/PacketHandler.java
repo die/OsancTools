@@ -97,7 +97,7 @@ public final class PacketHandler {
           case NUM_STARS_STAT -> stars = stat.getStatValue();
           case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.getNewObjects()[i].getObjectType()));
           case INVENTORY_0_STAT -> weapon = getItemName(String.valueOf(stat.getStatValue()));
-          case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.getStatValue()));
+          case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(0x6611));
           case INVENTORY_2_STAT -> armor = getItemName(String.valueOf(stat.getStatValue()));
           case INVENTORY_3_STAT -> ring = getItemName(String.valueOf(stat.getStatValue()));
           case NAME_STAT -> userName = stat.getStringStatValue();
@@ -192,15 +192,23 @@ public final class PacketHandler {
           String label = "";
           final Element eElement = (Element) nNode;
 
-          final long found_id = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
+          final long found_id;
+          if (eElement.getAttribute("type").contains("0x")) {
+            found_id = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
+          } else {
+            found_id = Long.parseLong(eElement.getAttribute("id").replace("0x", ""), 16);
+          }
 
           if (String.valueOf(found_id).equals(id)) {
             String name = "";
-
             if (eElement.getElementsByTagName("DisplayId").item(0) != null) {
               name = eElement.getElementsByTagName("DisplayId").item(0).getTextContent();
             } else {
-              name = eElement.getAttribute("id");
+              if (!eElement.getAttribute("id").contains("0x")) {
+                name = eElement.getAttribute("id");
+              } else {
+                name = eElement.getAttribute("type");
+              }
             }
 
             final NodeList tiers = eElement.getElementsByTagName("Tier");
@@ -211,10 +219,9 @@ public final class PacketHandler {
             final NodeList labels = eElement.getElementsByTagName("Labels");
             if (labels.item(0) != null) {
               final List<String> labelsList = Arrays.stream(labels.item(0).getTextContent().split(",")).toList();
-
-              if (labelsList.contains("ST")) {
+              if (labelsList.contains("ST") || labelsList.contains("TAB_ST")) {
                 label = "ST";
-              } else if (labelsList.contains("UT")) {
+              } else if (labelsList.contains("UT") || labelsList.contains("TAB_UT")) {
                 label = "UT";
               }
             }
@@ -336,7 +343,6 @@ public final class PacketHandler {
       final InputSource is1 = new InputSource(new StringReader(classXml.toString()));
       classData = builder.parse(is1);
       createClassDataObjects();
-
     } catch (final Exception e) {
       e.printStackTrace();
       JOptionPane.showMessageDialog(Gui.getFrames()[0], "Select the resources.assets in your Documents folder!");

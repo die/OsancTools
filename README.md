@@ -21,7 +21,7 @@ java -jar <artifact_name>
 
 ## Contributing
 
-Feel free to submit pull requests that handle specific issues, and when in doubt feel free to contact me to see where you can help.
+Feel free to submit pull requests that handle specific issues, and when in doubt feel free to contact me to see where you can help. While the code is open source, I ask that you please help contribute to the project rather than make a derivative if it is applicable.
 
 ## License
 

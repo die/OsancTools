@@ -4,6 +4,7 @@ import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.Gui;
+import com.github.waifu.gui.actions.ExportWhoAction;
 import com.github.waifu.gui.actions.ParseGuildLeakersAction;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.models.SetTableModel;
@@ -62,6 +63,10 @@ public class SetTable extends JFrame {
    * To be documented.
    */
   private JButton parseGuildLeaksButton;
+  /**
+   * To be documented.
+   */
+  private JButton exportWhoButton;
   /**
    * To be documented.
    */
@@ -256,14 +261,16 @@ public class SetTable extends JFrame {
     main.add(removeMarkedSetsCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     parseGuildLeaksButton = new JButton();
     parseGuildLeaksButton.setText("Parse Guild Leaks");
-    main.add(parseGuildLeaksButton, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(parseGuildLeaksButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    exportWhoButton = new JButton();
+    exportWhoButton.setText("Export /who");
+    main.add(exportWhoButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
   /**
-   * Document.
+   * To be documented.
    *
-   * @noinspection ALL.
-   * @return c.
+   * @noinspection ALL
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
@@ -291,6 +298,7 @@ public class SetTable extends JFrame {
     // todo: place custom component creation code here
     parseGuildLeaksButton.addActionListener(new ParseGuildLeakersAction(main));
     parseGuildLeaksButton.setEnabled(Gui.getRaid().getCrashers() != null);
+    exportWhoButton.addActionListener(new ExportWhoAction());
   }
 
   /**

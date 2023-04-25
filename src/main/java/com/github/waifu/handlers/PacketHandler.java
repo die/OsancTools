@@ -48,10 +48,29 @@ public final class PacketHandler {
    * To be documented.
    */
   private static Document equipmentData;
+
   /**
    * To be documented.
    */
   private static Document classData;
+
+  /**
+   * Get equipment document.
+   *
+   * @return Document object.
+   */
+  public static Document getEquipmentData() {
+    return equipmentData;
+  }
+
+  /**
+   * Get class document.
+   *
+   * @return Document object.
+   */
+  public static Document getClassData() {
+    return classData;
+  }
 
   /**
    * To be documented.

@@ -10,9 +10,13 @@ public enum UnknownItem {
    */
   SNOWMAN_SHEATH("14662", "Snowman's Sheath", "UT"),
   /**
-   * Assassin Ability: Mighty Stein.
+   * Ninja ability: Spider Shuriken.
+    */
+  SPIDER_SHURIKEN("14149", "Spider Shuriken", "UT"),
+  /**
+   * Ring: Corsair Ring.
    */
-  MIGHTY_STEIN("14149", "Mighty Stein", "UT");
+  CORSAIR_RING("8841", "Corsair Ring", "UT");
 
 
   /**

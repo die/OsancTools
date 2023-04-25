@@ -270,7 +270,8 @@ public class SetTable extends JFrame {
   /**
    * To be documented.
    *
-   * @noinspection ALL
+   * @noinspection ALL.
+   * @return JComponent.
    */
   public JComponent $$$getRootComponent$$$() {
     return main;

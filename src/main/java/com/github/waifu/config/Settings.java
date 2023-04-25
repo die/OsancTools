@@ -44,7 +44,8 @@ public class Settings {
             "PubHallsSemicar",
             "PubHallsAdvanced",
             "PubHallsExalt",
-            "PubHallsMisc");
+            "PubHallsMisc",
+            "PubShatters");
   }
 
   /**

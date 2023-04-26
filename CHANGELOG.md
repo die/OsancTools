@@ -6,6 +6,16 @@ and this project does not adhere to [Semantic Versioning](https://semver.org/spe
 
 ## [Unreleased]
 
+## [1.0.0.8] - 2023-04-25
+
+### Fixed
+- Fixed change in packet ids
+
+### Added
+- Added feature to export names sniffed into a /who image
+- Added Moonlight Village sprite images
+- Added Shatters normal run requirement sheet
+
 ## [1.0.0.7] - 2023-03-17
 
 ### Fixed

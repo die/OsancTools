@@ -325,4 +325,13 @@ public class Character {
   public void parseCharacter() {
     RequirementSheetHandler.parseMaxedStats(this);
   }
+
+  /**
+   * Checks if an account is private (no data).
+   *
+   * @return true if private, else false.
+   */
+  public boolean isPrivate() {
+    return this.inventory.getItems().stream().allMatch(item -> item.getName().equals("Empty slot"));
+  }
 }

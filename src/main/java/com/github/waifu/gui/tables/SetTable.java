@@ -299,7 +299,7 @@ public class SetTable extends JFrame {
     // todo: place custom component creation code here
     parseGuildLeaksButton.addActionListener(new ParseGuildLeakersAction(main));
     parseGuildLeaksButton.setEnabled(Gui.getRaid().getCrashers() != null);
-    exportWhoButton.addActionListener(new ExportWhoAction());
+    exportWhoButton.addActionListener(new ExportWhoAction(main));
   }
 
   /**

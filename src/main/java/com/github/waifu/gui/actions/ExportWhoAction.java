@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * Class for exporting names in a /who format.
@@ -60,6 +62,20 @@ public class ExportWhoAction implements ActionListener {
   }
 
   /**
+   * Panel for the SetTable.
+   */
+  private final JPanel setTablePanel;
+
+  /**
+   * Construct action.
+   *
+   * @param setTablePanel table panel.
+   */
+  public ExportWhoAction(final JPanel setTablePanel) {
+    this.setTablePanel = setTablePanel;
+  }
+
+  /**
    * Create action.
    *
    * @param e ignored event.
@@ -77,19 +93,21 @@ public class ExportWhoAction implements ActionListener {
 
         for (final Raider raider : raiders) {
           for (final Account account : raider.getAccounts()) {
+            // names who are not picked up by the sniffer (possibly not in loc), using the webapp, will show as a private profile, so we must filter them out.
+            if (!account.getCharacters().isEmpty() && !account.getCharacters().get(0).isPrivate()) {
+              if (line.length() == 0) {
+                line.append(account.getName());
+              } else {
+                line.append(", ").append(account.getName());
+              }
 
-            if (line.length() == 0) {
-              line.append(account.getName());
-            } else {
-              line.append(", ").append(account.getName());
+              if (line.length() > 70) {
+                line.append("\n");
+                names.append(line);
+                line = new StringBuilder();
+              }
+              numberOfPlayers++;
             }
-
-            if (line.length() > 70) {
-              line.append("\n");
-              names.append(line);
-              line = new StringBuilder();
-            }
-            numberOfPlayers++;
           }
         }
 
@@ -120,6 +138,7 @@ public class ExportWhoAction implements ActionListener {
       graphics.dispose();
       final ImageTransferable imageTransferable = new ImageTransferable(image);
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imageTransferable, null);
+      JOptionPane.showMessageDialog(setTablePanel, "Exported /who image into the clipboard.", "", JOptionPane.PLAIN_MESSAGE);
     }
   }
 }

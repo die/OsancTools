@@ -94,7 +94,7 @@ public class ExportWhoAction implements ActionListener {
         for (final Raider raider : raiders) {
           for (final Account account : raider.getAccounts()) {
             // names who are not picked up by the sniffer (possibly not in loc), using the webapp, will show as a private profile, so we must filter them out.
-            if (!account.getCharacters().isEmpty() && !account.getCharacters().get(0).isPrivate()) {
+            if (account.getCharacters() != null && !account.getCharacters().isEmpty() && !account.getCharacters().get(0).isPrivate()) {
               if (line.length() == 0) {
                 line.append(account.getName());
               } else {

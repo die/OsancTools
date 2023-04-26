@@ -21,7 +21,7 @@ public enum PacketType {
   /**
    * To be documented.
    */
-  NEWTICK(9, Incoming, NewTickPacket::new),
+  NEWTICK(10, Incoming, NewTickPacket::new),
   /**
    * To be documented.
    */
@@ -29,7 +29,7 @@ public enum PacketType {
   /**
    * To be documented.
    */
-  UPDATE(62, Incoming, UpdatePacket::new),
+  UPDATE(42, Incoming, UpdatePacket::new),
   /**
    * To be documented.
    */

@@ -206,7 +206,7 @@ public class Gui extends JFrame {
 
           final String recentVersion = release.getString("tag_name");
           final int parseVersion = parseVersion(recentVersion);
-          final String version = "v1.0.0.7";
+          final String version = "v1.0.0.8";
           final int currentVersion = parseVersion(version);
 
           if (currentVersion < parseVersion) {

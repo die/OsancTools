@@ -233,6 +233,15 @@
         "Apiary Armor",
         "Honey Circlet"
       ]
+    },
+    "Kogbold Turretsmith Archer": {
+      "total": 4,
+      "items": [
+        "Experimental Cannon",
+        "Sentry Turret",
+        "Tinkerers Apron",
+        "Targeting Monocular"
+      ]
     }
   },
   "required points":{
@@ -252,25 +261,23 @@
     "Ninja":2,
     "Samurai":3,
     "Bard":4,
-    "Summoner":3,
+    "Summoner":4,
     "Kensei":3
   },
   "items":{
     "5":{
-      "weapon":[
-        "Lumiaire"
-      ],
-      "ability":[
-        "Tome of the Mushroom Tribes"
-      ]
-    },
-    "4":{
-      "weapon":[
-        "Enforcer"
-      ],
-      "ability":[
-        "Crystallised Fang's Venom"
-      ]
+      "Priest Gigachad Set": {
+        "slot": [
+          "ability",
+          "armor",
+          "ring"
+        ],
+        "items": [
+          "Healing Tome",
+          "Ritual Robe",
+          "The Twilight Gemstone"
+        ]
+      }
     },
     "3":{
       "weapon":[
@@ -279,26 +286,23 @@
         "Hama Yumi",
         "Bow of Deep Enchantment",
         "Avarice",
-        "Dirk of Cronus",
-        "Phantasm Dirk",
-        "Conducting Wand",
-        "Dusky Catalyst",
         "Theurgy Wand",
         "Holy Artifact",
         "Wand of the Fallen",
         "Snowblind Wand",
-        "Abomination's Wrath"
+        "Enforcer",
+        "Lumiaire",
+        "Laser Pointer",
+        "Mischief",
+        "Makakoyumi"
       ],
       "ability":[
         "Noble Mandolin",
-        "Sentinel's Sidearm",
         "Shield of Ogmur",
         "Chaotic Scripture",
-        "Ceremonial Merlot",
-        "Tome of Holy Furor"
-      ],
-      "armor":[
-        "Vesture of Duality"
+        "Tome of Holy Furor",
+        "Crystallised Fang's Venom",
+        "Tome of the Mushroom Tribes"
       ],
       "Alchemist Assassin": {
         "slot": [
@@ -316,29 +320,29 @@
         "Divinity",
         "Sword of the Colossus",
         "Sword of Majesty",
-        "Soul's Guidance",
         "Wand of Retribution",
         "Superior",
         "Staff of the Fundamental Core",
         "Spellblade of the Everlasting Death",
-        "Corruption Tether",
-        "Crystallized Worm Spellblade",
-        "Shaman's Staff",
         "Valor",
         "Celestial Blade",
         "Kusanagi",
         "Godslayer Tachi",
-        "Toxic Toad",
         "Dagger of Dire Hatred",
         "Soulforged Blades",
         "Harmonious Harp",
-        "Nectar Crossfire",
-        "Leaf Bow"
+        "Leaf Bow",
+        "Dirk of Cronus",
+        "Phantasm Dirk",
+        "Conducting Wand",
+        "Abomination's Wrath",
+        "Dusky Catalyst",
+        "Vigor",
+        "Clockwork Repeater"
       ],
       "ability":[
         "Oryx's Escutcheon",
         "Polarity Poison",
-        "Amaterasu",
         "Virtuous Wakizashi",
         "Genesis Spell",
         "Primal Arcana",
@@ -354,7 +358,15 @@
         "Mad Javelin",
         "Quiver of the Autumn King",
         "Quiver of the Shadows",
-        "Wavecrest Concertina"
+        "Wavecrest Concertina",
+        "Trap of the Vile Spirit",
+        "Ceremonial Merlot",
+        "Sentinel's Sidearm",
+        "Tome of Purification",
+        "Botany Book",
+        "Kogbold Multitool",
+        "Scepter of Rust",
+        "Tezutsu Hanabi"
       ],
       "armor":[
         "Mercy's Bane",
@@ -362,18 +374,9 @@
         "Aegis Armor",
         "Hirejou Tenne",
         "Centaur's Shielding",
-        "Diplomatic Robe"
+        "Diplomatic Robe",
+        "Vesture of Duality"
       ],
-      "Killbilly Warrior": {
-        "slot": [
-          "armor",
-          "ring"
-        ],
-        "items": [
-          "Overalls of Endurance",
-          "Headless Ted"
-        ]
-      },
       "Treasurer Trickster": {
         "class":[
           "Rogue"
@@ -384,6 +387,26 @@
         "items": [
           "Collector's Monocle"
         ]
+      },
+      "Crystal Kunoichi": {
+        "slot": [
+          "ability",
+          "ring"
+        ],
+        "items": [
+          "Crystalline Kunai",
+          "Radiant Heart"
+        ]
+      },
+      "Storm Caller": {
+        "slot": [
+          "ability",
+          "ring"
+        ],
+        "items": [
+          "Thundering Chorus",
+          "Augur of the Tempest"
+        ]
       }
     },
     "1":{
@@ -393,7 +416,6 @@
         "Sword of Splendor",
         "Sword of the Unending Chaos",
         "Cheerful Chipper",
-        "Blade of the Assailant",
         "Doku No Ken",
         "Fire Blade",
         "Kiritsukeru",
@@ -412,7 +434,15 @@
         "Longbow of the Midnight Diamond",
         "Thousand Shot",
         "Deathless Crossbow",
-        "Bergenia Bow"
+        "Bergenia Bow",
+        "Crystallized Worm Spellblade",
+        "Shaman's Staff",
+        "Corruption Tether",
+        "Magic Wand",
+        "Bounty Hunter's Dagger",
+        "Burial Blades",
+        "Atavistic Soul Sabre",
+        "Squaroid Staff"
       ],
       "ability":[
         "Vanguard's Visage",
@@ -422,7 +452,6 @@
         "Marble Seal",
         "Abyssal Insignia",
         "Irradiance Sheath",
-        "Shield of Orcish Regalia",
         "Brutal Buckler",
         "Shadow Serpent Sidearm",
         "Wakizashi of Eastern Winds",
@@ -440,7 +469,6 @@
         "Lifebringing Lotus",
         "Consecrated Trap",
         "Depthchaser Trap",
-        "Trap of the Vile Spirit",
         "Quiver of Elvish Mastery",
         "Coalbearing Quiver",
         "Quiver of Thunder",
@@ -455,7 +483,6 @@
         "Hooded Skull",
         "Demon Lord's Skull",
         "Skull of Corrupted Souls",
-        "Cubic Frame",
         "Ritual Skull",
         "Orb of Conflict",
         "Orb of Terror",
@@ -469,11 +496,14 @@
         "Scepter of Sainthood",
         "Scepter of Fulmination",
         "Storm Caller",
-        "Mechanical Mace",
         "Grandmaster Mace",
         "Sovereign Mace",
         "Mace of the North Pole",
-        "Hivemind Mace"
+        "Hivemind Mace",
+        "Amaterasu",
+        "Thundering Chorus",
+        "Tyrant's Toxin",
+        "Brain Cube"
       ],
       "armor":[
         "Flame Guard",

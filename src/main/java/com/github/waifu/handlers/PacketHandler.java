@@ -85,7 +85,6 @@ public final class PacketHandler {
   public static void logKeyPops(final Packet packet) {
     if (packet instanceof final NotificationPacket notificationPacket) {
       if (notificationPacket.getEffect() == null) return;
-
       switch (notificationPacket.getEffect()) {
         case DungeonOpened -> {
           final PortalXmlObject portalXMLObject = notificationPacket.getDungeon();
@@ -93,6 +92,7 @@ public final class PacketHandler {
           PopsPanel.addPop(portalXMLObject, notificationPacket.getKeyPopper());
         }
         case ServerMessage -> {
+          System.out.println(notificationPacket);
           final String name = notificationPacket.getName();
           int key = -1;
           if (name.contains("The Void")) key = 583;

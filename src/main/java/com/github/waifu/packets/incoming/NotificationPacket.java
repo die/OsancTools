@@ -168,6 +168,7 @@ public class NotificationPacket extends Packet {
    */
   public String getName() {
     final JSONObject jsonObject = new JSONObject(message);
+    if (!jsonObject.has("t") || !jsonObject.getJSONObject("t").has("name")) return "";
     return jsonObject.getJSONObject("t").getString("name");
   }
 

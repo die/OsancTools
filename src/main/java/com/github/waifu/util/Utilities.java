@@ -5,10 +5,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import javax.swing.ImageIcon;
 import org.apache.commons.io.FilenameUtils;
 
@@ -16,6 +18,11 @@ import org.apache.commons.io.FilenameUtils;
  * Utilities class for the program.
  */
 public final class Utilities {
+
+  /**
+   * Application version.
+   */
+  private static String version;
 
   /**
    * To be documented.
@@ -34,9 +41,9 @@ public final class Utilities {
    * @return marked ImageIcon
    */
   public static ImageIcon markImage(final ImageIcon image, final Color color) {
-    final BufferedImage bufferedImage = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+    final BufferedImage bufferedImage = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
     final Graphics g = bufferedImage.createGraphics();
-    g.setColor(color);
+    g.setColor(new Color(color.getRed() / 255, color.getGreen() / 255, color.getBlue() / 255, 0.5f));
     g.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
     g.drawImage(image.getImage(), 0, 0, null);
     g.dispose();
@@ -54,6 +61,26 @@ public final class Utilities {
       return Utilities.class.getClassLoader().getResource("resources/" + path);
     } else {
       return Utilities.class.getClassLoader().getResource(path);
+    }
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public static String getApplicationVersion() {
+    try {
+      if (version == null) {
+        final Properties properties = new Properties();
+        final InputStream inputStream = Utilities.getClassResource("version.properties").openStream();
+        properties.load(inputStream);
+        inputStream.close();
+        version = properties.getProperty("major") + "." + properties.getProperty("minor") + "." + properties.getProperty("patch") + (Boolean.parseBoolean(properties.getProperty("release")) ? "" : "-SNAPSHOT");
+      }
+      return version;
+    } catch (Exception e) {
+      return null;
     }
   }
 

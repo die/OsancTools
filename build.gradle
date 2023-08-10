@@ -5,7 +5,6 @@ plugins {
 }
 
 group 'com.github.waifu'
-version '1.0.0.8'
 
 repositories {
     mavenCentral()
@@ -13,6 +12,7 @@ repositories {
 
 shadowJar {
     exclude 'images.zip'
+    classifier = ''
 }
 
 dependencies {
@@ -20,7 +20,7 @@ dependencies {
     implementation 'com.ardikars.pcap:pcap-jdk7:1.4.2'
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'com.intellij:forms_rt:7.0.3'
-    implementation 'com.formdev:flatlaf:2.2'
+    implementation 'com.formdev:flatlaf:3.0'
     implementation 'org.json:json:20220320'
     implementation group: 'net.sourceforge.tess4j', name: 'tess4j', version: '5.2.1'
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
+    implementation files("lib/spmf.jar")
 }
 
 test {
@@ -54,3 +55,25 @@ compileJava.options.encoding = 'UTF-8'
 application {
     mainClassName = "com.github.waifu.gui.Main"
 }
+
+version = { ->
+
+    def versionPropertiesFile = file('/src/main/resources/version.properties')
+
+    if(!versionPropertiesFile.exists()) {
+        throw new Exception('No version.properties file found')
+    }
+
+    Properties versionProperties = new Properties()
+
+    versionPropertiesFile.withInputStream { stream ->
+        versionProperties.load(stream)
+    }
+
+    def major = versionProperties.major
+    def minor = versionProperties.minor
+    def patch = versionProperties.patch
+    def release = versionProperties.release.toBoolean() ? '' : '-SNAPSHOT'
+    return "$major.$minor.$patch$release"
+
+}()

@@ -1,10 +1,9 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.assets.RotmgAssets;
+import com.github.waifu.assets.objects.EquipXMLObject;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
@@ -12,6 +11,10 @@ import javax.swing.ImageIcon;
  */
 public class Item {
 
+  /**
+   * To be documented.
+   */
+  private int id;
   /**
    * To be documented.
    */
@@ -35,6 +38,7 @@ public class Item {
    * <p>Constructs a default Item.
    */
   public Item() {
+    this.id = -1;
     this.name = "";
     this.type = "";
     this.image = null;
@@ -49,7 +53,8 @@ public class Item {
    * @param type      type of Item (Weapon/Ability/Armor/Ring).
    * @param itemClass class that can use the Item (Wizard/etc).
    */
-  public Item(final String name, final String type, final String itemClass) {
+  public Item(final int id, final String name, final String type, final String itemClass) {
+    this.id = id;
     this.name = name.replace(":", "");
     this.type = type;
     this.itemClass = itemClass;
@@ -58,22 +63,12 @@ public class Item {
   }
 
   /**
-   * To be documented.
+   * Get the item's assigned id.
    *
-   * @param name To be documented.
-   * @param type To be documented.
-   * @param itemClass To be documented.
-   * @param x To be documented.
-   * @param y To be documented.
-   * @throws IOException To be documented.
+   * @return id as an Integer.
    */
-  public Item(final String name, final String type, final String itemClass, final int x, final int y) throws IOException {
-    this.name = name.replace(":", "");
-    this.type = type;
-    this.itemClass = itemClass;
-    final BufferedImage image = ImageIO.read(Utilities.getClassResource("images/items/renders.png"));
-    final BufferedImage image1 = image.getSubimage(x, y, 46, 46);
-    this.image = new ImageIcon(image1);
+  public int getId() {
+    return id;
   }
 
   /**
@@ -185,11 +180,13 @@ public class Item {
    * <p>Constructs the appropriate image for the item using given information.
    */
   public void createImage() {
-    if (Utilities.getClassResource("images/items/" + name + ".png") != null) {
-      image = new ImageIcon(Utilities.getClassResource("images/items/" + name + ".png"));
-    } else if (Utilities.getClassResource("images/items/" + name.replace("UT", "ST") + ".png") != null) {
-      image = new ImageIcon(Utilities.getClassResource("images/items/" + name.replace("UT", "ST") + ".png"));
-    } else {
+    boolean found = false;
+    final EquipXMLObject equipXMLObject = RotmgAssets.equipXMLObjectList.get(id);
+
+    if (equipXMLObject != null) this.image = RotmgAssets.equipXMLObjectList.get(id).getImage();
+    if (image != null) found = true;
+
+    if (!found) {
       if (itemClass != null) {
         switch (type) {
           case "weapon" -> setEmptyWeaponImage(itemClass);

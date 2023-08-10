@@ -1,5 +1,6 @@
 package com.github.waifu.packets.packetcapture;
 
+import com.github.waifu.gui.Gui;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.PacketType;
 import com.github.waifu.packets.packetcapture.encryption.Rc4;
@@ -10,6 +11,9 @@ import com.github.waifu.packets.packetcapture.sniff.PaProcessor;
 import com.github.waifu.packets.packetcapture.sniff.Sniffer;
 import com.github.waifu.packets.reader.BufferReader;
 import java.nio.ByteBuffer;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  * The core class to process packets. First the network tap is sniffed to receive all packets. The packets
@@ -70,8 +74,15 @@ public class PacketProcessor extends Thread implements PaProcessor {
     outgoingPacketConstructor.startResets();
     try {
       sniffer.startSniffer();
-    } catch (final UnsatisfiedLinkError | Exception e) {
-      e.printStackTrace();
+    } catch (final UnsatisfiedLinkError | NoClassDefFoundError | Exception e) {
+      final JTextArea textarea = new JTextArea("> https://npcap.com/");
+      textarea.setEditable(false);
+      final String text = "<html>Error: failed to find network sniffer.";
+      final JLabel label = new JLabel(text);
+      final Object[] params = {label, "Please install the latest version here:", textarea};
+
+      JOptionPane.showMessageDialog(Gui.getFrames()[0],
+              params, null, JOptionPane.ERROR_MESSAGE);
     }
   }
 

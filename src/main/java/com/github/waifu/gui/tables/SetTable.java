@@ -1,16 +1,19 @@
 package com.github.waifu.gui.tables;
 
 import com.github.waifu.entities.Account;
-import com.github.waifu.entities.Inventory;
+import com.github.waifu.entities.Character;
+import com.github.waifu.entities.Group;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.ExportWhoAction;
 import com.github.waifu.gui.actions.ParseGuildLeakersAction;
 import com.github.waifu.gui.actions.TableCopyAction;
+import com.github.waifu.gui.listeners.GroupListener;
 import com.github.waifu.gui.models.SetTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class SetTable extends JFrame {
 
+  private GroupListener groupListener;
   /**
    * To be documented.
    */
@@ -92,14 +96,11 @@ public class SetTable extends JFrame {
    * SetTable method.
    *
    * <p>Constructs a JFrame to display the set parse.
-   *
-   * @param accountInventoryMap Map containing an Account object as the key
-   *                            and its Inventory as the value.
    */
-  public SetTable(final List<Raider> accountInventoryMap) {
+  public SetTable() {
     $$$setupUI$$$();
     createUIComponents();
-    createTable(accountInventoryMap);
+    createTable();
     addActionListeners();
     setContentPane(main);
     setAlwaysOnTop(true);
@@ -109,44 +110,80 @@ public class SetTable extends JFrame {
     setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setVisible(true);
     new TableCopyAction(setsTable);
+
     pack();
+
+    groupListener = (account, exists) -> {
+      final DefaultTableModel tableModel = (DefaultTableModel) setsTable.getModel();
+      account.getRecentCharacter().parseCharacter();
+      final int width = account.getRecentCharacter().getCharacterImage().getIconWidth();
+      if (exists) {
+        final int nameColumn = 1;
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+          if (!tableModel.getValueAt(i, nameColumn).equals(account.getName())) continue;
+          final Character recentChar = account.getRecentCharacter();
+          tableModel.setValueAt(recentChar.getInventory().getIssue().getProblem().getProblem(), i, 0);
+          tableModel.setValueAt(recentChar.getCharacterImage(), i, 2);
+          tableModel.setValueAt(recentChar.getMaxedStatsImage(), i, 3);
+        }
+      } else {
+        final Object[] row = createRow(account);
+        tableModel.addRow(row);
+      }
+      setsTable.getColumnModel().getColumn(2).setMinWidth(width);
+      setsTable.setModel(tableModel);
+      updateFilters();
+    };
+
+    Gui.getRaid().getGroup().addListener(groupListener);
   }
 
   /**
    * createTable method.
    *
    * <p>Creates the table model, adds rows to the model, and applies the model to the table.
-   *
-   * @param accountInventoryMap Map containing an Account object as the key
-   *                            and its Inventory as the value.
    */
-  private void createTable(final List<Raider> accountInventoryMap) {
-    final DefaultTableModel tableModel = new SetTableModel();
-    int width = 0;
-    for (final Raider raider : accountInventoryMap) {
-      for (int j = 0; j < raider.getAccounts().size(); j++) {
-        final Account account = raider.getAccounts().get(j);
-        final Inventory inventory = account.getCharacters().get(0).getInventory();
-        final Object[] array = new Object[6];
-        final ImageIcon result = new ImageIcon(inventory.createImage(setsTable.getRowHeight(), setsTable.getRowHeight()).getImage());
-        String description = inventory.printInventory();
-        if (!inventory.getIssue().getMessage().equals("")) {
-          description += " | Message: " + inventory.getIssue().getMessage();
-        }
-        result.setDescription(description);
-        width = result.getIconWidth();
-        array[0] = inventory.getIssue().getProblem().getProblem();
-        array[1] = account.getName();
-        array[2] = result;
-        array[3] = false;
-        tableModel.addRow(array);
-      }
-    }
-    setsTable.setDefaultRenderer(Object.class, new ColorTableRenderer(accountInventoryMap));
+  private void createTable() {
+    setsTable.setModel(new SetTableModel());
+
+    final DefaultTableModel tableModel = (DefaultTableModel) setsTable.getModel();
     sorter = new TableRowSorter<>(tableModel);
     setsTable.setRowSorter(sorter);
+
+    final Group group = Gui.getRaid().getGroup();
+    if (group.accounts.isEmpty()) return;
+
+    for (final Account account : group.accounts) {
+      final Object[] row = createRow(account);
+      tableModel.addRow(row);
+    }
     setsTable.setModel(tableModel);
-    setsTable.getColumnModel().getColumn(2).setMinWidth(width);
+    setsTable.setRowSorter(sorter);
+  }
+
+  private Object[] createRow(final Account account) {
+    Object[] row = new Object[6];
+    row[0] = account.getRecentCharacter().getInventory().getIssue().getProblem().getProblem();
+    row[1] = account.getName();
+
+    final ImageIcon characterImage = account.getRecentCharacter().getCharacterImage();
+    if (characterImage != null) {
+      final int cWidth = characterImage.getIconWidth();
+      setsTable.getColumnModel().getColumn(2).setMinWidth(cWidth);
+    }
+    row[2] = account.getRecentCharacter().getCharacterImage();
+
+    final ImageIcon statsImage = account.getRecentCharacter().getMaxedStatsImage();
+    if (statsImage != null) {
+      final int sWidth = statsImage.getIconWidth();
+      setsTable.getColumnModel().getColumn(3).setMinWidth(sWidth);
+
+    }
+    row[3] = statsImage;
+
+    row[4] = account.getRecentCharacter().getInventory().getIssue().getMessage();
+    row[5] = false;
+    return row;
   }
 
   /**
@@ -220,7 +257,7 @@ public class SetTable extends JFrame {
       @Override
       protected Void doInBackground() {
         if (removeMarkedSetsCheckBox.isSelected()) {
-          removeMarked = RowFilter.notFilter(RowFilter.regexFilter("true", 3));
+          removeMarked = RowFilter.notFilter(RowFilter.regexFilter("true", 5));
           updateFilters();
         } else {
           removeMarked = RowFilter.regexFilter("");
@@ -241,6 +278,8 @@ public class SetTable extends JFrame {
   private void $$$setupUI$$$() {
     main = new JPanel();
     main.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
+    main.setMinimumSize(new Dimension(-1, 177));
+    main.setPreferredSize(new Dimension(600, 700));
     final JScrollPane scrollPane1 = new JScrollPane();
     main.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "Sets", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
@@ -268,10 +307,7 @@ public class SetTable extends JFrame {
   }
 
   /**
-   * To be documented.
-   *
-   * @noinspection ALL.
-   * @return JComponent.
+   * @noinspection ALL
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
@@ -315,5 +351,13 @@ public class SetTable extends JFrame {
       }
     }
     return -1;
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    final Group group = Gui.getRaid().getGroup();
+    if (group == null || groupListener == null) return;
+    group.removeListener(groupListener);
   }
 }

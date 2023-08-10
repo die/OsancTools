@@ -1,10 +1,12 @@
 package com.github.waifu.gui;
 
+import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.config.Settings;
 import com.github.waifu.handlers.RequirementSheetHandler;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -31,9 +33,27 @@ public final class Main {
    *
    * @param args input arguments that are not used.
    */
-  public static void main(final String[] args) {
+  public static void main(final String[] args) throws IOException, InterruptedException, InvocationTargetException {
+    final SplashScreen splashScreen = new SplashScreen();
+
     try {
-      loadRequirementSheet();
+      final RotmgAssets assets = new RotmgAssets();
+      boolean loaded = assets.loadAssets(splashScreen.getProgressBar1(), splashScreen.getLabel());
+
+      if (!loaded) {
+        SplashScreen.chooseResourcesFile();
+        splashScreen.dispose();
+        System.exit(0);
+      }
+      splashScreen.dispose();
+    } catch (final OutOfMemoryError | IOException e) {
+      e.printStackTrace();
+      splashScreen.dispose();
+      System.exit(0);
+    }
+
+    try {
+      Main.loadRequirementSheet();
       SwingUtilities.invokeLater(Gui::new);
     } catch (final Exception e) {
       e.printStackTrace();

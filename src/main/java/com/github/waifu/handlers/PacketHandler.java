@@ -1,5 +1,9 @@
 package com.github.waifu.handlers;
 
+import com.github.waifu.assets.RotmgAssets;
+import com.github.waifu.assets.objects.EquipXMLObject;
+import com.github.waifu.assets.objects.PlayerXmlObject;
+import com.github.waifu.assets.objects.PortalXmlObject;
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Character;
 import com.github.waifu.entities.CharacterStats;
@@ -8,9 +12,11 @@ import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Item;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.Main;
+import com.github.waifu.gui.panels.PopsPanel;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.data.StatData;
 import com.github.waifu.packets.data.enums.UnknownItem;
+import com.github.waifu.packets.incoming.NotificationPacket;
 import com.github.waifu.packets.incoming.UpdatePacket;
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,7 +33,6 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -77,15 +82,47 @@ public final class PacketHandler {
    *
    * @param packet To be documented.
    */
+  public static void logKeyPops(final Packet packet) {
+    if (packet instanceof final NotificationPacket notificationPacket) {
+      if (notificationPacket.getEffect() == null) return;
+      switch (notificationPacket.getEffect()) {
+        case DungeonOpened -> {
+          final PortalXmlObject portalXMLObject = notificationPacket.getDungeon();
+          if (portalXMLObject == null) return;
+          PopsPanel.addPop(portalXMLObject, notificationPacket.getKeyPopper());
+        }
+        case ServerMessage -> {
+          System.out.println(notificationPacket);
+          final String name = notificationPacket.getName();
+          int key = -1;
+          if (name.contains("The Void")) key = 583;
+          if (name.contains("Wine Cellar")) key = 1826;
+          if (name.contains("The Sword Monument")) key = 10022;
+          if (name.contains("The Shield Monument")) key = 10023;
+          if (name.contains("The Helmet Monument")) key = 10024;
+          final EquipXMLObject equipXMLObject = RotmgAssets.equipXMLObjectList.get(key);
+          if (equipXMLObject == null) return;
+          PopsPanel.addPop(equipXMLObject, notificationPacket.getKeyPopper());
+        }
+      }
+    }
+  }
+
+  /**
+   * To be documented.
+   *
+   * @param packet To be documented.
+   */
   public static void handlePacket(final Packet packet) {
+
     final UpdatePacket updatePacket = (UpdatePacket) packet;
     int stars = 0;
     int level = 0;
     String charClass = "";
-    String weapon = "";
-    String ability = "";
-    String armor = "";
-    String ring = "";
+    int weaponId = -2;
+    int abilityId = -2;
+    int armorId = -2;
+    int ringId = -2;
     String userName = "";
     String guildName = "";
     String guildRank = "";
@@ -107,18 +144,20 @@ public final class PacketHandler {
     int dex = 0;
     int vit = 0;
     int wis = 0;
+    int skin = 0;
 
     for (int i = 0; i < updatePacket.getNewObjects().length; i++) {
       final StatData[] stats = updatePacket.getNewObjects()[i].getStatus().getStatData();
-
       for (final StatData stat : stats) {
         switch (stat.getStatType()) {
           case NUM_STARS_STAT -> stars = stat.getStatValue();
-          case PLAYER_ID -> charClass = getClassName(String.valueOf(updatePacket.getNewObjects()[i].getObjectType()));
-          case INVENTORY_0_STAT -> weapon = getItemName(String.valueOf(stat.getStatValue()));
-          case INVENTORY_1_STAT -> ability = getItemName(String.valueOf(stat.getStatValue()));
-          case INVENTORY_2_STAT -> armor = getItemName(String.valueOf(stat.getStatValue()));
-          case INVENTORY_3_STAT -> ring = getItemName(String.valueOf(stat.getStatValue()));
+          case PLAYER_ID -> {
+            charClass = String.valueOf(updatePacket.getNewObjects()[i].getObjectType());
+          }
+          case INVENTORY_0_STAT -> weaponId = stat.getStatValue();
+          case INVENTORY_1_STAT -> abilityId = stat.getStatValue();
+          case INVENTORY_2_STAT -> armorId = stat.getStatValue();
+          case INVENTORY_3_STAT -> ringId = stat.getStatValue();
           case NAME_STAT -> userName = stat.getStringStatValue();
           case GUILD_NAME_STAT -> guildName = stat.getStringStatValue();
           case GUILD_RANK_STAT -> guildRank = stat.getStringStatValue();
@@ -141,30 +180,30 @@ public final class PacketHandler {
           case DEXTERITY_STAT -> dex = stat.getStatValue();
           case VITALITY_STAT -> vit = stat.getStatValue();
           case WISDOM_STAT -> wis = stat.getStatValue();
-          default -> {
+          case SKIN_STAT -> skin = stat.getStatValue();
 
-          }
         }
       }
     }
-    if (userName.equals("") || weapon.equals("")) {
+    if (userName.equals("") || weaponId == -2) {
       return;
     }
 
+    final Account account = new Account(userName);
+    final Item weaponItem = new Item(weaponId, getItemName(weaponId), "weapon", getClassName(Integer.parseInt(charClass)));
+    final Item abilityItem = new Item(abilityId, getItemName(abilityId), "ability", getClassName(Integer.parseInt(charClass)));
+    final Item armorItem = new Item(armorId, getItemName(armorId), "armor", getClassName(Integer.parseInt(charClass)));
+    final Item ringItem = new Item(ringId, getItemName(ringId), "ring", getClassName(Integer.parseInt(charClass)));
+    final List<Item> items = new ArrayList<>();
+    Collections.addAll(items, weaponItem, abilityItem, armorItem, ringItem);
+    final Inventory inventory = new Inventory(items);
     final List<Integer> stats = new ArrayList<>();
     Collections.addAll(stats, hp, mp, att, def, spd, dex, vit, wis);
     final List<Integer> statBoosts = new ArrayList<>();
     Collections.addAll(statBoosts, boostHp, boostMp, boostAtt, boostDef, boostSpd, boostDex, boostVit, boostWis);
     final CharacterStats characterStats = new CharacterStats(stats, statBoosts);
-    final ClassData characterClass = ClassDataHandler.findClassByName(charClass);
-    final Item weaponItem = new Item(weapon, "weapon", charClass);
-    final Item abilityItem = new Item(ability, "ability", charClass);
-    final Item armorItem = new Item(armor, "armor", charClass);
-    final Item ringItem = new Item(ring, "ring", charClass);
-    final List<Item> items = new ArrayList<>();
-    Collections.addAll(items, weaponItem, abilityItem, armorItem, ringItem);
-    final Account account = createAccount(userName, stars, fame, guildName, guildRank, items, level, currentFame, characterClass, characterStats);
-    Gui.getRaid().addSnifferAccount(account);
+    account.getCharacters().add(new Character(getClassName(Integer.parseInt(charClass)), skin, inventory, characterStats));
+    Gui.getRaid().getGroup().addAccount(account);
   }
 
   /**
@@ -173,20 +212,10 @@ public final class PacketHandler {
    * @param id To be documented.
    * @return To be documented.
    */
-  public static String getClassName(final String id) {
-    final NodeList nodeList = classData.getElementsByTagName("Object");
-
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      final Node nNode = nodeList.item(i);
-
-      if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-        final Element eElement = (Element) nNode;
-        if (eElement.getElementsByTagName("Class").item(0) != null) {
-          final long foundId = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
-          if (String.valueOf(foundId).equals(id)) {
-            return eElement.getAttribute("id");
-          }
-        }
+  public static String getClassName(final int id) {
+    for (final PlayerXmlObject playerXMLObject : RotmgAssets.playerXmlObjectList) {
+      if (Integer.parseInt(playerXMLObject.getType().replace("0x", ""), 16) == id) {
+        return playerXMLObject.getId();
       }
     }
     return "Wizard";
@@ -198,60 +227,31 @@ public final class PacketHandler {
    * @param id To be documented.
    * @return To be documented.
    */
-  public static String getItemName(final String id) {
-    if (id.equals("-1")) {
+  public static String getItemName(final int id) {
+    if (id == -1) {
       return "Empty slot";
     } else {
-      final NodeList nodeList = equipmentData.getElementsByTagName("Object");
+      final EquipXMLObject equipXMLObject = RotmgAssets.equipXMLObjectList.get(id);
 
-      for (int i = 0; i < nodeList.getLength(); i++) {
-        final Node nNode = nodeList.item(i);
+      if (equipXMLObject == null) return UnknownItem.getItemById(id);
 
-        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-          String label = "";
-          final Element eElement = (Element) nNode;
+      String label = "";
+      if (equipXMLObject.getLabels() == null) return equipXMLObject + " UT";
 
-          final long found_id;
-          if (eElement.getAttribute("type").contains("0x")) {
-            found_id = Long.parseLong(eElement.getAttribute("type").replace("0x", ""), 16);
-          } else {
-            found_id = Long.parseLong(eElement.getAttribute("id").replace("0x", ""), 16);
-          }
-
-          if (String.valueOf(found_id).equals(id)) {
-            String name = "";
-            if (eElement.getElementsByTagName("DisplayId").item(0) != null) {
-              name = eElement.getElementsByTagName("DisplayId").item(0).getTextContent();
-            } else {
-              if (!eElement.getAttribute("id").contains("0x")) {
-                name = eElement.getAttribute("id");
-              } else {
-                name = eElement.getAttribute("type");
-              }
-            }
-
-            final NodeList tiers = eElement.getElementsByTagName("Tier");
-            if (tiers.item(0) != null) {
-              label = "T" + tiers.item(0).getTextContent();
-            }
-
-            final NodeList labels = eElement.getElementsByTagName("Labels");
-            if (labels.item(0) != null) {
-              final List<String> labelsList = Arrays.stream(labels.item(0).getTextContent().split(",")).toList();
-              if (labelsList.contains("ST") || labelsList.contains("TAB_ST")) {
-                label = "ST";
-              } else if (labelsList.contains("UT") || labelsList.contains("TAB_UT")) {
-                label = "UT";
-              }
-            }
-
-            if (!label.equals("")) {
-              return name + " " + label;
-            }
+      final List<String> labels = Arrays.asList(equipXMLObject.getLabels());
+      if (labels.contains("ST") || labels.contains("TAB_ST")) {
+        label = "ST";
+        return equipXMLObject.getDisplayId() + " " + label;
+      } else if (labels.contains("UT") || labels.contains("TAB_UT")) {
+        label = "UT";
+      } else {
+        for (final String s : equipXMLObject.getLabels()) {
+          if (s.charAt(0) == 'T' && s.matches(".*\\d.*")) {
+            label = s;
           }
         }
       }
-      return UnknownItem.getItemById(id);
+      return equipXMLObject + " " + label;
     }
   }
 
@@ -296,7 +296,7 @@ public final class PacketHandler {
 
     final StringBuilder equipXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     final StringBuilder classXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+    try (final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
       String line;
       boolean writeEquip = false;
       boolean writeClass = false;

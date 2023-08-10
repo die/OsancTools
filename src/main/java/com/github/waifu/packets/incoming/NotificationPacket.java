@@ -1,8 +1,11 @@
 package com.github.waifu.packets.incoming;
 
+import com.github.waifu.assets.RotmgAssets;
+import com.github.waifu.assets.objects.PortalXmlObject;
 import com.github.waifu.packets.Packet;
 import com.github.waifu.packets.data.enums.NotificationEffectType;
 import com.github.waifu.packets.reader.BufferReader;
+import org.json.JSONObject;
 
 /**
  * Received when a notification is received by the player.
@@ -137,5 +140,47 @@ public class NotificationPacket extends Packet {
             + unknownInt2
             + "\n   unknownInt3="
             + unknownInt3;
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public NotificationEffectType getEffect() {
+    return effect;
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public String getKeyPopper() {
+    final JSONObject jsonObject = new JSONObject(message);
+    return jsonObject.getJSONObject("t").getString("player").split(",")[0];
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public String getName() {
+    final JSONObject jsonObject = new JSONObject(message);
+    if (!jsonObject.has("t") || !jsonObject.getJSONObject("t").has("name")) return "";
+    return jsonObject.getJSONObject("t").getString("name");
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public PortalXmlObject getDungeon() {
+    return RotmgAssets.portalXmlObjectList.stream()
+            .filter(object -> object.getTypeAsInt() == pictureType)
+            .findAny()
+            .orElse(null);
   }
 }

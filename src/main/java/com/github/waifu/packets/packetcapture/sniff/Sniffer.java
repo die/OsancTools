@@ -290,9 +290,8 @@ public class Sniffer {
             c.close();
           }
         }
-      } catch (final NullPointerException e) {
+      } catch (final NullPointerException ignored) {
         // Network tap is already closed
-        System.out.println("[X] Error stopping sniffer: sniffer not running.");
       }
     }
   }

@@ -166,13 +166,9 @@ public final class RealmeyeRequestHandler {
               case 3 -> "ring";
               default -> "";
             };
-            // String[] positions = itemsImage.get(j).replace("background-position:", "").replace("px", "").split(" ");
-            // int x = Math.abs(Integer.parseInt(positions[0]));
-            //int y = Math.abs(Integer.parseInt(positions[1]));
-            // System.out.println(x + " " + y);
-            inventory.add(new Item(items.get(j), itemType, type));
+            inventory.add(new Item(0, items.get(j), itemType, type));
           }
-          final Character character = new Character(type, skin, level, cqc, fame, exp, place, stats, characterLastSeen, server, new Inventory(inventory));
+          final Character character = new Character(type, new Inventory(inventory));
           characters.add(character);
         }
         return new Account(username, stars, numberOfSkins, exaltations, accountFame, guild, guildRank, creationDate, lastSeen, characters);
@@ -181,6 +177,7 @@ public final class RealmeyeRequestHandler {
         return getPrivateAccount(username);
       }
     }
+
   }
 
   /**

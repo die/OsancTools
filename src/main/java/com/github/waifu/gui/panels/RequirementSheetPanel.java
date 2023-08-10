@@ -1,5 +1,9 @@
 package com.github.waifu.gui.panels;
 
+import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Group;
+import com.github.waifu.entities.Raid;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.Main;
 import com.github.waifu.handlers.RequirementSheetHandler;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -102,6 +106,15 @@ public class RequirementSheetPanel extends JPanel {
         final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
         requirementSheetTextArea.setText(requirementSheet.toString(4));
         changeClassPointsButton.setEnabled(requirementSheet.has("required points"));
+
+        final Raid raid = Gui.getRaid();
+        if (raid == null) return;
+        final Group group = raid.getGroup();
+        if (group == null) return;
+        for (final Account a : group.getAccounts()) {
+            a.getRecentCharacter().parseCharacter();
+            group.addAccount(a);
+        }
       } catch (final Exception ex) {
         ex.printStackTrace();
       }

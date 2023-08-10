@@ -1,23 +1,19 @@
 package com.github.waifu.gui.models;
 
-import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 /**
  * To be documented.
  */
-public class SetTableModel extends DefaultTableModel {
+public class KeyPopModel extends DefaultTableModel {
 
   /**
    * To be documented.
    */
-  public SetTableModel() {
-    addColumn("Problem");
-    addColumn("Username");
-    addColumn("Inventory");
-    addColumn("Non-Maxed Stats");
-    addColumn("Message");
-    addColumn("Mark");
+  public KeyPopModel() {
+    addColumn("Dungeon / Key");
+    addColumn("Popper");
+    addColumn("Timestamp");
   }
 
   /**
@@ -28,12 +24,6 @@ public class SetTableModel extends DefaultTableModel {
    */
   @Override
   public Class<?> getColumnClass(final int column) {
-    if (column == 2 || column == 3) {
-      return ImageIcon.class;
-    }
-    if (column == 5) {
-      return Boolean.class;
-    }
     return Object.class;
   }
 
@@ -46,6 +36,6 @@ public class SetTableModel extends DefaultTableModel {
    */
   @Override
   public boolean isCellEditable(final int row, final int column) {
-    return column == 5;
+    return false;
   }
 }

@@ -8,21 +8,21 @@ public enum UnknownItem {
   /**
    * Kensei Ability: Snowman's Sheath.
    */
-  SNOWMAN_SHEATH("14662", "Snowman's Sheath", "UT"),
+  SNOWMAN_SHEATH(14662, "Snowman's Sheath", "UT"),
   /**
    * Ninja ability: Spider Shuriken.
     */
-  SPIDER_SHURIKEN("14149", "Spider Shuriken", "UT"),
+  SPIDER_SHURIKEN(14149, "Spider Shuriken", "UT"),
   /**
    * Ring: Corsair Ring.
    */
-  CORSAIR_RING("8841", "Corsair Ring", "UT");
+  CORSAIR_RING(8841, "Corsair Ring", "UT");
 
 
   /**
    * The id of the item.
    */
-  private final String id;
+  private final int id;
   /**
    * The name of the item.
    */
@@ -32,7 +32,7 @@ public enum UnknownItem {
    */
   private final String label;
 
-  UnknownItem(final String id, final String name, final String label) {
+  UnknownItem(final int id, final String name, final String label) {
     this.id = id;
     this.name = name;
     this.label = label;
@@ -44,9 +44,9 @@ public enum UnknownItem {
    * @param id the id of an item as an Integer.
    * @return the name of the item.
    */
-  public static String getItemById(final String id) {
+  public static String getItemById(final int id) {
     for (final UnknownItem u : values()) {
-      if (u.id.equals(id)) {
+      if (u.id == id) {
         return u.name + " " + u.label;
       }
     }

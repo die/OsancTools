@@ -7,7 +7,6 @@ import com.github.waifu.entities.Item;
 import com.github.waifu.enums.InventorySlots;
 import com.github.waifu.enums.Problem;
 import com.github.waifu.enums.Stat;
-import com.github.waifu.gui.Gui;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
 import java.net.URL;
@@ -43,16 +42,10 @@ public final class RequirementSheetHandler {
     final List<Item> items = inventory.getItems();
     final Issue issue = inventory.getIssue();
     if (items.stream().allMatch(item -> item.getName().equals("Empty slot"))) {
-      if (Gui.getRaid().isWebAppRaid()) {
-        issue.setProblem(Problem.PRIVATE_PROFILE);
-        issue.setMessage("");
-        issue.setWhisper("");
-      } else {
-        issue.setProblem(Problem.EMPTY_SLOT);
-        items.forEach(item -> item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor())));
-        issue.setMessage("");
-        issue.setWhisper("");
-      }
+      issue.setProblem(Problem.EMPTY_SLOT);
+      items.forEach(item -> item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor())));
+      issue.setMessage("");
+      issue.setWhisper("");
     } else {
       final JSONObject requirementSheet = getRequirementSheet();
 
@@ -65,11 +58,9 @@ public final class RequirementSheetHandler {
           for (final Item i : items) {
             final int calculatedPoints = calculatePoints(i, items);
 
-            if (i.getImage().getDescription() != null && !i.getImage().getDescription().equals("marked")) {
-              if (calculatedPoints > 0) {
-                i.setImage(Utilities.markImage(i.getImage(), Color.CYAN));
-                i.getImage().setDescription("marked");
-              }
+            if (calculatedPoints > 0) {
+              i.setImage(Utilities.markImage(i.getImage(), Color.CYAN));
+              i.getImage().setDescription("marked");
             }
             points += calculatedPoints;
           }
@@ -119,7 +110,7 @@ public final class RequirementSheetHandler {
       final String metric = requirementSheet.getJSONObject("maxedStats").getString("metric");
       final JSONArray maxedStats = requirementSheet.getJSONObject("maxedStats").getJSONArray("stats");
       if (metric.equals("any")) {
-        final Integer[] maxedStatIndices = character.getCharacterStats().getMaxedStatIndices(character.getCharacterClass());
+        final Integer[] maxedStatIndices = character.getCharacterStats().getMaxedStatIndices(character.getType());
 
         boolean found = false;
         for (int i = 0; i < maxedStats.length(); i++) {
@@ -131,24 +122,19 @@ public final class RequirementSheetHandler {
 
           if (!found) {
             character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
-            character.getInventory().getIssue().setMessage("Not maxed in: " + stat.name());
+            character.characterStatImages[stat.getIndex()] = Utilities.markImage(stat.getIcon(), Color.RED);
           }
         }
       } else if (metric.equals("required")) {
-        final Integer[] maxedStatIndices = character.getCharacterStats().getMaxedStatIndices(character.getCharacterClass());
+        final Integer[] maxedStatIndices = character.getCharacterStats().getMaxedStatIndices(character.getType());
 
-        final StringBuilder statsNotMaxed = new StringBuilder();
         for (int i = 0; i < maxedStats.length(); i++) {
           final Stat stat = Stat.getStatByName(maxedStats.getString(i).toUpperCase());
           assert stat != null;
           if (maxedStatIndices[stat.getIndex()] != 1) {
             character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
-            statsNotMaxed.append(stat.name()).append(" ");
+            character.characterStatImages[stat.getIndex()] = Utilities.markImage(stat.getIcon(), Color.RED);
           }
-        }
-
-        if (character.getInventory().getIssue().getProblem().equals(Problem.NOT_MAXED)) {
-          character.getInventory().getIssue().setMessage("Not maxed in: " + statsNotMaxed);
         }
       }
     }

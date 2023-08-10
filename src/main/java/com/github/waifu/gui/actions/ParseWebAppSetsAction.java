@@ -79,7 +79,7 @@ public class ParseWebAppSetsAction implements ActionListener {
             Register.setInstance(new Register());
             final List<Raider> sets = getSnifferSets(Gui.getRaid(), progressBar);
             if (sets != null) {
-              new SetTable(sets);
+              // new SetTable(sets);
             }
             parseSetsButton.setText("Parse Sets");
             Gui.setProcessRunning(false);
@@ -114,7 +114,7 @@ public class ParseWebAppSetsAction implements ActionListener {
                 Gui.setProcessRunning(true);
                 final List<Raider> sets = getRealmeyeSets(Gui.getRaid(), progressBar);
                 if (sets != null) {
-                  new SetTable(sets);
+                  // new SetTable(sets);
                 }
                 Gui.setProcessRunning(false);
                 stopButton.setText("Finished");
@@ -201,12 +201,10 @@ public class ParseWebAppSetsAction implements ActionListener {
     for (int i = 0; i < raiders.size(); i++) {
       for (int j = 0; j < raiders.get(i).getAccounts().size(); j++) {
         if (raiders.get(i).getAccounts().get(j).getCharacters() != null) {
-          raiders.get(i).getAccounts().get(j).getRecentCharacter().getInventory().parseInventory();
           raiders.get(i).getAccounts().get(j).getRecentCharacter().parseCharacter();
         } else {
           final List<Character> characters = new ArrayList<>();
           final Character character = new Character();
-          character.getInventory().parseInventory();
           character.parseCharacter();
           characters.add(character);
           raiders.get(i).getAccounts().set(j, new Account(raiders.get(i).getAccounts().get(j).getName(), characters));

@@ -1,5 +1,7 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.assets.RotmgAssets;
+import com.github.waifu.assets.objects.PlayerXmlObject;
 import com.github.waifu.enums.Stat;
 import com.github.waifu.handlers.ClassDataHandler;
 import java.util.List;
@@ -32,10 +34,10 @@ public class CharacterStats {
   /**
    * Get maxed stats out of 8.
    *
-   * @param c class enum.
+   * @param clazz class enum.
    * @return int.
    */
-  public Integer[] getMaxedStatIndices(final ClassData c) {
+  public Integer[] getMaxedStatIndices(final String clazz) {
     final int maxHp = this.stats.get(Stat.LIFE.getIndex()) - this.statBoosts.get(Stat.LIFE.getIndex());
     final int maxMp = this.stats.get(Stat.MANA.getIndex()) - this.statBoosts.get(Stat.MANA.getIndex());
     final int maxAtt = this.stats.get(Stat.ATTACK.getIndex()) - this.statBoosts.get(Stat.ATTACK.getIndex());
@@ -45,6 +47,13 @@ public class CharacterStats {
     final int maxVit = this.stats.get(Stat.VITALITY.getIndex()) - this.statBoosts.get(Stat.VITALITY.getIndex());
     final int maxWis = this.stats.get(Stat.WISDOM.getIndex()) - this.statBoosts.get(Stat.WISDOM.getIndex());
 
-    return ClassDataHandler.getMaxedStatIndices(c, maxHp, maxMp, maxAtt, maxDef, maxSpd, maxDex, maxVit, maxWis);
+    PlayerXmlObject playerXmlObject = null;
+    for (final PlayerXmlObject p : RotmgAssets.playerXmlObjectList) {
+      if (p.getId().equals(clazz)) {
+        playerXmlObject = p;
+      }
+    }
+
+    return ClassDataHandler.getMaxedStatIndices(playerXmlObject, maxHp, maxMp, maxAtt, maxDef, maxSpd, maxDex, maxVit, maxWis);
   }
 }

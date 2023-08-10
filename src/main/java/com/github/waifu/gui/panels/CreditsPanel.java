@@ -31,7 +31,7 @@ public class CreditsPanel extends JPanel {
     creditsImage.setHorizontalAlignment(0);
     creditsImage.setHorizontalTextPosition(0);
     creditsImage.setIcon(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")));
-    creditsImage.setText("<html>Made with ♡ by Su<br><center>su#4008</html>");
+    creditsImage.setText("<html><center>Version " + Utilities.getApplicationVersion() + "<br><br>Made with <a style=color:red;\">♥</a> by su<br>vampillia.</html>");
     creditsImage.setToolTipText("https://discord.gg/oryx");
     creditsImage.setVerticalAlignment(0);
     creditsImage.setVerticalTextPosition(3);

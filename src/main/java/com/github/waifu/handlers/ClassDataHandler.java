@@ -1,5 +1,6 @@
 package com.github.waifu.handlers;
 
+import com.github.waifu.assets.objects.PlayerXmlObject;
 import com.github.waifu.entities.ClassData;
 import com.github.waifu.enums.Stat;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public final class ClassDataHandler {
   /**
    * List of all class data.
    */
-  private static List<ClassData> classDataList = new ArrayList<>();
+  private static final List<ClassData> classDataList = new ArrayList<>();
 
   /**
    * Private constructor.
@@ -146,7 +147,7 @@ public final class ClassDataHandler {
   /**
    * Calculates ?/8 a given class is.
    *
-   * @param c the class enum found.
+   * @param playerXmlObject the class enum found.
    * @param hp the current total hp stat.
    * @param mp the current total mp stat.
    * @param att the current att stat.
@@ -157,32 +158,32 @@ public final class ClassDataHandler {
    * @param wis the current wis stat.
    * @return the number out of 8 of stats maxed.
    */
-  public static Integer[] getMaxedStatIndices(final ClassData c, final int hp, final int mp, final int att, final int def, final int spd, final int dex, final int vit, final int wis) {
+  public static Integer[] getMaxedStatIndices(final PlayerXmlObject playerXmlObject, final int hp, final int mp, final int att, final int def, final int spd, final int dex, final int vit, final int wis) {
     final Integer[] stats = new Integer[8];
     Arrays.fill(stats, 0);
 
-    if (hp >= c.getMaxHp()) {
+    if (hp >= playerXmlObject.getMaxHp()) {
       stats[Stat.LIFE.getIndex()] = 1;
     }
-    if (mp >= c.getMaxMp()) {
+    if (mp >= playerXmlObject.getMaxMp()) {
       stats[Stat.MANA.getIndex()] = 1;
     }
-    if (att >= c.getMaxAtt()) {
+    if (att >= playerXmlObject.getMaxAtt()) {
       stats[Stat.ATTACK.getIndex()] = 1;
     }
-    if (def >= c.getMaxDef()) {
+    if (def >= playerXmlObject.getMaxDef()) {
       stats[Stat.DEFENSE.getIndex()] = 1;
     }
-    if (spd >= c.getMaxSpd()) {
+    if (spd >= playerXmlObject.getMaxSpd()) {
       stats[Stat.SPEED.getIndex()] = 1;
     }
-    if (dex >= c.getMaxDex()) {
+    if (dex >= playerXmlObject.getMaxDex()) {
       stats[Stat.DEXTERITY.getIndex()] = 1;
     }
-    if (vit >= c.getMaxVit()) {
+    if (vit >= playerXmlObject.getMaxVit()) {
       stats[Stat.VITALITY.getIndex()] = 1;
     }
-    if (wis >= c.getMaxWis()) {
+    if (wis >= playerXmlObject.getMaxWis()) {
       stats[Stat.WISDOM.getIndex()] = 1;
     }
 

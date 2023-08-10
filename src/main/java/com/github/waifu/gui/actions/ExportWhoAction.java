@@ -1,9 +1,11 @@
 package com.github.waifu.gui.actions;
 
 import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Group;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.gui.Gui;
+import com.github.waifu.handlers.DatabaseHandler;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -82,63 +84,65 @@ public class ExportWhoAction implements ActionListener {
    */
   @Override
   public void actionPerformed(final ActionEvent e) {
-    if (Gui.getRaid() != null) {
-      final Raid raid = Gui.getRaid();
-      final StringBuilder names = new StringBuilder();
-      StringBuilder line = new StringBuilder();
-      int numberOfPlayers = 0;
+    final Raid raid = Gui.getRaid();
+    if (raid == null) return;
 
-      if (raid.getRaiders() != null && !raid.getRaiders().isEmpty()) {
-        final List<Raider> raiders = raid.getRaiders();
+    final Group group = Gui.getRaid().getGroup();
+    if (group == null) return;
 
-        for (final Raider raider : raiders) {
-          for (final Account account : raider.getAccounts()) {
-            // names who are not picked up by the sniffer (possibly not in loc), using the webapp, will show as a private profile, so we must filter them out.
-            if (account.getCharacters() != null && !account.getCharacters().isEmpty() && !account.getCharacters().get(0).isPrivate()) {
-              if (line.length() == 0) {
-                line.append(account.getName());
-              } else {
-                line.append(", ").append(account.getName());
-              }
+    final StringBuilder names = new StringBuilder();
+    StringBuilder line = new StringBuilder();
+    int numberOfPlayers = 0;
 
-              if (line.length() > 70) {
-                line.append("\n");
-                names.append(line);
-                line = new StringBuilder();
-              }
-              numberOfPlayers++;
-            }
+    if (group.getAccounts() != null && !group.getAccounts().isEmpty()) {
+      final List<Account> raiders = group.getAccounts();
+
+      for (final Account account : raiders) {
+        // names who are not picked up by the sniffer (possibly not in loc), using the webapp, will show as a private profile, so we must filter them out.
+        if (account.getCharacters() != null && !account.getCharacters().isEmpty() && !account.getCharacters().get(0).isPrivate()) {
+          if (line.length() == 0) {
+            line.append(account.getName());
+          } else {
+            line.append(", ").append(account.getName());
           }
-        }
 
-        if (!names.toString().contains(line)) {
-          names.append(line);
+          if (line.length() > 70) {
+            line.append("\n");
+            names.append(line);
+            line = new StringBuilder();
+          }
+          numberOfPlayers++;
         }
       }
 
-      final StringBuilder full = new StringBuilder("Players online (" + numberOfPlayers + "): ").append(names);
-      BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-      Graphics graphics = image.createGraphics();
-      int y = 0;
-      for (final String s : full.toString().split("\n")) {
-        graphics.drawString(s, 0, y += graphics.getFontMetrics().getHeight());
+      if (!names.toString().contains(line)) {
+        names.append(line);
       }
-      final FontMetrics metrics = graphics.getFontMetrics();
-      final int margin = 10;
-      final int height = metrics.getHeight() * full.toString().split("\n").length + margin;
-      final int width = metrics.stringWidth(full.toString().split("\n")[0]) + margin;
-      graphics.dispose();
-      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      graphics  = image.getGraphics();
-      graphics.setColor(Color.decode("#CCCC00"));
-      y = 0;
-      for (final String s : full.toString().split("\n")) {
-        graphics.drawString(s, margin / 2, y += graphics.getFontMetrics().getHeight());
-      }
-      graphics.dispose();
-      final ImageTransferable imageTransferable = new ImageTransferable(image);
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imageTransferable, null);
-      JOptionPane.showMessageDialog(setTablePanel, "Exported /who image into the clipboard.", "", JOptionPane.PLAIN_MESSAGE);
     }
+
+    final StringBuilder full = new StringBuilder("Players online (" + numberOfPlayers + "): ").append(names);
+
+    BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    Graphics graphics = image.createGraphics();
+    int y = 0;
+    for (final String s : full.toString().split("\n")) {
+      graphics.drawString(s, 0, y += graphics.getFontMetrics().getHeight());
+    }
+    final FontMetrics metrics = graphics.getFontMetrics();
+    final int margin = 10;
+    final int height = metrics.getHeight() * full.toString().split("\n").length + margin;
+    final int width = metrics.stringWidth(full.toString().split("\n")[0]) + margin;
+    graphics.dispose();
+    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    graphics  = image.getGraphics();
+    graphics.setColor(Color.decode("#CCCC00"));
+    y = 0;
+    for (final String s : full.toString().split("\n")) {
+      graphics.drawString(s, margin / 2, y += graphics.getFontMetrics().getHeight());
+    }
+    graphics.dispose();
+    final ImageTransferable imageTransferable = new ImageTransferable(image);
+    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imageTransferable, null);
+    JOptionPane.showMessageDialog(setTablePanel, "Exported /who image into the clipboard.", "", JOptionPane.PLAIN_MESSAGE);
   }
 }

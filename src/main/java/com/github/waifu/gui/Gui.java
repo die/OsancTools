@@ -8,6 +8,7 @@ import com.github.waifu.gui.panels.CreditsPanel;
 import com.github.waifu.gui.panels.ExaltsPanel;
 import com.github.waifu.gui.panels.HomePanel;
 import com.github.waifu.gui.panels.OptionsPanel;
+import com.github.waifu.gui.panels.PopsPanel;
 import com.github.waifu.gui.panels.RequirementSheetPanel;
 import com.github.waifu.handlers.RealmeyeRequestHandler;
 import com.github.waifu.util.Utilities;
@@ -90,10 +91,12 @@ public class Gui extends JFrame {
     setIconImage(new ImageIcon(Utilities.getClassResource("images/gui/Gravestone.png")).getImage());
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     pack();
+    setLocationRelativeTo(null);
     setVisible(true);
     setFocusable(false);
     checkRealmeye();
     checkNewVersion();
+    raid = new Raid();
   }
 
   /**
@@ -206,7 +209,10 @@ public class Gui extends JFrame {
 
           final String recentVersion = release.getString("tag_name");
           final int parseVersion = parseVersion(recentVersion);
-          final String version = "v1.0.0.8";
+          final String version = Utilities.getApplicationVersion();
+
+          if (version == null) return;
+
           final int currentVersion = parseVersion(version);
 
           if (currentVersion < parseVersion) {
@@ -251,7 +257,7 @@ public class Gui extends JFrame {
    * @return parsed version as an int.
    */
   private int parseVersion(final String version) {
-    return Integer.parseInt(version.replace('.', ' ').replace("v", "").replace(" ", ""));
+    return Integer.parseInt(version.replace('.', ' ').replace("-SNAPSHOT", "").replace("v", "").replace(" ", ""));
   }
 
   /**
@@ -275,6 +281,7 @@ public class Gui extends JFrame {
     main.add(tabbedPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 
     tabbedPane.addTab("Home", new HomePanel(this));
+    tabbedPane.addTab("Pops", new PopsPanel(main.getPreferredSize()));
     tabbedPane.addTab("Sheets", new RequirementSheetPanel());
     tabbedPane.addTab("Exalts", new ExaltsPanel());
     tabbedPane.addTab("Options", new OptionsPanel());

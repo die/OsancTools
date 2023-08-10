@@ -192,4 +192,22 @@ public class BufferReader {
   public String toString() {
     return Arrays.toString(buffer.array());
   }
+
+  /**
+   * Gets the remaining bytes from current index.
+   *
+   * @return number of bytes remaining from current index.
+   */
+  public int getRemainingBytes() {
+    return buffer.capacity() - buffer.position();
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public ByteBuffer getBuffer() {
+    return buffer;
+  }
 }

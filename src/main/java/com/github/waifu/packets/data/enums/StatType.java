@@ -106,9 +106,9 @@ public enum StatType {
    */
   UNKNOWN24(24),
   /**
-   * Unknown.
+   * The id of the skin being used.
    */
-  UNKNOWN25(25),
+  SKIN_STAT(25),
   /**
    * Current vitality stat.
    */
@@ -512,7 +512,11 @@ public enum StatType {
   /**
    * Unknown.
    */
-  UNKNOWN126(126);
+  UNKNOWN126(126),
+  /**
+   * Enchantment stat.
+   */
+  ENCHANTMENT(127);
 
   /**
    * Index of the Stat type.

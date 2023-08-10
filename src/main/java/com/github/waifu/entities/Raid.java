@@ -15,6 +15,10 @@ public class Raid {
   /**
    * To be documented.
    */
+  private Group group;
+  /**
+   * To be documented.
+   */
   private final List<Raider> raiders;
 
   /**
@@ -81,6 +85,7 @@ public class Raid {
    * To be documented.
    */
   public Raid() {
+    group = new Group();
     this.json = null;
     this.type = "";
     this.description = "";
@@ -185,6 +190,15 @@ public class Raid {
       }
       System.out.println();
     }
+  }
+
+  /**
+   * To be documented.
+   *
+   * @return To be documented.
+   */
+  public Group getGroup() {
+    return group;
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.github.waifu.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,7 +66,7 @@ public class Account {
     this.guildRank = null;
     this.creationDate = null;
     this.lastSeen = null;
-    this.characters = null;
+    this.characters = new ArrayList<>();
   }
 
   /**

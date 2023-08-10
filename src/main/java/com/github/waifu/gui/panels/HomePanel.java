@@ -3,9 +3,9 @@ package com.github.waifu.gui.panels;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.gui.AcceptFileFrame;
 import com.github.waifu.gui.Gui;
-import com.github.waifu.gui.actions.GetWebAppDataAction;
+import com.github.waifu.gui.actions.ParseSetsAction;
 import com.github.waifu.gui.actions.ParseWebAppReactsAction;
-import com.github.waifu.gui.actions.ParseWebAppSetsAction;
+import com.github.waifu.gui.actions.SnifferAction;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -15,10 +15,10 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 import org.json.JSONException;
 
@@ -66,7 +66,7 @@ public class HomePanel extends JPanel {
   /**
    * To be documented.
    */
-  private final JButton inputRaidButton;
+  private final JButton startSnifferButton;
   /**
    * To be documented.
    */
@@ -82,7 +82,7 @@ public class HomePanel extends JPanel {
   /**
    * To be documented.
    */
-  private final JButton stopButton;
+  private final JButton newRaidButton;
   /**
    * To be documented.
    */
@@ -133,9 +133,9 @@ public class HomePanel extends JPanel {
     buttonPanel = new JPanel();
     buttonPanel.setLayout(new GridLayoutManager(5, 1, new Insets(0, 0, 0, 5), -1, -1));
     add(buttonPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    inputRaidButton = new JButton();
-    inputRaidButton.setText("Input Raid ID");
-    buttonPanel.add(inputRaidButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    startSnifferButton = new JButton();
+    startSnifferButton.setText("Start Sniffer");
+    buttonPanel.add(startSnifferButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     vcParseButton = new JButton();
     vcParseButton.setActionCommand("Parse VC");
     vcParseButton.setLabel("Parse VC");
@@ -147,10 +147,10 @@ public class HomePanel extends JPanel {
     parseSetsButton = new JButton();
     parseSetsButton.setText("Parse Sets");
     buttonPanel.add(parseSetsButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    stopButton = new JButton();
-    stopButton.setHorizontalTextPosition(0);
-    stopButton.setText("Stop Process");
-    buttonPanel.add(stopButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    newRaidButton = new JButton();
+    newRaidButton.setHorizontalTextPosition(0);
+    newRaidButton.setText("New Raid");
+    buttonPanel.add(newRaidButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     progressBarPanel = new JPanel();
     progressBarPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
     add(progressBarPanel, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -165,22 +165,20 @@ public class HomePanel extends JPanel {
   }
 
   private void addActionListeners() {
-    inputRaidButton.addActionListener(new GetWebAppDataAction(this));
+    startSnifferButton.addActionListener(new SnifferAction());
 
     vcParseButton.addActionListener(e -> {
-      final AcceptFileFrame acceptFileFrame = new AcceptFileFrame(this);
+      // final AcceptFileFrame acceptFileFrame = new AcceptFileFrame(this);
+      JOptionPane.showMessageDialog(Gui.getFrames()[0], "This feature is currently under maintenance.");
     });
 
-    parseReactsButton.addActionListener(new ParseWebAppReactsAction(progressBar, stopButton, parseReactsButton));
+    parseReactsButton.addActionListener(e -> JOptionPane.showMessageDialog(Gui.getFrames()[0], "This feature is currently under maintenance."));
 
-    parseSetsButton.addActionListener(new ParseWebAppSetsAction(progressBar, stopButton, parseSetsButton));
+    parseSetsButton.addActionListener(new ParseSetsAction());
 
-    stopButton.addActionListener(e -> {
-      final SwingWorker worker = Gui.getWorker();
-      if (worker != null && !worker.isDone() && !worker.isCancelled()) {
-        worker.cancel(true);
-        stopButton.setText("Stopped");
-      }
+    newRaidButton.addActionListener(e -> {
+      final int option = JOptionPane.showConfirmDialog(Gui.getFrames()[0], "This erases current raid data, including all players sniffed. Are you sure?");
+      if (option == JOptionPane.YES_OPTION) Gui.setRaid(new Raid());
     });
   }
 
@@ -215,12 +213,10 @@ public class HomePanel extends JPanel {
           raidDescription = raidDescription.substring(0, MAX_LENGTH) + "...";
         }
         descriptionLabel.setText(raidDescription);
-        // todo: pack GUI if necessary.
         gui.pack();
       }
     } catch (final JSONException exception) {
       exception.printStackTrace();
-      // System.out.println("Cannot find assets from JSON, did you select the right file?");
     }
   }
 }

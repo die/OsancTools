@@ -88,9 +88,7 @@ public class ParseVoiceChannelAction implements ActionListener {
   private void parseVoiceChannelFromFile() {
     try {
       final File outputfile = new File("src/test/resources/raids" + "/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/who.png");
-      if (!outputfile.exists()) {
-        System.out.println("Image does not exist");
-      } else {
+      if (outputfile.exists()) {
         image = ImageIO.read(outputfile);
         final File jsonFile = new File("src/test/resources/raids" + "/" + Gui.getJson().getJSONObject("raid").getInt("id") + "/" + Gui.getJson().getJSONObject("raid").getInt("id") + " [WC].json");
         final JSONObject json = new JSONObject(new JSONTokener(new InputStreamReader(new FileInputStream(jsonFile), StandardCharsets.UTF_8)));

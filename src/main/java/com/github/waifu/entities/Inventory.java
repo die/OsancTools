@@ -1,5 +1,6 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.enums.InventorySlots;
 import com.github.waifu.enums.Problem;
 import com.github.waifu.handlers.RequirementSheetHandler;
@@ -27,6 +28,10 @@ public class Inventory {
    * To be documented.
    */
   private final Issue issue;
+  /**
+   * Stores if the inventory was parsed already.
+   */
+  private boolean parsed;
 
   /**
    * Inventory method.
@@ -35,10 +40,10 @@ public class Inventory {
    */
   public Inventory() {
     final List<Item> empty = new ArrayList<>();
-    empty.add(new Item("Empty slot", "weapon", "Wizard"));
-    empty.add(new Item("Empty slot", "ability", "Wizard"));
-    empty.add(new Item("Empty slot", "armor", "Wizard"));
-    empty.add(new Item("Empty slot", "ring", "Wizard"));
+    empty.add(new Item(-1, "Empty slot", "weapon", "Wizard"));
+    empty.add(new Item(-1, "Empty slot", "ability", "Wizard"));
+    empty.add(new Item(-1, "Empty slot", "armor", "Wizard"));
+    empty.add(new Item(-1, "Empty slot", "ring", "Wizard"));
 
     issue = new Issue(Problem.NONE);
     this.items = empty;
@@ -136,6 +141,10 @@ public class Inventory {
    * parseInventory method.
    */
   public void parseInventory() {
+    for (final Item i : items) {
+      if (i.getId() == -1) continue;
+      i.setImage(RotmgAssets.equipXMLObjectList.get(i.getId()).getImage());
+    }
     RequirementSheetHandler.parse(this);
   }
 
@@ -146,7 +155,7 @@ public class Inventory {
    * @param dps To be documented.
    * @return To be documented.
    */
-  public boolean calculateDps(final String skin, final int dps) {
+  public boolean calculateDps(final int skin, final int dps) {
     JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
     final JSONObject dpsItems = requirementSheet.getJSONObject("reacts").getJSONObject("dpsItems");
     int count = 0;
@@ -180,10 +189,10 @@ public class Inventory {
    * @return To be documented.
    */
   public ImageIcon createImage(final int w, final int h) {
-    final ImageIcon weapon = new ImageIcon(getItems().get(InventorySlots.WEAPON.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    final ImageIcon ability = new ImageIcon(getItems().get(InventorySlots.ABILITY.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    final ImageIcon armor = new ImageIcon(getItems().get(InventorySlots.ARMOR.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    final ImageIcon ring = new ImageIcon(getItems().get(InventorySlots.RING.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    final ImageIcon weapon = new ImageIcon(getItems().get(InventorySlots.WEAPON.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING));
+    final ImageIcon ability = new ImageIcon(getItems().get(InventorySlots.ABILITY.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING));
+    final ImageIcon armor = new ImageIcon(getItems().get(InventorySlots.ARMOR.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING));
+    final ImageIcon ring = new ImageIcon(getItems().get(InventorySlots.RING.getIndex()).getImage().getImage().getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING));
     final int inventoryWidth = weapon.getIconWidth() + ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth();
     final int inventoryHeight = weapon.getIconHeight();
     final BufferedImage combined = new BufferedImage(inventoryWidth, inventoryHeight, BufferedImage.TYPE_INT_ARGB);
@@ -194,4 +203,9 @@ public class Inventory {
     g.drawImage(ring.getImage(), ability.getIconWidth() + armor.getIconWidth() + ring.getIconWidth(), 0, null);
     return new ImageIcon(combined);
   }
+
+  public boolean isParsed() {
+    return parsed;
+  }
+
 }

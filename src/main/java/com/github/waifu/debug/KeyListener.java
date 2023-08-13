@@ -6,8 +6,8 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,11 +20,26 @@ public class KeyListener implements java.awt.event.KeyListener {
   /**
    * List of characters to listen for.
    */
-  private List<Character> gerpep = Arrays.asList('g', 'e', 'r', 'p', 'e', 'p');
+  private final List<Character> characters;
+  /**
+   * Image to show.
+   */
+  private final ImageIcon imageIcon;
+  /**
+   * Message to show.
+   */
+  private final String message;
   /**
    * List of characters to keep track of inputs.
    */
-  private List<Character> keys = new ArrayList<>();
+  private final List<Character> keys = new ArrayList<>();
+
+  public KeyListener(final List<Character> characters, final String path, final String message) {
+    final URL imageUrl = Utilities.getClassResource(path);
+    this.characters = characters;
+    this.imageIcon = new ImageIcon(imageUrl);;
+    this.message = message;
+  }
 
   /**
    * Function that fires when a key is typed.
@@ -56,21 +71,18 @@ public class KeyListener implements java.awt.event.KeyListener {
     final int index = keys.size();
 
     keys.add(e.getKeyChar());
-    final boolean reachedLimit = keys.size() == gerpep.size();
-    final boolean hasKey = gerpep.contains(e.getKeyChar());
-    final boolean characterAtIndex = gerpep.get(index).equals(e.getKeyChar());
-    if (keys.equals(gerpep)) {
-      final URL imageUrl = Utilities.getClassResource("images/gui/bluecat.png");
-      final ImageIcon blueCatIcon = new ImageIcon(imageUrl);
-      final Image image = blueCatIcon.getImage();
+    final boolean reachedLimit = keys.size() == characters.size();
+    final boolean hasKey = characters.contains(e.getKeyChar());
+    final boolean characterAtIndex = characters.get(index).equals(e.getKeyChar());
+    if (keys.equals(characters)) {
+      final Image image = imageIcon.getImage();
       final int width = 50;
       final int height = 50;
       final int scaleMethod = Image.SCALE_SMOOTH;
       final Image scaledImage = image.getScaledInstance(width, height, scaleMethod);
-      final ImageIcon blueCat = new ImageIcon(scaledImage);
-      final String message = "how did you get here?";
-      final JLabel label = new JLabel(message, blueCat, JLabel.TRAILING);
-      JOptionPane.showMessageDialog(Gui.getFrames()[0], label);
+      final ImageIcon newIcon = new ImageIcon(scaledImage);
+      final JLabel label = new JLabel(message, newIcon, JLabel.CENTER);
+      JOptionPane.showMessageDialog(Gui.getFrames()[0], label, characters.stream().map(String::valueOf).collect(Collectors.joining()), JOptionPane.PLAIN_MESSAGE);
       keys.clear();
     } else if (reachedLimit || !hasKey || !characterAtIndex) {
       keys.clear();

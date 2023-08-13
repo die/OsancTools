@@ -4,14 +4,18 @@ import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.assets.objects.PlayerXmlObject;
 import com.github.waifu.assets.objects.SkinXmlObject;
 import com.github.waifu.enums.Stat;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.handlers.ClassDataHandler;
 import com.github.waifu.handlers.RequirementSheetHandler;
 import com.github.waifu.util.Utilities;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
+import java.util.List;
+import java.util.StringJoiner;
+import javax.swing.*;
 
 /**
  * Character class to store character data.
@@ -75,8 +79,6 @@ public class Character {
    */
   private CharacterStats characterStats;
 
-  public ImageIcon[] characterStatImages = new ImageIcon[8];
-
   /**
    * Character method.
    *
@@ -128,7 +130,9 @@ public class Character {
    * <p>Constructs a Character with all information.
    *
    * @param type      class of the Character.
+   * @param skin      the skin of the Character.
    * @param inventory Inventory of the Character.
+   * @param characterStats the Character's stats.
    */
   public Character(final String type, final int skin, final Inventory inventory, final CharacterStats characterStats) {
     this.characterClass = ClassDataHandler.findClassByName(type);
@@ -204,36 +208,6 @@ public class Character {
     this.server = server;
     this.inventory = inventory;
     this.characterClass = ClassDataHandler.findClassByName(type);
-  }
-
-  /**
-   * Returns the Character object as a String.
-   *
-   * @return Character object as a String.
-   */
-  @Override
-  public String toString() {
-    return "Type: "
-            + this.type
-            + "\nSkin: "
-            + this.skin
-            + "\nLevel: "
-            + this.level
-            + "\nCQC: "
-            + this.cqc
-            + "\nFame: "
-            + this.fame
-            + "\nExp: "
-            + this.exp
-            + "\nPlace: "
-            + this.place
-            + "\nStats: "
-            + this.stats
-            + "\nLast Seen: "
-            + this.lastSeen
-            + "\nServer: "
-            + this.server
-            + "\n";
   }
 
   /**
@@ -358,9 +332,7 @@ public class Character {
    *
    */
   public void parseCharacter() {
-    for (final Stat stat : Stat.values()) {
-      characterStatImages[stat.getIndex()] = stat.getIcon();
-    }
+    characterStats.resetProblemStats();
     RequirementSheetHandler.parseMaxedStats(this);
     inventory.parseInventory();
   }
@@ -374,6 +346,10 @@ public class Character {
     return this.inventory.getItems().stream().allMatch(item -> item.getName().equals("Empty slot"));
   }
 
+  /**
+   * Check if the character has a default skin equipped.
+   * @return true if so, false otherwise.
+   */
   public boolean hasDefaultSkin() {
     return skin == 0;
   }
@@ -388,7 +364,7 @@ public class Character {
     final ImageIcon ability = new ImageIcon(inventory.getAbility().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
     final ImageIcon armor = new ImageIcon(inventory.getArmor().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
     final ImageIcon ring = new ImageIcon(inventory.getRing().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-    java.util.List<Integer> widths = new ArrayList<>();
+    final List<Integer> widths = new ArrayList<>();
     widths.add(weapon.getIconWidth());
     widths.add(ability.getIconWidth());
     widths.add(armor.getIconWidth());
@@ -405,7 +381,6 @@ public class Character {
 
     if (!hasDefaultSkin()) {
       for (final SkinXmlObject skinXMLObject : RotmgAssets.skinXmlObjectList) {
-        //System.out.println(skinXMLObject.getTypeAsInt());
         if (skinXMLObject.getTypeAsInt() == this.skin) {
           skin = skinXMLObject.getImage();
           widths.add(skin.getIconWidth());
@@ -416,55 +391,49 @@ public class Character {
 
     int inventoryWidth = 0;
 
-    int padding = 2;
-    for (int w : widths) {
-      // padding = 2
-      inventoryWidth += w + padding;
+    final int padding = 2;
+    for (final int w : widths) {
+      inventoryWidth += (w + padding);
     }
-    BufferedImage combined = new BufferedImage(inventoryWidth, height, BufferedImage.TYPE_INT_ARGB);
+    final BufferedImage combined = new BufferedImage(inventoryWidth, height, BufferedImage.TYPE_INT_ARGB);
 
     int pos = 0;
     if (clazz != null) {
-       combined = appendImageIcon(combined, clazz, pos);
-       pos += clazz.getIconWidth() + padding;
+      appendImageIcon(combined, clazz, pos);
+      pos += clazz.getIconWidth() + padding;
     }
 
     if (skin != null) {
-      combined = appendImageIcon(combined, skin, pos);
+      appendImageIcon(combined, skin, pos);
       pos += skin.getIconWidth() + padding;
     }
 
-    combined = appendImageIcon(combined, weapon, pos);
+    appendImageIcon(combined, weapon, pos);
     pos += weapon.getIconWidth() + padding;
 
-    combined = appendImageIcon(combined, ability, pos);
+    appendImageIcon(combined, ability, pos);
     pos += ability.getIconWidth() + padding;
 
-    combined = appendImageIcon(combined, armor, pos);
+    appendImageIcon(combined, armor, pos);
     pos += armor.getIconWidth() + padding;
 
-    combined = appendImageIcon(combined, ring, pos);
-    pos += ring.getIconWidth() + padding;
+    appendImageIcon(combined, ring, pos);
 
-    ImageIcon imageIcon = new ImageIcon(combined);
+    final ImageIcon imageIcon = new ImageIcon(combined);
     imageIcon.setDescription(inventory.printInventory());
     return imageIcon;
   }
 
+  /**
+   * Gets the image of all non-maxed stats.
+   * @return image icon with a custom description.
+   */
   public ImageIcon getMaxedStatsImage() {
-    Integer[] maxedStats = characterStats.getMaxedStatIndices(type);
-
-    for (int i = 0; i < maxedStats.length; i++) {
-      if (characterStatImages[i] == null && maxedStats[i] == 0) {
-        final Stat stat = Stat.getStatByIndex(i);
-        if (stat == null) continue;
-        characterStatImages[i] = stat.getIcon();
-      }
-    }
-
+    final Integer[] maxedStats = characterStats.getMaxedStatIndices(type);
+    final Integer[] problemStats = characterStats.getProblemStats();
     int width = 0;
     int pos = 0;
-    for (int i : maxedStats) {
+    for (final int i : maxedStats) {
       if (i == 0) {
         width += 16;
       }
@@ -474,22 +443,29 @@ public class Character {
       return null;
     }
 
-    BufferedImage bufferedImage = new BufferedImage(width, 16, BufferedImage.TYPE_INT_ARGB);
-    Graphics g = bufferedImage.createGraphics();
-    for (int i = 0; i < characterStatImages.length; i++) {
-      if (characterStatImages[i] == null) continue;
-
-      g.drawImage(characterStatImages[i].getImage(), pos, 0, null);
-      pos += characterStatImages[i].getIconWidth();
+    final BufferedImage bufferedImage = new BufferedImage(width, 16, BufferedImage.TYPE_INT_ARGB);
+    final Graphics g = bufferedImage.createGraphics();
+    final StringJoiner stringJoiner = new StringJoiner(", ");
+    for (int i = 0; i < maxedStats.length; i++) {
+      if (maxedStats[i] == 1) continue;
+      final Stat stat = Stat.getStatByIndex(i);
+      if (stat == null || stat.getIcon() == null) continue;
+      ImageIcon imageIcon = stat.getIcon();
+      if (problemStats[i] == 1) imageIcon = Utilities.markImage(imageIcon, Color.RED);
+      stringJoiner.add(stat.name().substring(0, 1).toUpperCase() + stat.name().substring(1).toLowerCase());
+      g.drawImage(imageIcon.getImage(), pos, 0, null);
+      pos += stat.getIcon().getIconWidth();
     }
     g.dispose();
-    return new ImageIcon(bufferedImage);
+
+    final ImageIcon imageIcon = new ImageIcon(bufferedImage);
+    imageIcon.setDescription("Not maxed in stats: " + stringJoiner);
+    return imageIcon;
   }
 
-  private BufferedImage appendImageIcon(final BufferedImage bufferedImage, ImageIcon imageIcon, final int pos) {
-    Graphics g = bufferedImage.getGraphics();
+  private void appendImageIcon(final BufferedImage bufferedImage, final ImageIcon imageIcon, final int pos) {
+    final Graphics g = bufferedImage.getGraphics();
     g.drawImage(imageIcon.getImage(), pos, 0, null);
     g.dispose();
-    return bufferedImage;
   }
 }

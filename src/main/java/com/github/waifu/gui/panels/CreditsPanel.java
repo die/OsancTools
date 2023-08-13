@@ -5,6 +5,9 @@ import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Insets;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,7 +23,8 @@ public class CreditsPanel extends JPanel {
   public CreditsPanel() {
     setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
     addCreditLabel();
-    addKeyListener(new KeyListener());
+    addKeyListener(new KeyListener(Arrays.asList('g', 'e', 'r', 'p', 'e', 'p'), "images/gui/bluecat.png", "how did you get here?"));
+    addKeyListener(new KeyListener(Arrays.asList('g', 'i', 'm', 'r', 'e', 'a', 'p', 'e', 'r'), "images/gui/obito.png", "can i have a drink of water"));
   }
 
   /**

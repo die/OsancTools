@@ -4,6 +4,7 @@ import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.assets.objects.PlayerXmlObject;
 import com.github.waifu.enums.Stat;
 import com.github.waifu.handlers.ClassDataHandler;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,6 +20,10 @@ public class CharacterStats {
    * Boosts list.
    */
   private final List<Integer> statBoosts;
+  /**
+   * Stats that are against the requirement sheet.
+   */
+  private final Integer[] problemStats;
 
   /**
    * To be documented.
@@ -29,6 +34,43 @@ public class CharacterStats {
   public CharacterStats(final List<Integer> stats, final List<Integer> statBoosts) {
     this.stats = stats;
     this.statBoosts = statBoosts;
+    this.problemStats = new Integer[8];
+    Arrays.fill(problemStats, 0);
+  }
+
+  /**
+   * Get problem stats.
+   * @return list of stats (0-7), 1 if it is a problem.
+   */
+  public Integer[] getProblemStats() {
+    return problemStats;
+  }
+
+  /**
+   * Marks which stat is a problem with a value of 1.
+   * @param index stat index.
+   */
+  public void addProblemStat(final int index) {
+    if (index > problemStats.length) return;
+
+    problemStats[index] = 1;
+  }
+
+  /**
+   * Removes a stat that was a problem with a value of 0.
+   * @param index stat index.
+   */
+  public void removeProblemStat(final int index) {
+    if (index > problemStats.length) return;
+
+    problemStats[index] = 0;
+  }
+
+  /**
+   * Reset problem stats.
+   */
+  public void resetProblemStats() {
+    Arrays.fill(problemStats, 0);
   }
 
   /**

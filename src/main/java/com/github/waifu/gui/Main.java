@@ -6,7 +6,7 @@ import com.github.waifu.handlers.RequirementSheetHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -38,7 +38,7 @@ public final class Main {
 
     try {
       final RotmgAssets assets = new RotmgAssets();
-      boolean loaded = assets.loadAssets(splashScreen.getProgressBar1(), splashScreen.getLabel());
+      final boolean loaded = assets.loadAssets(splashScreen.getProgressBar1(), splashScreen.getLabel());
 
       if (!loaded) {
         SplashScreen.chooseResourcesFile();

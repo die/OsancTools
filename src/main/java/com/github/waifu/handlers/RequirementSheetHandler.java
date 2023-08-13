@@ -122,7 +122,7 @@ public final class RequirementSheetHandler {
 
           if (!found) {
             character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
-            character.characterStatImages[stat.getIndex()] = Utilities.markImage(stat.getIcon(), Color.RED);
+            character.getCharacterStats().addProblemStat(stat.getIndex());
           }
         }
       } else if (metric.equals("required")) {
@@ -133,7 +133,7 @@ public final class RequirementSheetHandler {
           assert stat != null;
           if (maxedStatIndices[stat.getIndex()] != 1) {
             character.getInventory().getIssue().setProblem(Problem.NOT_MAXED);
-            character.characterStatImages[stat.getIndex()] = Utilities.markImage(stat.getIcon(), Color.RED);
+            character.getCharacterStats().addProblemStat(stat.getIndex());
           }
         }
       }

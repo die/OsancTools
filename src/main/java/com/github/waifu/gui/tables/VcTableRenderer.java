@@ -1,6 +1,7 @@
 package com.github.waifu.gui.tables;
 
 import com.github.waifu.entities.Raider;
+import com.github.waifu.entities.ViBotRaider;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
@@ -37,8 +38,8 @@ public class VcTableRenderer extends DefaultTableCellRenderer {
     final Component component = super.getTableCellRendererComponent(table, value,
             isSelected, hasFocus, row, column);
 
-    if (column == 1) {
-      final Raider r = Gui.getRaid().findRaiderByServerNickname(String.valueOf(value));
+    if (column == 0) {
+      final ViBotRaider r = Gui.getRaid().getViBotRaiderByNickname(String.valueOf(value));
       if (r != null && r.isCelestial()) {
         component.setForeground(Color.YELLOW);
       } else {

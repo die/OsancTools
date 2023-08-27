@@ -1,8 +1,11 @@
 package com.github.waifu.config;
 
+import com.github.waifu.handlers.DatabaseHandler;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
+import org.json.JSONObject;
 
 /**
  * Class that stores user preferences.
@@ -18,9 +21,9 @@ public class Settings {
    */
   private final List<String> settings;
   /**
-   * List of strings that define available requirement sheets.
+   * Map of available requirement sheets.
    */
-  private final List<String> requirementSheets;
+  private Map<String, JSONObject> requirementSheets;
 
   /**
    * Constructor that defines available settings and requirement sheets.
@@ -29,7 +32,6 @@ public class Settings {
     preferences = Preferences.userRoot();
     settings = Arrays.asList(
             "token",
-            "betaToken",
             "theme",
             "stat",
             "requirement",
@@ -37,15 +39,7 @@ public class Settings {
             "showAlert",
             "resourceDir");
 
-    requirementSheets = Arrays.asList(
-            "OryxSanctuary",
-            "OryxSanctuaryVeteran",
-            "PubHallsVeteran",
-            "PubHallsSemicar",
-            "PubHallsAdvanced",
-            "PubHallsExalt",
-            "PubHallsMisc",
-            "PubShatters");
+    requirementSheets = DatabaseHandler.getRequirementSheets(getToken());
   }
 
   /**
@@ -64,24 +58,6 @@ public class Settings {
    */
   public void setToken(final String token) {
     preferences.put("token", token);
-  }
-
-  /**
-   * Retrieves Beta WebApp token.
-   *
-   * @return Beta WebApp token as a String.
-   */
-  public String getBetaToken() {
-    return preferences.get("betaToken", "");
-  }
-
-  /**
-   * Sets the Beta WebApp token.
-   *
-   * @param betaToken Beta WebApp token as a String.
-   */
-  public void setBetaToken(final String betaToken) {
-    preferences.put("betaToken", betaToken);
   }
 
   /**
@@ -182,12 +158,7 @@ public class Settings {
    */
   public String getRequirementSheetName() {
     // handling for anything set that isn't a valid requirement sheet on Github
-    final String name = preferences.get("requirementSheetName", requirementSheets.get(0));
-    if (!requirementSheets.contains(name)) {
-      return "OryxSanctuary";
-    } else {
-      return preferences.get("requirementSheetName", requirementSheets.get(0));
-    }
+    return preferences.get("requirementSheetName", "OryxSanctuary");
   }
 
   /**
@@ -204,7 +175,7 @@ public class Settings {
    *
    * @return Requirement sheet names as a List.
    */
-  public List<String> getRequirementSheets() {
+  public Map<String, JSONObject> getRequirementSheets() {
     return requirementSheets;
   }
 

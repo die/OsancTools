@@ -1,7 +1,10 @@
 package com.github.waifu.entities;
 
+import com.github.waifu.gui.listeners.GroupListener;
+import com.github.waifu.gui.listeners.RaidListener;
 import com.github.waifu.util.Pair;
 import com.github.waifu.util.Utilities;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
@@ -17,6 +20,14 @@ public class Raid {
    */
   private Group group;
   /**
+   * ViBot raiders.
+   */
+  private List<ViBotRaider> viBotRaiders;
+  /**
+   * To be documented.
+   */
+  public List<RaidListener> listeners;
+  /**
    * To be documented.
    */
   private final List<Raider> raiders;
@@ -28,92 +39,90 @@ public class Raid {
   /**
    * To be documented.
    */
-  private JSONObject json;
-  /**
-   * To be documented.
-   */
-  private String type;
-  /**
-   * To be documented.
-   */
-  private String description;
-  /**
-   * To be documented.
-   */
-  private int maxMembers;
-  /**
-   * To be documented.
-   */
   private Raider raidLeader;
   /**
    * To be documented.
    */
-  private String location;
-  /**
-   * To be documented.
-   */
   private String name;
-  /**
-   * To be documented.
-   */
-  private String id;
-  /**
-   * To be documented.
-   */
-  private String status;
 
-  /**
-   * To be documented.
-   *
-   * @param json To be documented.
-   */
-  public Raid(final JSONObject json) {
-    this.json = json;
-    this.type = json.getString("raid_type");
-    this.description = String.valueOf(json.get("description"));
-    this.maxMembers = json.getInt("max_members");
-    this.raidLeader = createRaidLeader(json.getJSONObject("creator"));
-    this.location = String.valueOf(json.get("location"));
-    this.name = json.getString("name");
-    this.id = String.valueOf(json.getInt("id"));
-    this.status = json.getString("status");
-    this.raiders = new ArrayList<>();
-    addWebAppRaiders(json);
-  }
+  private String guild;
+
+  private String vcName;
+
+  private Color color;
+
+  private final List<React> reacts;
+
+  private String startTime;
+
+
 
   /**
    * To be documented.
    */
   public Raid() {
     group = new Group();
-    this.json = null;
-    this.type = "";
-    this.description = "";
-    this.maxMembers = -1;
+    this.viBotRaiders = new ArrayList<>();
     this.raidLeader = null;
-    this.location = "";
     this.name = "";
-    this.id = "";
-    this.status = "";
+    this.guild = "";
     this.raiders = new ArrayList<>();
+    this.listeners = new ArrayList<>();
+    this.reacts = new ArrayList<>();
   }
 
-  /**
-   * To be documented.
-   *
-   * @param json To be documented.
-   */
-  public void deepCopy(final JSONObject json) {
-    this.json = json;
-    this.type = json.getString("raid_type");
-    this.description = String.valueOf(json.get("description"));
-    this.maxMembers = json.getInt("max_members");
-    this.raidLeader = createRaidLeader(json.getJSONObject("creator"));
-    this.location = String.valueOf(json.get("location"));
-    this.name = json.getString("name");
-    this.id = String.valueOf(json.getInt("id"));
-    this.status = json.getString("status");
-    addWebAppRaiders(json);
+  public String getGuild() {
+    return guild;
+  }
+
+  public Color getColor() {
+    return color;
+  }
+
+  public String getVcName() {
+    return vcName;
+  }
+
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  public void setGuild(final String guildId) {
+    switch (guildId) {
+      case "451171819672698920" -> guild = "Shatters/Moonlight";
+      case "343704644712923138" -> guild = "Lost Halls";
+      case "708026927721480254" -> guild = "Oryx Sanctuary";
+    }
+  }
+
+  public void setColor(final Color color) {
+    this.color = color;
+  }
+
+  public void setVcName(final String vcName) {
+    this.vcName = vcName;
+  }
+
+  public List<React> getReacts() {
+    return reacts;
+  }
+
+  public String getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(final String startTime) {
+    this.startTime = startTime;
+  }
+
+  public void addReact(final React react) {
+    for (final React r : reacts) {
+      if (r.getName().equals(react.getName())) {
+        reacts.set(reacts.indexOf(r), react);
+        return;
+      }
+    }
+    reacts.add(react);
   }
 
   /**
@@ -124,60 +133,6 @@ public class Raid {
    */
   private Raider createRaidLeader(final JSONObject creator) {
     return new Raider(creator.getString("id"), creator.getString("avatar"), creator.getString("server_nickname"));
-  }
-
-  /**
-   * To be documented.
-   *
-   * @param account To be documented.
-   */
-  public void addSnifferAccount(final Account account) {
-    final Pair<Integer, Integer> pair = findRaiderAccountByUsername(account.getName());
-    if (pair == null) {
-      if (json == null) {
-        raiders.add(new Raider(account));
-      } else {
-        if (crashers == null) {
-          crashers = new ArrayList<>();
-        }
-        crashers.add(account);
-      }
-    } else {
-      raiders.get(pair.left()).getAccounts().set(pair.right(), account);
-    }
-  }
-
-  /**
-   * To be documented.
-   *
-   * @param json To be documented.
-   */
-  public void addWebAppRaiders(final JSONObject json) {
-    final JSONArray members = json.getJSONArray("members");
-
-    for (int i = 0; i < members.length(); i++) {
-
-      final boolean inWaitingList = members.getJSONObject(i).getBoolean("in_waiting_list");
-
-      if (!inWaitingList) {
-        final boolean gotPriority = members.getJSONObject(i).getBoolean("got_priority");
-        final boolean gotEarlyLocation = members.getJSONObject(i).getBoolean("got_earlyloc");
-        final boolean inVC = members.getJSONObject(i).getBoolean("in_vc");
-        final JSONArray reacts = members.getJSONObject(i).getJSONArray("reacts");
-        final JSONArray roles = members.getJSONObject(i).getJSONArray("roles");
-        final String id = members.getJSONObject(i).getString("user_id");
-        final String avatar = members.getJSONObject(i).getString("avatar");
-        final String timestampJoined = members.getJSONObject(i).getString("timestamp_joined");
-
-        final List<Account> accounts = new ArrayList<>();
-        final String serverNickname = members.getJSONObject(i).getString("server_nickname");
-        final List<String> usernames = Utilities.parseUsernamesFromNickname(serverNickname);
-        for (final String s : usernames) {
-          accounts.add(new Account(s));
-        }
-        raiders.add(new Raider(id, serverNickname, timestampJoined, avatar, gotPriority, gotEarlyLocation, inWaitingList, inVC, roles, reacts, accounts));
-      }
-    }
   }
 
   /**
@@ -201,40 +156,61 @@ public class Raid {
     return group;
   }
 
+  public void addViBotRaiders(final ViBotRaider viBotRaider) {
+    final ViBotRaider viBotRaider1 = getViBotRaiderByNickname(viBotRaider.getNickname());
+    if (viBotRaider1 == null) {
+      viBotRaiders.add(viBotRaider);
+    } else {
+      viBotRaiders.set(viBotRaiders.indexOf(viBotRaider1), viBotRaider);
+    }
+    for (final RaidListener raidListener : listeners) {
+      raidListener.update(viBotRaider);
+    }
+  }
+
+
   /**
    * To be documented.
-   *
    * @return To be documented.
    */
-  public JSONObject getJson() {
-    return json;
+  public List<ViBotRaider> getViBotRaiders() {
+    return viBotRaiders;
+  }
+
+  public ViBotRaider getViBotRaider(String ign) {
+    for (final ViBotRaider viBotRaider : viBotRaiders) {
+      if (viBotRaider.hasIGN(ign)) {
+        return viBotRaider;
+      }
+    }
+    return null;
+  }
+
+  public ViBotRaider getViBotRaiderByNickname(final String nickname) {
+    for (final ViBotRaider viBotRaider : viBotRaiders) {
+      if (viBotRaider.getNickname().equals(nickname)) {
+        return viBotRaider;
+      }
+    }
+    return null;
+  }
+
+  public ViBotRaider getViBotRaiderById(final String id) {
+    for (final ViBotRaider viBotRaider : viBotRaiders) {
+      if (viBotRaider.getId().equals(id)) {
+        return viBotRaider;
+      }
+    }
+    return null;
   }
 
   /**
    * To be documented.
    *
-   * @return To be documented.
+   * @param raidListener To be documented.
    */
-  public String getType() {
-    return type;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public int getMaxMembers() {
-    return maxMembers;
+  public void addListener(final RaidListener raidListener) {
+    this.listeners.add(raidListener);
   }
 
   /**
@@ -251,35 +227,8 @@ public class Raid {
    *
    * @return To be documented.
    */
-  public String getLocation() {
-    return location;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public String getId() {
-    return id;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
   public String getName() {
     return name;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public String getStatus() {
-    return status;
   }
 
   /**
@@ -362,36 +311,5 @@ public class Raid {
       }
     }
     return null;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public int getNumberOfAccounts() {
-    int accounts = 0;
-    for (final Raider r : raiders) {
-      accounts += r.getAccounts().size();
-    }
-    return accounts;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public boolean sniffed() {
-    return !this.getRaiders().stream().allMatch(raider -> raider.getAccounts().stream().allMatch(account -> account.getCharacters() == null));
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public boolean isWebAppRaid() {
-    return json != null;
   }
 }

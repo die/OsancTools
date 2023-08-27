@@ -6,7 +6,7 @@ import com.github.waifu.handlers.RequirementSheetHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -24,6 +24,7 @@ public final class Main {
    * To be documented.
    */
   private Main() {
+
   }
 
   /**
@@ -41,7 +42,6 @@ public final class Main {
       final boolean loaded = assets.loadAssets(splashScreen.getProgressBar1(), splashScreen.getLabel());
 
       if (!loaded) {
-        SplashScreen.chooseResourcesFile();
         splashScreen.dispose();
         System.exit(0);
       }
@@ -53,22 +53,10 @@ public final class Main {
     }
 
     try {
-      Main.loadRequirementSheet();
       SwingUtilities.invokeLater(Gui::new);
     } catch (final Exception e) {
       e.printStackTrace();
     }
-  }
-
-  /**
-   * loadRequirementSheet method.
-   *
-   * <p>Loads requirement sheets from the repository.
-   */
-  public static void loadRequirementSheet() throws IOException {
-    final URL url = new URL("https://raw.githubusercontent.com/Waifu/OsancTools/master/src/main/resources/sheets/" + getSettings().getRequirementSheetName() + ".json");
-    final JSONTokener tokener = new JSONTokener(url.openStream());
-    RequirementSheetHandler.setRequirementSheet(new JSONObject(tokener));
   }
 
   /**

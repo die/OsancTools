@@ -34,20 +34,20 @@
           <text value="Remove Good Sets"/>
         </properties>
       </component>
-      <component id="8c9da" class="javax.swing.JCheckBox" binding="removePrivateProfilesCheckBox" default-binding="true">
+      <component id="8c9da" class="javax.swing.JCheckBox" binding="showRaidMembersCheckBox">
         <constraints>
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Remove Private Profiles"/>
+          <text value="Show Raid Members"/>
         </properties>
       </component>
-      <component id="37f21" class="javax.swing.JCheckBox" binding="removeBadSetsCheckBox">
+      <component id="37f21" class="javax.swing.JCheckBox" binding="removeRuneReactsCheckbox">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Remove Bad Sets"/>
+          <text value="Remove Rune Reacts"/>
         </properties>
       </component>
       <component id="f9f8d" class="javax.swing.JCheckBox" binding="removeMarkedSetsCheckBox" default-binding="true">

@@ -105,7 +105,7 @@ public class AlgoApriori {
     this.databaseSize = 0;
     Map<Integer, Integer> mapItemCount = new HashMap();
     this.database = new ArrayList();
-    JSONArray jsonArray = DatabaseHandler.getAll();
+    JSONArray jsonArray = null;
 
     StringBuilder in = new StringBuilder();
     for (int i = 0; i < jsonArray.length(); i++) {

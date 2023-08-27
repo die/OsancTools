@@ -11,6 +11,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Insets;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -59,18 +60,25 @@ public class RequirementSheetPanel extends JPanel {
     changeClassPointsButton = new JButton();
     changeClassPointsButton.setText("Modify Class Points");
     add(changeClassPointsButton, new GridConstraints(1, 0, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    final List<String> requirementSheets = Main.getSettings().getRequirementSheets();
-    final String selectedSheet = Main.getSettings().getRequirementSheetName();
-    for (final String s : requirementSheets) {
-      requirementSheetComboBox.addItem(s);
-      if (selectedSheet.equals(s)) {
-        requirementSheetComboBox.setSelectedIndex(requirementSheets.indexOf(s));
+    final Map<String, JSONObject> requirementSheets = Main.getSettings().getRequirementSheets();
+
+    if (requirementSheets != null) {
+      final List<String> names = requirementSheets.keySet().stream().toList();
+      final String selectedSheet = Main.getSettings().getRequirementSheetName();
+      for (final String s : names) {
+        requirementSheetComboBox.addItem(s);
+        if (selectedSheet.equals(s)) {
+          requirementSheetComboBox.setSelectedIndex(names.indexOf(s));
+        }
       }
+      requirementSheetTextArea.setEnabled(false);
+
+      final String selectedName = Main.getSettings().getRequirementSheetName();
+      final JSONObject currentSheet = requirementSheets.get(selectedName);
+      RequirementSheetHandler.setRequirementSheet(requirementSheets.get(selectedName));
+      requirementSheetTextArea.setText(currentSheet.toString(4));
+      changeClassPointsButton.setEnabled(currentSheet.has("required points"));
     }
-    requirementSheetTextArea.setEnabled(false);
-    final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
-    requirementSheetTextArea.setText(requirementSheet.toString(4));
-    changeClassPointsButton.setEnabled(requirementSheet.has("required points"));
     addActionListeners();
   }
 
@@ -101,12 +109,12 @@ public class RequirementSheetPanel extends JPanel {
       final JComboBox comboBox = (JComboBox) e.getSource();
       Main.getSettings().setRequirementSheetName(String.valueOf(comboBox.getSelectedItem()));
       try {
-        Main.loadRequirementSheet();
-        TimeUnit.SECONDS.sleep(1);
-        final JSONObject requirementSheet = RequirementSheetHandler.getRequirementSheet();
+        final JSONObject requirementSheet = Main.getSettings().getRequirementSheets().get(String.valueOf(comboBox.getSelectedItem()));
+        RequirementSheetHandler.setRequirementSheet(requirementSheet);
         requirementSheetTextArea.setText(requirementSheet.toString(4));
         changeClassPointsButton.setEnabled(requirementSheet.has("required points"));
 
+        /* Update parses based on requirement sheet. */
         final Raid raid = Gui.getRaid();
         if (raid == null) return;
         final Group group = raid.getGroup();

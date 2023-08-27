@@ -28,9 +28,11 @@ public class RequiredPointsPanel extends JPanel {
    */
   private final Map<String, Integer> map = new HashMap<>() {
     {
-      final JSONObject jsonObject = RequirementSheetHandler.getRequirementSheet().getJSONObject("required points");
-      for (final String keys : jsonObject.keySet()) {
-        put(keys, jsonObject.getInt(keys));
+      if (RequirementSheetHandler.getRequirementSheet() != null) {
+        final JSONObject jsonObject = RequirementSheetHandler.getRequirementSheet().getJSONObject("required points");
+        for (final String keys : jsonObject.keySet()) {
+          put(keys, jsonObject.getInt(keys));
+        }
       }
     }
   };

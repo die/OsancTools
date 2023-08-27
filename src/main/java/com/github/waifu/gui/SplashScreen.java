@@ -134,7 +134,7 @@ public class SplashScreen extends JFrame {
    * To be documented.
    */
   public static void chooseResourcesFile() {
-    JOptionPane.showMessageDialog(getFrames()[0], "Error loading resources.assets. Please select the correct file.");
+    JOptionPane.showMessageDialog(getFrames()[0], "Error loading resources.assets. Please select the correct file and then re-open the program.");
     final JFileChooser fc = new JFileChooser();
     fc.setDialogTitle("Please select your resources.assets file.");
     final FileFilter filter = new FileNameExtensionFilter("Assets (*.assets)", "assets");

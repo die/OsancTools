@@ -51,14 +51,6 @@ public class OptionsPanel extends JPanel {
   /**
    * To be documented.
    */
-  private final JPasswordField betaTokenPasswordField;
-  /**
-   * To be documented.
-   */
-  private final JButton setBetaTokenButton;
-  /**
-   * To be documented.
-   */
   private final JCheckBox showRealmeyeAlertCheckBox;
   /**
    * To be documented.
@@ -77,9 +69,9 @@ public class OptionsPanel extends JPanel {
     setTokenButton = new JButton();
     setTokenButton.setText("Set Token");
     add(setTokenButton, new GridConstraints(3, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    final JLabel webAppTokenField = new JLabel();
-    webAppTokenField.setText("WebApp Token");
-    add(webAppTokenField, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    final JLabel token = new JLabel();
+    token.setText("Token (Requires Restart)");
+    add(token, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     lightThemeRadioButton = new JRadioButton();
     lightThemeRadioButton.setText("Light");
     add(lightThemeRadioButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -89,16 +81,6 @@ public class OptionsPanel extends JPanel {
     buttonGroup = new ButtonGroup();
     buttonGroup.add(lightThemeRadioButton);
     buttonGroup.add(darkThemeRadioButton);
-    final JLabel label4 = new JLabel();
-    label4.setText("WebApp Beta Token");
-    add(label4, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    betaTokenPasswordField = new JPasswordField();
-    betaTokenPasswordField.putClientProperty("JPasswordField.cutCopyAllowed", Boolean.TRUE);
-    betaTokenPasswordField.setText(Main.getSettings().getBetaToken());
-    add(betaTokenPasswordField, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(150, -1), null, 0, false));
-    setBetaTokenButton = new JButton();
-    setBetaTokenButton.setText("Set Beta Token");
-    add(setBetaTokenButton, new GridConstraints(5, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     clearSettingsButton = new JButton();
     clearSettingsButton.setText("Clear Settings");
     add(clearSettingsButton, new GridConstraints(1, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -154,19 +136,7 @@ public class OptionsPanel extends JPanel {
         Main.getSettings().setToken(token);
       }
     });
-    /*
-      To be documented.
-     */
-    setBetaTokenButton.addActionListener(e -> {
-      final String betaToken = String.valueOf(betaTokenPasswordField.getPassword());
-      final int confirm = JOptionPane.showConfirmDialog(this,
-              "The current token is: " + Main.getSettings().getBetaToken() + "\n Would you like to change it to: " + betaToken,
-              "Confirmation",
-              JOptionPane.YES_NO_OPTION);
-      if (confirm == 0) {
-        Main.getSettings().setBetaToken(betaToken);
-      }
-    });
+
     /*
       To be documented.
      */
@@ -181,20 +151,7 @@ public class OptionsPanel extends JPanel {
         tokenPasswordField.setEchoChar('•');
       }
     });
-    /*
-      To be documented.
-     */
-    betaTokenPasswordField.addFocusListener(new FocusAdapter() {
-      @Override
-      public void focusGained(final FocusEvent e) {
-        betaTokenPasswordField.setEchoChar((char) 0);
-      }
 
-      @Override
-      public void focusLost(final FocusEvent e) {
-        betaTokenPasswordField.setEchoChar('•');
-      }
-    });
     /*
       To be documented.
      */

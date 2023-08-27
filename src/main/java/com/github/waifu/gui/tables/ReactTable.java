@@ -115,7 +115,7 @@ public class ReactTable extends JFrame {
     sorter = new TableRowSorter<>(tableModel);
     reactTable.setRowSorter(sorter);
     int width = 0;
-    for (final React react : reacts) {
+    /*for (final React react : reacts) {
       for (final Raider r : react.getRaiders()) {
         for (final Account a : r.getAccounts()) {
           final Object[] array = new Object[5];
@@ -145,8 +145,8 @@ public class ReactTable extends JFrame {
     final List<Raider> raiders = new ArrayList<>();
     for (final React react : reacts) {
       raiders.addAll(react.getRaiders());
-    }
-    reactTable.setDefaultRenderer(Object.class, new ColorTableRenderer(raiders));
+    }*/
+    //reactTable.setDefaultRenderer(Object.class, new ColorTableRenderer(raiders));
     reactTable.setModel(tableModel);
     reactTable.getColumnModel().getColumn(2).setMinWidth(width);
   }

@@ -93,4 +93,8 @@ public class Issue {
       this.problem = problem;
     }
   }
+
+  public void resetProblem() {
+    this.problem = Problem.NONE;
+  }
 }

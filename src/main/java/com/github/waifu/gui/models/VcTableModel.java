@@ -1,6 +1,6 @@
 package com.github.waifu.gui.models;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -8,16 +8,23 @@ import javax.swing.table.DefaultTableModel;
  */
 public class VcTableModel extends DefaultTableModel {
 
+  public enum Column {
+    RAIDER,
+    IGN,
+    VC,
+    DEAFENED,
+    MESSAGE,
+    MARK
+  }
+
   /**
    * To be documented.
    */
   public VcTableModel() {
-    addColumn("Avatar");
-    addColumn("Nickname");
-    addColumn("IGN");
-    addColumn("In Group");
-    addColumn("In VC");
-    addColumn("Mark");
+    for (final Column column : Column.values()) {
+      final String name = column.name();
+      addColumn(name.charAt(0) + name.substring(1).toLowerCase());
+    }
   }
 
   /**
@@ -28,10 +35,7 @@ public class VcTableModel extends DefaultTableModel {
    */
   @Override
   public Class<?> getColumnClass(final int column) {
-    if (column == 0) {
-      return ImageIcon.class;
-    }
-    if (column == 5) {
+    if (column == Column.MARK.ordinal()) {
       return Boolean.class;
     }
     return Object.class;
@@ -46,6 +50,6 @@ public class VcTableModel extends DefaultTableModel {
    */
   @Override
   public boolean isCellEditable(final int row, final int column) {
-    return column == 5;
+    return column == Column.MARK.ordinal();
   }
 }

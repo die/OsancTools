@@ -48,7 +48,7 @@ public final class RequirementSheetHandler {
       issue.setWhisper("");
     } else {
       final JSONObject requirementSheet = getRequirementSheet();
-
+      if (requirementSheet == null) return;
       final String metric = requirementSheet.getString("metric");
 
       switch (metric) {
@@ -103,9 +103,7 @@ public final class RequirementSheetHandler {
    * @param character character object.
    */
   public static void parseMaxedStats(final Character character) {
-    if (character.getCharacterStats() == null) {
-      return;
-    }
+    if (character.getCharacterStats() == null || requirementSheet == null) return;
     if (requirementSheet.has("maxedStats")) {
       final String metric = requirementSheet.getJSONObject("maxedStats").getString("metric");
       final JSONArray maxedStats = requirementSheet.getJSONObject("maxedStats").getJSONArray("stats");
@@ -149,6 +147,7 @@ public final class RequirementSheetHandler {
    */
   private static int calculatePoints(final Item item, final List<Item> items) {
     final JSONObject requirementSheet = getRequirementSheet();
+    if (requirementSheet == null) return 0;
     /*
       Excuse sets from calculations if the set is allowed.
      */
@@ -279,6 +278,7 @@ public final class RequirementSheetHandler {
    */
   public static boolean parseBannedItem(final Item item, final List<Item> items, final Issue issue) {
     final JSONObject requirementSheet = getRequirementSheet();
+    if (requirementSheet == null) return false;
     if (requirementSheet.has("bannedItems")) {
       final JSONObject bannedItems = requirementSheet.getJSONObject("bannedItems");
       final JSONArray itemList = bannedItems.getJSONArray(item.getType());
@@ -347,6 +347,7 @@ public final class RequirementSheetHandler {
    */
   public static boolean parseSwapout(final Item item, final Issue issue) {
     final JSONObject requirementSheet = getRequirementSheet();
+    if (requirementSheet == null) return false;
     if (requirementSheet.has("swapoutItems")) {
       final JSONArray swapouts = requirementSheet.getJSONArray("swapoutItems");
       if (swapouts.toList().contains(item.getNameWithoutLabel())) {

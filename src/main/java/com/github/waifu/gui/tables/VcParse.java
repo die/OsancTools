@@ -1,41 +1,38 @@
 package com.github.waifu.gui.tables;
 
-import com.github.waifu.entities.Raider;
+import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Raid;
+import com.github.waifu.entities.ViBotRaider;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.TableCopyAction;
+import com.github.waifu.gui.listeners.GroupListener;
+import com.github.waifu.gui.listeners.RaidListener;
 import com.github.waifu.gui.models.VcTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import java.awt.Component;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.RowFilter;
-import javax.swing.SwingWorker;
+import java.util.StringJoiner;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
-import net.sourceforge.tess4j.util.ImageHelper;
-import net.sourceforge.tess4j.util.LoadLibs;
 
 /**
  * To be documented.
  */
 public class VcParse extends JFrame {
+
+  private RaidListener raidListener;
+
+  private GroupListener groupListener;
 
   /**
    * To be documented.
@@ -48,7 +45,7 @@ public class VcParse extends JFrame {
   /**
    * To be documented.
    */
-  private JCheckBox showInGroup;
+  private JCheckBox showCrashers;
   /**
    * To be documented.
    */
@@ -56,15 +53,13 @@ public class VcParse extends JFrame {
   /**
    * To be documented.
    */
-  private JCheckBox removeInVcCheckBox;
+  private JCheckBox showDeafened;
   /**
    * To be documented.
    */
   private JCheckBox removeMarkedRaidersCheckBox;
-  /**
-   * To be documented.
-   */
-  private boolean destroy = false;
+  private JButton copyCrashers;
+  private JCheckBox showRaidMembersCheckBox;
   /**
    * To be documented.
    */
@@ -76,11 +71,16 @@ public class VcParse extends JFrame {
   /**
    * To be documented.
    */
-  private RowFilter<Object, Object> ingroup = RowFilter.regexFilter("");
+  private RowFilter<Object, Object> raidingVC = RowFilter.regexFilter("");
   /**
    * To be documented.
    */
-  private RowFilter<Object, Object> invc = RowFilter.regexFilter("");
+  private RowFilter<Object, Object> raidMember = RowFilter.regexFilter("");
+  ;
+  /**
+   * To be documented.
+   */
+  private RowFilter<Object, Object> deafened = RowFilter.regexFilter("");
   /**
    * To be documented.
    */
@@ -88,18 +88,10 @@ public class VcParse extends JFrame {
 
   /**
    * To be documented.
-   *
-   * @param image   To be documented.
-   * @param raiders To be documented.
-   * @throws TesseractException   To be documented.
-   * @throws InterruptedException To be documented.
    */
-  public VcParse(final Image image, final List<Raider> raiders) throws TesseractException {
+  public VcParse() {
     $$$setupUI$$$();
-    createTable(image, raiders);
-    if (destroy) {
-      return;
-    }
+    createTable();
     addActionListeners();
     setContentPane(main);
     setAlwaysOnTop(true);
@@ -110,67 +102,83 @@ public class VcParse extends JFrame {
     setVisible(true);
     pack();
     new TableCopyAction(vcParseTable);
+
+    groupListener = (account, exists) -> {
+      final DefaultTableModel tableModel = (DefaultTableModel) vcParseTable.getModel();
+
+      if (exists && Gui.getRaid().getViBotRaider(account.getName()) != null) {
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+          if (tableModel.getValueAt(i, 1).equals(account.getName())) {
+            ViBotRaider raider = Gui.getRaid().getViBotRaider(account.getName());
+            tableModel.setValueAt(raider.getNickname(), i, 0);
+            tableModel.setValueAt(raider.inVC() ? raider.getVoiceChannel().getName() : null, i, 2);
+            tableModel.setValueAt(raider.isDeaf(), i, 3);
+          }
+        }
+      } else if (!exists) {
+        ViBotRaider viBotRaider = Gui.getRaid().getViBotRaider(account.getName());
+        if (viBotRaider == null) {
+          Object[] row = new Object[6];
+          row[1] = account.getName();
+          tableModel.addRow(row);
+        } else {
+          Object[] row = new Object[6];
+          row[0] = viBotRaider.getNickname();
+          row[1] = account.getName();
+          row[2] = viBotRaider.inVC() ? viBotRaider.getVoiceChannel().getName() : null;
+          row[3] = viBotRaider.isDeaf();
+          row[4] = "None";
+          row[5] = false;
+          tableModel.addRow(row);
+        }
+      }
+      vcParseTable.setModel(tableModel);
+      updateFilters();
+    };
+
+    raidListener = (vibotRaider) -> {
+      final DefaultTableModel tableModel = (DefaultTableModel) vcParseTable.getModel();
+      for (int i = 0; i < tableModel.getRowCount(); i++) {
+        if (vibotRaider.hasIGN(String.valueOf(tableModel.getValueAt(i, 1)))) {
+          tableModel.setValueAt(vibotRaider.getNickname(), i, 0);
+          tableModel.setValueAt(vibotRaider.inVC() ? vibotRaider.getVoiceChannel().getName() : null, i, 2);
+          tableModel.setValueAt(vibotRaider.isDeaf(), i, 3);
+        }
+      }
+      vcParseTable.setModel(tableModel);
+      updateFilters();
+    };
+
+    Gui.getRaid().addListener(raidListener);
+    Gui.getRaid().getGroup().addListener(groupListener);
   }
 
   /**
    * createTable method.
    *
    * <p>Creates the table model, adds rows to the model, and applies the model to the table.
-   *
-   * @param image   image of the /who to parse
-   * @param raiders list of members in the webapp
    */
-  private void createTable(final Image image, final List<Raider> raiders) throws TesseractException {
-    final BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-    bufferedImage.getGraphics().drawImage(image, 0, 0, null);
-    final Tesseract instance = new Tesseract();
-    instance.setLanguage("eng");
-    instance.setDatapath(LoadLibs.extractTessResources("tessdata").getPath());
-    instance.setOcrEngineMode(1);
-    final String result = instance.doOCR(ImageHelper.convertImageToGrayscale(bufferedImage));
-    if (!result.contains("Players online")) {
-      final Component rootPane = Gui.getFrames()[0].getComponents()[0];
-      if (raiders == null) {
-        JOptionPane.showMessageDialog(rootPane, "Failed get members", "Error", JOptionPane.WARNING_MESSAGE);
-        destroy = true;
-      }
-      JOptionPane.showMessageDialog(rootPane, "Failed to parse image", "Error", JOptionPane.WARNING_MESSAGE);
-      destroy = true;
-      this.dispose();
-      return;
-    }
-    final List<String> temp = Arrays.asList(Arrays.asList(result.split(": ")).get(1).replace(",", "").replace("\n", " ").split(" "));
-    final List<String> names = new ArrayList<>(temp);
+  private void createTable() {
     final DefaultTableModel tableModel = new VcTableModel();
-    for (final Raider raider : raiders) {
-      final String username = raider.getServerNickname();
-      final List<String> usernames = Utilities.parseUsernamesFromNickname(raider.getServerNickname());
-      String inGroup = "Not In Group";
-      String inGroupUsername = "";
-      String inVc = "Not In VC";
-      for (final String s : usernames) {
-        for (final String n : names) {
-          if (n.equalsIgnoreCase(s)) {
-            names.remove(n);
-            inGroup = "In Group";
-            inGroupUsername = s;
-            break;
-          }
-        }
-      }
-      if (raider.isInVc()) {
-        inVc = "In VC";
+    for (final Account a : Gui.getRaid().getGroup().getAccounts()) {
+      final ViBotRaider viBotRaider = Gui.getRaid().getViBotRaider(a.getName());
+      if (viBotRaider == null) {
+        Object[] row = new Object[6];
+        row[1] = a.getName();
+        tableModel.addRow(row);
+      } else {
+        Object[] row = new Object[6];
+        row[0] = viBotRaider.getNickname();
+        row[1] = a.getName();
+        row[2] = viBotRaider.inVC() ? viBotRaider.getVoiceChannel().getName() : null;
+        row[3] = viBotRaider.isDeaf();
+        row[4] = "None";
+        row[5] = false;
+        tableModel.addRow(row);
       }
 
-      final Object[] array = new Object[6];
-      array[0] = raider.getResizedAvatar(vcParseTable.getRowHeight(), vcParseTable.getRowHeight());
-      array[1] = username;
-      array[2] = inGroupUsername;
-      array[3] = inGroup;
-      array[4] = inVc;
-      array[5] = false;
-      tableModel.addRow(array);
     }
+
     vcParseTable.setDefaultRenderer(Object.class, new VcTableRenderer());
     sorter = new TableRowSorter<>(tableModel);
     vcParseTable.setRowSorter(sorter);
@@ -185,28 +193,28 @@ public class VcParse extends JFrame {
   private void addActionListeners() {
     vcParseTable.addPropertyChangeListener(evt -> updateFilters());
 
-    showInGroup.addActionListener(e -> new SwingWorker<Void, Void>() {
+    showCrashers.addActionListener(e -> new SwingWorker<Void, Void>() {
       @Override
       protected Void doInBackground() {
-        if (showInGroup.isSelected()) {
-          ingroup = RowFilter.notFilter(RowFilter.regexFilter("Not In Group", 3));
+        if (showCrashers.isSelected()) {
+          raidingVC = RowFilter.notFilter(RowFilter.regexFilter(Gui.getRaid().getVcName(), 2));
           updateFilters();
         } else {
-          ingroup = RowFilter.regexFilter("");
+          raidingVC = RowFilter.regexFilter("");
           updateFilters();
         }
         return null;
       }
     }.execute());
 
-    removeInVcCheckBox.addActionListener(e -> new SwingWorker<Void, Void>() {
+    showDeafened.addActionListener(e -> new SwingWorker<Void, Void>() {
       @Override
       protected Void doInBackground() {
-        if (removeInVcCheckBox.isSelected()) {
-          invc = RowFilter.regexFilter("Not In VC", 4);
+        if (showDeafened.isSelected()) {
+          deafened = RowFilter.regexFilter("true", 3);
           updateFilters();
         } else {
-          invc = RowFilter.regexFilter("");
+          deafened = RowFilter.regexFilter("");
           updateFilters();
         }
         return null;
@@ -216,15 +224,18 @@ public class VcParse extends JFrame {
     removeCelestial.addActionListener(e -> new SwingWorker<Void, Void>() {
       @Override
       protected Void doInBackground() {
-        final RowFilter<Object, Object> filter = new RowFilter<>() {
-          @Override
-          public boolean include(final Entry entry) {
-            final String serverNickname = (String) entry.getValue(1);
-            return !Gui.getRaid().findRaiderByServerNickname(serverNickname).isCelestial();
-          }
-        };
         if (removeCelestial.isSelected()) {
-          celestial = filter;
+          celestial = new RowFilter<>() {
+            @Override
+            public boolean include(final Entry entry) {
+              final String ign = (String) entry.getValue(1);
+              final Raid raid = Gui.getRaid();
+              final ViBotRaider viBotRaider = raid.getViBotRaider(ign);
+              if (viBotRaider == null) return true;
+              return !viBotRaider.isCelestial();
+            }
+          };
+          ;
           updateFilters();
         } else {
           celestial = RowFilter.regexFilter("");
@@ -247,6 +258,43 @@ public class VcParse extends JFrame {
         return null;
       }
     }.execute());
+
+    showRaidMembersCheckBox.addActionListener(e -> new SwingWorker<Void, Void>() {
+      @Override
+      protected Void doInBackground() {
+        if (showRaidMembersCheckBox.isSelected()) {
+          raidMember = new RowFilter<Object, Object>() {
+            @Override
+            public boolean include(final Entry<?, ?> entry) {
+              return entry.getValue(0) != null;
+            }
+          };
+          updateFilters();
+        } else {
+          raidMember = RowFilter.regexFilter("");
+          updateFilters();
+        }
+        return null;
+      }
+    }.execute());
+
+    copyCrashers.addActionListener(e -> new SwingWorker<Void, Void>() {
+      @Override
+      protected Void doInBackground() {
+        final DefaultTableModel tableModel = (DefaultTableModel) vcParseTable.getModel();
+
+        StringJoiner names = new StringJoiner(" ");
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+          if (tableModel.getValueAt(i, 2) == null) {
+            names.add(String.valueOf(tableModel.getValueAt(i, 1)));
+          }
+        }
+        System.out.println(names.toString());
+        final StringSelection stringSelection = new StringSelection(names.toString());
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
+        return null;
+      }
+    }.execute());
   }
 
   /**
@@ -258,8 +306,9 @@ public class VcParse extends JFrame {
   private void updateFilters() {
     final List<RowFilter<Object, Object>> filters = new ArrayList<>();
     filters.add(this.celestial);
-    filters.add(this.ingroup);
-    filters.add(this.invc);
+    filters.add(this.raidingVC);
+    filters.add(this.raidMember);
+    filters.add(this.deafened);
     filters.add(this.removeMarked);
     this.sorter.setRowFilter(RowFilter.andFilter(filters));
   }
@@ -273,7 +322,7 @@ public class VcParse extends JFrame {
   }
 
   /**
-   * Method generated by IntelliJ IDEA GUI Designer.
+   * Method generated by IntelliJ IDEA GUI Designer
    * >>> IMPORTANT!! <<<
    * DO NOT edit this method OR call it in your code!
    *
@@ -281,31 +330,36 @@ public class VcParse extends JFrame {
    */
   private void $$$setupUI$$$() {
     main = new JPanel();
-    main.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
+    main.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
+    main.setPreferredSize(new Dimension(600, 700));
     final JScrollPane scrollPane1 = new JScrollPane();
     main.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "VC", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
     vcParseTable = new JTable();
     vcParseTable.setCellSelectionEnabled(true);
     scrollPane1.setViewportView(vcParseTable);
-    showInGroup = new JCheckBox();
-    showInGroup.setText("Show In Group");
-    main.add(showInGroup, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    showCrashers = new JCheckBox();
+    showCrashers.setText("Show Crashers");
+    main.add(showCrashers, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     removeCelestial = new JCheckBox();
     removeCelestial.setText("Remove Celestial");
     main.add(removeCelestial, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    removeInVcCheckBox = new JCheckBox();
-    removeInVcCheckBox.setText("Remove In VC");
-    main.add(removeInVcCheckBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    showDeafened = new JCheckBox();
+    showDeafened.setText("Show Deafened");
+    main.add(showDeafened, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     removeMarkedRaidersCheckBox = new JCheckBox();
     removeMarkedRaidersCheckBox.setText("Remove Marked Raiders");
     main.add(removeMarkedRaidersCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    copyCrashers = new JButton();
+    copyCrashers.setText("Copy Crasher Names");
+    main.add(copyCrashers, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    showRaidMembersCheckBox = new JCheckBox();
+    showRaidMembersCheckBox.setText("Show Raid Members");
+    main.add(showRaidMembersCheckBox, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
   /**
-   * To be documented.
-   *
    * @noinspection ALL
-   * @return To be documented.
    */
   public JComponent $$$getRootComponent$$$() {
     return main;

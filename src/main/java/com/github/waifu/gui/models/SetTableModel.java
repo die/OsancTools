@@ -8,6 +8,15 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SetTableModel extends DefaultTableModel {
 
+  public enum Column {
+    PROBLEM,
+    USERNAME,
+    INVENTORY,
+    NONMAXEDSTATS,
+    MESSAGE,
+    MARK
+  }
+
   /**
    * To be documented.
    */

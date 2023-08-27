@@ -92,7 +92,6 @@ public final class PacketHandler {
           PopsPanel.addPop(portalXMLObject, notificationPacket.getKeyPopper());
         }
         case ServerMessage -> {
-          System.out.println(notificationPacket);
           final String name = notificationPacket.getName();
           int key = -1;
           if (name.contains("The Void")) key = 583;
@@ -189,7 +188,7 @@ public final class PacketHandler {
       return;
     }
 
-    final Account account = new Account(userName);
+    final Account account = new Account(userName.split(",")[0]);
     final Item weaponItem = new Item(weaponId, getItemName(weaponId), "weapon", getClassName(Integer.parseInt(charClass)));
     final Item abilityItem = new Item(abilityId, getItemName(abilityId), "ability", getClassName(Integer.parseInt(charClass)));
     final Item armorItem = new Item(armorId, getItemName(armorId), "armor", getClassName(Integer.parseInt(charClass)));

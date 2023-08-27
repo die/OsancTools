@@ -200,7 +200,7 @@ public class Gui extends JFrame {
     }
 
     try {
-      final URL url = new URL("https://api.github.com/repos/waifu/osanctools/releases");
+      final URL url = new URL("https://api.github.com/repos/waifu/OsancTools-Release/releases");
       final JSONTokener tokener = new JSONTokener(url.openStream());
       final JSONArray jsonArray = new JSONArray(tokener);
       for (int i = 0; i < jsonArray.length(); i++) {

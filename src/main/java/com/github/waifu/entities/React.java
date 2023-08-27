@@ -1,6 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.enums.Problem;
+import com.github.waifu.gui.Gui;
 import com.github.waifu.handlers.RequirementSheetHandler;
 import com.github.waifu.util.Utilities;
 import java.net.MalformedURLException;
@@ -19,15 +20,11 @@ public class React {
   /**
    * To be documented.
    */
-  private final String id;
-  /**
-   * To be documented.
-   */
   private final String name;
   /**
    * To be documented.
    */
-  private final String requirement;
+  private String requirement;
   /**
    * To be documented.
    */
@@ -39,60 +36,20 @@ public class React {
   /**
    * To be documented.
    */
-  private List<Raider> raiders;
+  private JSONArray raiderIds;
 
-  /**
-   * React method.
-   *
-   * <p>Constructs a React with limited information.
-   *
-   * @param id       id of the React.
-   * @param name     name of the React.
-   * @param requirement To be documented.
-   * @param imageUrl url of the image of the React.
-   * @param raiders  list of raiders who have reacted to this React.
-   */
-  public React(final String id, final String name, final String requirement, final String imageUrl, final List<Raider> raiders) throws MalformedURLException {
-    this.id = id;
+  public React(final String name, final JSONArray raiderIds) {
     this.name = name;
-    this.type = "manual";
-    this.requirement = requirement;
-    this.image = new ImageIcon(new URL(imageUrl));
-    this.raiders = raiders;
+    this.raiderIds = raiderIds;
   }
 
-  /**
-   * React method.
-   *
-   * <p>Constructs a React with all information.
-   *
-   * @param id       id of the React.
-   * @param name     name of the React.
-   * @param type     type of React in how it should be checked.
-   * @param requirement To be documented.
-   * @param imageUrl url of the image of the React.
-   * @param raiders  list of raiders who have reacted to this React.
-   */
-  public React(final String id, final String name, final String type, final String requirement, final String imageUrl, final List<Raider> raiders) {
-    this.id = id;
-    this.name = name;
-    this.type = type;
-    this.requirement = requirement;
-    try {
-      this.image = new ImageIcon(new URL(imageUrl));
-    } catch (final MalformedURLException exception) {
-      this.image = null;
+  public boolean hasRaiderId(final String raiderId) {
+    for (int i = 0; i < raiderIds.length(); i++) {
+      if (raiderIds.getString(i).equals(raiderId)) {
+        return true;
+      }
     }
-    this.raiders = raiders;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public String getId() {
-    return this.id;
+    return false;
   }
 
   /**
@@ -141,24 +98,6 @@ public class React {
   }
 
   /**
-   * To be documented.
-   *
-   * @return To be documented.
-   */
-  public List<Raider> getRaiders() {
-    return this.raiders;
-  }
-
-  /**
-   * To be documented.
-   *
-   * @param raiders To be documented.
-   */
-  public void setRaiders(final List<Raider> raiders) {
-    this.raiders = raiders;
-  }
-
-  /**
    * parseReact method.
    *
    * <p>Parsing the react given its type.
@@ -168,39 +107,22 @@ public class React {
   public void parseReact(final String type) {
     switch (type) {
       case "item":
-        for (final Raider r : raiders) {
-          for (final Account a : r.getAccounts()) {
-            parseItem(a);
-          }
+        for (int i = 0; i < raiderIds.length(); i++) {
+          final ViBotRaider viBotRaider = Gui.getRaid().getViBotRaiderById(raiderIds.getString(i));
+          //parseItem(Gui.getRaid().getGroup().get);
         }
         break;
       case "class":
-        for (final Raider r : raiders) {
-          for (final Account a : r.getAccounts()) {
-            parseClass(a);
-          }
-        }
+        // parseClass(a);
         break;
       case "dps":
-        for (final Raider r : raiders) {
-          for (final Account a : r.getAccounts()) {
-            parseDps(a);
-          }
-        }
+        // parseDps(a);
         break;
       case "lock":
-        for (final Raider r : raiders) {
-          for (final Account a : r.getAccounts()) {
-            a.getCharacters().get(0).getInventory().getIssue().setWhisper("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
-          }
-        }
+        //             a.getCharacters().get(0).getInventory().getIssue().setWhisper("/t " + a.getName() + " Please trade me so I can confirm your effusion.");
         break;
       default:
-        for (final Raider r : raiders) {
-          for (final Account a : r.getAccounts()) {
-            a.getCharacters().get(0).getInventory().getIssue().setWhisper("/lock " + a.getName());
-          }
-        }
+        //             a.getCharacters().get(0).getInventory().getIssue().setWhisper("/lock " + a.getName());
         break;
     }
   }

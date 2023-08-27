@@ -3,6 +3,7 @@ package com.github.waifu.entities;
 import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.assets.objects.PlayerXmlObject;
 import com.github.waifu.assets.objects.SkinXmlObject;
+import com.github.waifu.enums.Problem;
 import com.github.waifu.enums.Stat;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.handlers.ClassDataHandler;
@@ -333,6 +334,7 @@ public class Character {
    */
   public void parseCharacter() {
     characterStats.resetProblemStats();
+    inventory.getIssue().resetProblem();
     RequirementSheetHandler.parseMaxedStats(this);
     inventory.parseInventory();
   }

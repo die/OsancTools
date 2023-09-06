@@ -56,10 +56,15 @@ public class UpdatePacket extends Packet {
       newObjects[i] = new ObjectData().deserialize(buffer);
     }
 
-    drops = new int[buffer.readCompressedInt()];
-    for (int i = 0; i < drops.length; i++) {
-      drops[i] = buffer.readCompressedInt();
-    }
+    // todo: handle drops
+    buffer.readRemainingBytes();
+    /*
+      final int compressedInt = buffer.readCompressedInt();
+      drops = new int[compressedInt];
+      for (int i = 0; i < drops.length; i++) {
+        drops[i] = buffer.readCompressedInt();
+      }
+    */
   }
 
   /**

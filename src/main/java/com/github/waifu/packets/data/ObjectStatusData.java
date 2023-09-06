@@ -29,9 +29,12 @@ public class ObjectStatusData {
   public ObjectStatusData deserialize(final BufferReader buffer) {
     objectId = buffer.readCompressedInt();
     pos = new WorldPosData().deserialize(buffer);
-    stats = new StatData[buffer.readCompressedInt()];
-    for (int i = 0; i < stats.length; i++) {
-      stats[i] = new StatData().deserialize(buffer);
+    final int num = buffer.readCompressedInt();
+    if (num >= 0) {
+      stats = new StatData[num];
+      for (int i = 0; i < stats.length; i++) {
+        stats[i] = new StatData().deserialize(buffer);
+      }
     }
     return this;
   }

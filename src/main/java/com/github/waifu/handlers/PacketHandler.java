@@ -148,6 +148,7 @@ public final class PacketHandler {
     for (int i = 0; i < updatePacket.getNewObjects().length; i++) {
       final StatData[] stats = updatePacket.getNewObjects()[i].getStatus().getStatData();
       for (final StatData stat : stats) {
+        if (stat.getStatType() == null) continue;
         switch (stat.getStatType()) {
           case NUM_STARS_STAT -> stars = stat.getStatValue();
           case PLAYER_ID -> {

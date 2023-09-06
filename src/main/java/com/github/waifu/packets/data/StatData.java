@@ -39,7 +39,11 @@ public class StatData {
     statType = StatType.byOrdinal(statTypeNum);
 
     if (isStringStat()) {
-      stringStatValue = buffer.readString();
+      try {
+        stringStatValue = buffer.readString();
+      } catch (Exception e) {
+        System.out.println(this);
+      }
     } else {
       statValue = buffer.readCompressedInt();
     }
@@ -52,11 +56,11 @@ public class StatData {
     return StatType.EXP_STAT.get() == statTypeNum // 6
             || StatType.NAME_STAT.get() == statTypeNum // 31
             || StatType.ACCOUNT_ID_STAT.get() == statTypeNum // 38
-            || StatType.OWNER_ACCOUNT_ID_STAT.get() == statTypeNum // 54
+            // || StatType.OWNER_ACCOUNT_ID_STAT.get() == statTypeNum // 54
             || StatType.GUILD_NAME_STAT.get() == statTypeNum // 62
             || StatType.TEXTURE_STAT.get() == statTypeNum // 80
             || StatType.PET_NAME_STAT.get() == statTypeNum // 82
-            || StatType.GRAVE_ACCOUNT_ID.get() == statTypeNum // 115
+            // || StatType.GRAVE_ACCOUNT_ID.get() == statTypeNum // 115
             || StatType.UNKNOWN121.get() == statTypeNum
             || StatType.ENCHANTMENT.get() == statTypeNum;
   }
@@ -86,5 +90,16 @@ public class StatData {
    */
   public String getStringStatValue() {
     return stringStatValue;
+  }
+
+  @Override
+  public String toString() {
+    return "StatData{" +
+            "statTypeNum=" + statTypeNum +
+            ", statType=" + statType +
+            ", statValue=" + statValue +
+            ", stringStatValue='" + stringStatValue + '\'' +
+            ", statValueTwo=" + statValueTwo +
+            "}\n";
   }
 }

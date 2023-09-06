@@ -176,6 +176,15 @@ public class BufferReader {
   }
 
   /**
+   * Clears buffer by reading all bytes.
+   */
+  public void readRemainingBytes() {
+    for (int i = 0; i < getRemainingBytes(); i++) {
+      readByte();
+    }
+  }
+
+  /**
    * Checks if the buffer have finished reading all bytes.
    *
    * @return boolean if buffer is fully parsed.

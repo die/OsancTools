@@ -516,8 +516,11 @@ public enum StatType {
   /**
    * Enchantment stat.
    */
-  ENCHANTMENT(127);
-
+  ENCHANTMENT(127),
+  /**
+   * Unknown.
+   */
+  UNKNOWN128(128);
   /**
    * Index of the Stat type.
    */

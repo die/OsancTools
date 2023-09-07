@@ -84,6 +84,14 @@ public class StatData {
   }
 
   /**
+   * Get the second stat value.
+   * @return as an int.
+   */
+  public int getStatValueTwo() {
+    return statValueTwo;
+  }
+
+  /**
    * Get the stat value.
    *
    * @return stat value as a String.

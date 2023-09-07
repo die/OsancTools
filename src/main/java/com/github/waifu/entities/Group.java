@@ -2,8 +2,10 @@ package com.github.waifu.entities;
 
 import com.github.waifu.assets.objects.PortalXmlObject;
 import com.github.waifu.gui.listeners.GroupListener;
+import com.github.waifu.util.Utilities;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * To be documented.
@@ -77,6 +79,16 @@ public class Group {
     }
   }
 
+  public Account getAccountByNickname(final List<String> igns) {
+    final Stream<String> stringStream = igns.stream();
+    for (final Account account : accounts) {
+      final String name = account.getName();
+      if (stringStream.anyMatch(name::equalsIgnoreCase)) {
+        return account;
+      }
+    }
+    return null;
+  }
   /**
    * To be documented.
    *

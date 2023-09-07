@@ -8,15 +8,23 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ReactTableModel extends DefaultTableModel {
 
+  public enum Column {
+    REACT,
+    RAIDER,
+    USERNAME,
+    INVENTORY,
+    MESSAGE,
+    MARK
+  }
+
   /**
    * To be documented.
    */
   public ReactTableModel() {
-    addColumn("React");
-    addColumn("Username");
-    addColumn("Inventory");
-    addColumn("Message");
-    addColumn("Mark");
+    for (final ReactTableModel.Column column : ReactTableModel.Column.values()) {
+      final String name = column.name();
+      addColumn(name.charAt(0) + name.substring(1).toLowerCase());
+    }
   }
 
   /**
@@ -27,13 +35,13 @@ public class ReactTableModel extends DefaultTableModel {
    */
   @Override
   public Class<?> getColumnClass(final int column) {
-    if (column == 0) {
+    /*if (column == 0) {
+      return ImageIcon.class;
+    }*/
+    if (column == Column.INVENTORY.ordinal()) {
       return ImageIcon.class;
     }
-    if (column == 2) {
-      return ImageIcon.class;
-    }
-    if (column == 4) {
+    if (column == Column.MARK.ordinal()) {
       return Boolean.class;
     }
     return Object.class;
@@ -48,6 +56,6 @@ public class ReactTableModel extends DefaultTableModel {
    */
   @Override
   public boolean isCellEditable(final int row, final int column) {
-    return column == 4;
+    return column == Column.MARK.ordinal();
   }
 }

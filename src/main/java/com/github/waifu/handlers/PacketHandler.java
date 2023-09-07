@@ -135,14 +135,14 @@ public final class PacketHandler {
     int boostDex = 0;
     int boostVit = 0;
     int boostWis = 0;
-    int hp = 0;
-    int mp = 0;
-    int att = 0;
-    int def = 0;
-    int spd = 0;
-    int dex = 0;
-    int vit = 0;
-    int wis = 0;
+    int hp = Integer.MAX_VALUE;
+    int mp = Integer.MAX_VALUE;
+    int att = Integer.MAX_VALUE;
+    int def = Integer.MAX_VALUE;
+    int spd = Integer.MAX_VALUE;
+    int dex = Integer.MAX_VALUE;
+    int vit = Integer.MAX_VALUE;
+    int wis = Integer.MAX_VALUE;
     int skin = 0;
 
     for (int i = 0; i < updatePacket.getNewObjects().length; i++) {
@@ -172,7 +172,13 @@ public final class PacketHandler {
           case DEXTERITY_BOOST_STAT -> boostDex = stat.getStatValue();
           case VITALITY_BOOST_STAT -> boostVit = stat.getStatValue();
           case WISDOM_BOOST_STAT -> boostWis = stat.getStatValue();
-          case MAX_HP_STAT -> hp = stat.getStatValue();
+          case MAX_HP_STAT -> {
+            if (stat.getStatValueTwo() == -1) {
+              hp = stat.getStatValue();
+            } else {
+              att = stat.getStatValueTwo();
+            }
+          }
           case MAX_MP_STAT -> mp = stat.getStatValue();
           case ATTACK_STAT -> att = stat.getStatValue();
           case DEFENSE_STAT -> def = stat.getStatValue();
@@ -181,6 +187,20 @@ public final class PacketHandler {
           case VITALITY_STAT -> vit = stat.getStatValue();
           case WISDOM_STAT -> wis = stat.getStatValue();
           case SKIN_STAT -> skin = stat.getStatValue();
+          case XP_BOOSTED_STAT -> {
+            switch (stat.getStatValue()) {
+              case 21 -> def = stat.getStatValueTwo();
+              case 22 -> spd = stat.getStatValueTwo();
+              case 26 -> vit = stat.getStatValueTwo();
+              case 27 -> wis = stat.getStatValueTwo();
+              case 48 -> boostAtt = stat.getStatValueTwo();
+              case 49 -> boostDef = stat.getStatValueTwo();
+              case 50 -> boostSpd = stat.getStatValueTwo();
+              case 51 -> boostVit = stat.getStatValueTwo();
+              case 52 -> boostWis = stat.getStatValueTwo();
+              case 53 -> boostDex = stat.getStatValueTwo();
+            }
+          }
 
         }
       }

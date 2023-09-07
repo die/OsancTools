@@ -1,11 +1,14 @@
 package com.github.waifu.gui.tables;
 
 import com.github.waifu.entities.Account;
+import com.github.waifu.entities.Character;
 import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.entities.React;
+import com.github.waifu.entities.ViBotRaider;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.TableCopyAction;
+import com.github.waifu.gui.listeners.GroupListener;
 import com.github.waifu.gui.models.ReactTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -30,12 +33,17 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.json.JSONArray;
 
 /**
  * ReactTable class to construct the UI for the table containing parsed reacts.
  */
 public class ReactTable extends JFrame {
 
+  /**
+   * To be documented.
+   */
+  private GroupListener groupListener;
   /**
    * To be documented.
    */
@@ -85,12 +93,10 @@ public class ReactTable extends JFrame {
    * ReactTable method.
    *
    * <p>Constructs a JFrame to display the react parse.
-   *
-   * @param reacts List containing React objects.
    */
-  public ReactTable(final List<React> reacts) {
+  public ReactTable() {
     $$$setupUI$$$();
-    createTable(reacts);
+    createTable();
     addActionListeners();
     setAlwaysOnTop(true);
     setContentPane(reactPanel);
@@ -101,54 +107,59 @@ public class ReactTable extends JFrame {
     setVisible(true);
     pack();
     new TableCopyAction(reactTable);
+
+    groupListener = (account, exists) -> {
+      final DefaultTableModel tableModel = (DefaultTableModel) reactTable.getModel();
+
+    };
+
+    Gui.getRaid().getGroup().addListener(groupListener);
   }
 
   /**
    * createTable method.
    *
    * <p>Creates the table model, adds rows to the model, and applies the model to the table.
-   *
-   * @param reacts List containing React objects.
    */
-  private void createTable(final List<React> reacts) {
+  private void createTable() {
+
     final DefaultTableModel tableModel = new ReactTableModel();
-    sorter = new TableRowSorter<>(tableModel);
-    reactTable.setRowSorter(sorter);
-    int width = 0;
-    /*for (final React react : reacts) {
-      for (final Raider r : react.getRaiders()) {
-        for (final Account a : r.getAccounts()) {
-          final Object[] array = new Object[5];
-          final ImageIcon reactImage = new ImageIcon(react.getImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
-          reactImage.setDescription(react.getName());
-          array[0] = reactImage;
-          array[1] = a.getName();
-          final Inventory inventory = a.getCharacters().get(0).getInventory();
-          final ImageIcon result = new ImageIcon(inventory.createImage(reactTable.getRowHeight(), reactTable.getRowHeight()).getImage());
-          final ImageIcon skin = new ImageIcon(a.getCharacters().get(0).getSkinImage().getImage().getScaledInstance(reactTable.getRowHeight(), reactTable.getRowHeight(), Image.SCALE_SMOOTH));
-          width = result.getIconWidth() + skin.getIconWidth();
-          final BufferedImage bufferedImage = new BufferedImage(width, reactTable.getRowHeight(), BufferedImage.TYPE_INT_ARGB);
-          final Graphics g = bufferedImage.getGraphics();
-          g.drawImage(skin.getImage(), 0, 0, null);
-          g.drawImage(result.getImage(), skin.getIconWidth(), 0, null);
-          g.dispose();
-          final ImageIcon imageIcon = new ImageIcon(bufferedImage);
-          imageIcon.setDescription(inventory.printInventory());
-          array[2] = imageIcon;
-          final String whisper = a.getCharacters().get(0).getInventory().getIssue().getWhisper();
-          array[3] = whisper;
-          array[4] = false;
-          tableModel.addRow(array);
+    final List<React> reacts = Gui.getRaid().getReacts();
+    for (final React react : reacts) {
+      final JSONArray ids = react.getRaiderIds();
+      for (int i = 0; i < ids.length(); i++) {
+        final String id = ids.getString(i);
+        final ViBotRaider viBotRaider = Gui.getRaid().getViBotRaiderById(id);
+        if (viBotRaider == null) {
+          System.out.println(id);
         }
+        final Account account = Gui.getRaid().getGroup().getAccountByNickname(Utilities.parseUsernamesFromNickname(viBotRaider.getNickname()));
+        tableModel.addRow(createRow(react, viBotRaider, account));
       }
     }
-    final List<Raider> raiders = new ArrayList<>();
-    for (final React react : reacts) {
-      raiders.addAll(react.getRaiders());
-    }*/
-    //reactTable.setDefaultRenderer(Object.class, new ColorTableRenderer(raiders));
+    sorter = new TableRowSorter<>(tableModel);
+    reactTable.setRowSorter(sorter);
     reactTable.setModel(tableModel);
-    reactTable.getColumnModel().getColumn(2).setMinWidth(width);
+  }
+
+  private Object[] createRow(final React react, final ViBotRaider viBotRaider, final Account account) {
+    final Object[] row = new Object[6];
+    row[0] = react.getName();
+    row[1] = viBotRaider.getNickname();
+
+    if (account != null) {
+      row[2] = account.getName();
+      final ImageIcon characterImage = account.getRecentCharacter().getCharacterImage();
+      if (characterImage != null) {
+        final int cWidth = characterImage.getIconWidth();
+        reactTable.getColumnModel().getColumn(ReactTableModel.Column.INVENTORY.ordinal()).setMinWidth(cWidth);
+      }
+      row[3] = characterImage;
+      row[4] = account.getRecentCharacter().getInventory().getIssue().getMessage();
+    }
+    row[5] = false;
+
+    return row;
   }
 
   /**

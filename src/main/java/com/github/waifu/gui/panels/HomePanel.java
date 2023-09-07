@@ -4,6 +4,7 @@ import com.github.waifu.entities.Raid;
 import com.github.waifu.entities.React;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.SnifferAction;
+import com.github.waifu.gui.tables.ReactTable;
 import com.github.waifu.gui.tables.SetTable;
 import com.github.waifu.gui.tables.VcParse;
 import com.github.waifu.handlers.DatabaseHandler;
@@ -13,8 +14,12 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -23,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -188,7 +194,7 @@ public class HomePanel extends JPanel {
     });
 
     parseReactsButton.addActionListener(e -> {
-
+      new ReactTable();
     });
 
     parseSetsButton.addActionListener(e-> new SetTable());
@@ -210,6 +216,7 @@ public class HomePanel extends JPanel {
       final JSONObject raid = map.get(selectionObject);
 
       // reacts
+      System.out.println(raid.getJSONObject("reactables"));
       if (raid.has("reactables")) {
         final JSONObject reactables = raid.getJSONObject("reactables");
         for (final String key : reactables.keySet()) {
@@ -225,14 +232,25 @@ public class HomePanel extends JPanel {
       } else {
         Gui.getRaid().setColor(Color.BLACK);
       }
-      Gui.getRaid().setVcName(raid.getJSONObject("channel").getString("name"));
-      final String guild = raid.getJSONObject("channel").getString("guildId");
+
+      Gui.getRaid().setVcName(raid.isNull("channel") ? null : raid.getJSONObject("channel").getString("name"));
+      final String guild = raid.getJSONObject("raidStatusMessage").getString("guildId");
       Gui.getRaid().setGuild(guild);
 
       if (raid.has("time")) {
         Gui.getRaid().setStartTime(new Date(raid.getLong("time")).toString());
       }
-      DatabaseHandler.getDiscordMembers(guild, raid.getJSONArray("members"));
+      System.out.println(raid.toString(4));
+
+      final JSONArray members = raid.getJSONArray("members");
+      final JSONArray earlySlotMembers = raid.getJSONArray("earlySlotMembers");
+      final List<Object> memberIds = members.toList();
+      for (int i = 0; i < earlySlotMembers.length(); i++) {
+        final String id = earlySlotMembers.getString(i);
+        if (memberIds.contains(id)) continue;
+        members.put(id);
+      }
+      DatabaseHandler.getDiscordMembers(guild, members);
       updateHomePanel();
     });
 

@@ -6,7 +6,9 @@ import com.github.waifu.util.Pair;
 import com.github.waifu.util.Utilities;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,7 +24,7 @@ public class Raid {
   /**
    * ViBot raiders.
    */
-  private List<ViBotRaider> viBotRaiders;
+  private Map<String, ViBotRaider> viBotRaiders;
   /**
    * To be documented.
    */
@@ -62,7 +64,7 @@ public class Raid {
    */
   public Raid() {
     group = new Group();
-    this.viBotRaiders = new ArrayList<>();
+    this.viBotRaiders = new HashMap<>();
     this.raidLeader = null;
     this.name = "";
     this.guild = "";
@@ -157,12 +159,7 @@ public class Raid {
   }
 
   public void addViBotRaiders(final ViBotRaider viBotRaider) {
-    final ViBotRaider viBotRaider1 = getViBotRaiderByNickname(viBotRaider.getNickname());
-    if (viBotRaider1 == null) {
-      viBotRaiders.add(viBotRaider);
-    } else {
-      viBotRaiders.set(viBotRaiders.indexOf(viBotRaider1), viBotRaider);
-    }
+    viBotRaiders.put(viBotRaider.getId(), viBotRaider);
     for (final RaidListener raidListener : listeners) {
       raidListener.update(viBotRaider);
     }
@@ -173,12 +170,12 @@ public class Raid {
    * To be documented.
    * @return To be documented.
    */
-  public List<ViBotRaider> getViBotRaiders() {
+  public Map<String, ViBotRaider> getViBotRaiders() {
     return viBotRaiders;
   }
 
-  public ViBotRaider getViBotRaider(String ign) {
-    for (final ViBotRaider viBotRaider : viBotRaiders) {
+  public ViBotRaider getViBotRaider(final String ign) {
+    for (final ViBotRaider viBotRaider : viBotRaiders.values()) {
       if (viBotRaider.hasIGN(ign)) {
         return viBotRaider;
       }
@@ -187,7 +184,7 @@ public class Raid {
   }
 
   public ViBotRaider getViBotRaiderByNickname(final String nickname) {
-    for (final ViBotRaider viBotRaider : viBotRaiders) {
+    for (final ViBotRaider viBotRaider : viBotRaiders.values()) {
       if (viBotRaider.getNickname().equals(nickname)) {
         return viBotRaider;
       }
@@ -196,12 +193,7 @@ public class Raid {
   }
 
   public ViBotRaider getViBotRaiderById(final String id) {
-    for (final ViBotRaider viBotRaider : viBotRaiders) {
-      if (viBotRaider.getId().equals(id)) {
-        return viBotRaider;
-      }
-    }
-    return null;
+    return viBotRaiders.get(id);
   }
 
   /**

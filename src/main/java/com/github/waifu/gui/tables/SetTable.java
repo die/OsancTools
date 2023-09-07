@@ -272,12 +272,8 @@ public class SetTable extends JFrame {
             public boolean include(final Entry<?, ?> entry) {
               final String ign = entry.getStringValue(SetTableModel.Column.USERNAME.ordinal());
               if (Gui.getRaid() == null || Gui.getRaid().getViBotRaiders() == null) return false;
-              for (final ViBotRaider viBotRaider : Gui.getRaid().getViBotRaiders()) {
-                if (viBotRaider.hasIGN(ign)) {
-                  return true;
-                }
-              }
-              return false;
+              final ViBotRaider viBotRaider = Gui.getRaid().getViBotRaider(ign);
+              return viBotRaider != null;
             }
           };
           updateFilters();

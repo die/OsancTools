@@ -36,7 +36,7 @@ public class React {
   /**
    * To be documented.
    */
-  private JSONArray raiderIds;
+  private final JSONArray raiderIds;
 
   public React(final String name, final JSONArray raiderIds) {
     this.name = name;
@@ -95,6 +95,10 @@ public class React {
    */
   public ImageIcon getImage() {
     return this.image;
+  }
+
+  public JSONArray getRaiderIds() {
+    return raiderIds;
   }
 
   /**

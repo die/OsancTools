@@ -147,6 +147,7 @@ public final class PacketHandler {
 
     for (int i = 0; i < updatePacket.getNewObjects().length; i++) {
       final StatData[] stats = updatePacket.getNewObjects()[i].getStatus().getStatData();
+      if (stats == null) continue;
       for (final StatData stat : stats) {
         if (stat.getStatType() == null) continue;
         switch (stat.getStatType()) {

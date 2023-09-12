@@ -58,6 +58,7 @@ public class StatData {
             || StatType.PET_NAME_STAT.get() == statTypeNum // 82
             || StatType.GRAVE_ACCOUNT_ID.get() == statTypeNum // 115
             || StatType.UNKNOWN121.get() == statTypeNum
+            || StatType.ENCHANTMENT.get() == statTypeNum
             || StatType.UNKNOWN127.get() == statTypeNum
             || StatType.UNKNOWN128.get() == statTypeNum;
   }

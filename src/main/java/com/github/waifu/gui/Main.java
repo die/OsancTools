@@ -2,13 +2,10 @@ package com.github.waifu.gui;
 
 import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.config.Settings;
-import com.github.waifu.handlers.RequirementSheetHandler;
+import com.github.waifu.debug.Debug;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import javax.swing.*;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import javax.swing.SwingUtilities;
 
 /**
  * Main class to initialize the UI.
@@ -55,6 +52,7 @@ public final class Main {
     try {
       SwingUtilities.invokeLater(Gui::new);
     } catch (final Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
   }

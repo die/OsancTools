@@ -80,10 +80,9 @@ public class Group {
   }
 
   public Account getAccountByNickname(final List<String> igns) {
-    final Stream<String> stringStream = igns.stream();
     for (final Account account : accounts) {
       final String name = account.getName();
-      if (stringStream.anyMatch(name::equalsIgnoreCase)) {
+      if (igns.stream().anyMatch(name::equalsIgnoreCase)) {
         return account;
       }
     }

@@ -1,5 +1,6 @@
 package com.github.waifu.gui.panels;
 
+import com.github.waifu.debug.Debug;
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Group;
 import com.github.waifu.entities.Raid;
@@ -11,8 +12,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Insets;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -120,10 +119,11 @@ public class RequirementSheetPanel extends JPanel {
         final Group group = raid.getGroup();
         if (group == null) return;
         for (final Account a : group.getAccounts()) {
-            a.getRecentCharacter().parseCharacter();
+            a.getRecentCharacter().parseCharacterInventory(a.getName());
             group.addAccount(a);
         }
       } catch (final Exception ex) {
+        Debug.printStacktrace(ex.toString());
         ex.printStackTrace();
       }
     });

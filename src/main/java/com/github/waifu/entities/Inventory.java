@@ -27,7 +27,11 @@ public class Inventory {
   /**
    * To be documented.
    */
-  private final Issue issue;
+  private Issue issue;
+  /**
+   * To be documented.
+   */
+  private Issue reactIssue;
   /**
    * Stores if the inventory was parsed already.
    */
@@ -46,6 +50,7 @@ public class Inventory {
     empty.add(new Item(-1, "Empty slot", "ring", "Wizard"));
 
     issue = new Issue(Problem.NONE);
+    reactIssue = new Issue(Problem.NONE);
     this.items = empty;
   }
 
@@ -59,6 +64,7 @@ public class Inventory {
   public Inventory(final List<Item> items) {
     this.items = items;
     this.issue = new Issue(Problem.NONE);
+    this.reactIssue = new Issue(Problem.NONE);
   }
 
   /**
@@ -124,28 +130,40 @@ public class Inventory {
     return this.issue;
   }
 
+  public void resetIssue() {
+    this.issue = new Issue(Problem.NONE);
+  }
+
+  public Issue getReactIssue() {
+    return reactIssue;
+  }
+
+  public void resetReactIssue() {
+    this.reactIssue = new Issue(Problem.NONE);
+  }
+
   /**
    * To be documented.
    *
    * @return To be documented.
    */
   public String printInventory() {
-    final StringJoiner stringJoiner = new StringJoiner(" | ");
+    final StringJoiner stringJoiner = new StringJoiner(", ");
     for (final Item item : items) {
       stringJoiner.add(item.getName());
     }
-    return stringJoiner.toString();
+    return "Inventory: [" + stringJoiner.toString() + "]";
   }
 
   /**
    * parseInventory method.
    */
-  public void parseInventory() {
+  public void parseInventory(final String name) {
     for (final Item i : items) {
       if (i.getId() == -1) continue;
       i.setImage(RotmgAssets.equipXMLObjectList.get(i.getId()).getImage());
     }
-    RequirementSheetHandler.parse(this);
+    RequirementSheetHandler.parse(this, name);
   }
 
   /**

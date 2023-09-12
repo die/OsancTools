@@ -1,15 +1,13 @@
 package com.github.waifu.entities;
 
-import com.github.waifu.gui.listeners.GroupListener;
 import com.github.waifu.gui.listeners.RaidListener;
+import com.github.waifu.gui.listeners.ViBotListener;
 import com.github.waifu.util.Pair;
-import com.github.waifu.util.Utilities;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -28,7 +26,11 @@ public class Raid {
   /**
    * To be documented.
    */
-  public List<RaidListener> listeners;
+  public List<ViBotListener> viBotListeners;
+  /**
+   * To be documented.
+   */
+  public List<RaidListener> raidListeners;
   /**
    * To be documented.
    */
@@ -69,7 +71,8 @@ public class Raid {
     this.name = "";
     this.guild = "";
     this.raiders = new ArrayList<>();
-    this.listeners = new ArrayList<>();
+    this.viBotListeners = new ArrayList<>();
+    this.raidListeners = new ArrayList<>();
     this.reacts = new ArrayList<>();
   }
 
@@ -160,8 +163,8 @@ public class Raid {
 
   public void addViBotRaiders(final ViBotRaider viBotRaider) {
     viBotRaiders.put(viBotRaider.getId(), viBotRaider);
-    for (final RaidListener raidListener : listeners) {
-      raidListener.update(viBotRaider);
+    for (final ViBotListener viBotListener : viBotListeners) {
+      viBotListener.update(viBotRaider);
     }
   }
 
@@ -199,10 +202,19 @@ public class Raid {
   /**
    * To be documented.
    *
+   * @param viBotListener To be documented.
+   */
+  public void addViBotListener(final ViBotListener viBotListener) {
+    this.viBotListeners.add(viBotListener);
+  }
+
+  /**
+   * To be documented.
+   *
    * @param raidListener To be documented.
    */
-  public void addListener(final RaidListener raidListener) {
-    this.listeners.add(raidListener);
+  public void addRaidListener(final RaidListener raidListener) {
+    this.raidListeners.add(raidListener);
   }
 
   /**

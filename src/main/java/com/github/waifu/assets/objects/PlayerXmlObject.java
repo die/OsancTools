@@ -1,6 +1,7 @@
 package com.github.waifu.assets.objects;
 
 import com.github.waifu.assets.RotmgAssets;
+import com.github.waifu.debug.Debug;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import org.json.JSONObject;
@@ -358,6 +359,7 @@ public class PlayerXmlObject {
               default -> image = null;
             }
           } catch (Exception e) {
+            Debug.printStacktrace(e.toString());
             e.printStackTrace();
           }
         }

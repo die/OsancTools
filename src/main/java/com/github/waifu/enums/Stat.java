@@ -107,4 +107,10 @@ public enum Stat {
     }
     return null;
   }
+
+  @Override
+  public String toString() {
+    final String name = name();
+    return name.charAt(0) + name.substring(1).toLowerCase();
+  }
 }

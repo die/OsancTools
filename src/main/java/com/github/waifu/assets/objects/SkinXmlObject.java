@@ -1,6 +1,7 @@
 package com.github.waifu.assets.objects;
 
 import com.github.waifu.assets.RotmgAssets;
+import com.github.waifu.debug.Debug;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import org.json.JSONObject;
@@ -165,6 +166,7 @@ public class SkinXmlObject {
               case 4 -> image = new ImageIcon(RotmgAssets.mapObjects.getSubimage(pos.getInt("x"), pos.getInt("y"), pos.getInt("w"), pos.getInt("h")).getScaledInstance(16, 16, Image.SCALE_DEFAULT));
             }
           } catch (Exception e) {
+            Debug.printStacktrace(e.toString());
             System.out.println(this.id + " " + e);
           }
         }

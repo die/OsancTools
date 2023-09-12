@@ -2,21 +2,18 @@ package com.github.waifu.gui.tables;
 
 import com.github.waifu.entities.Account;
 import com.github.waifu.entities.Character;
-import com.github.waifu.entities.Inventory;
 import com.github.waifu.entities.Raider;
 import com.github.waifu.entities.React;
 import com.github.waifu.entities.ViBotRaider;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.listeners.GroupListener;
+import com.github.waifu.gui.listeners.RaidListener;
 import com.github.waifu.gui.models.ReactTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -44,6 +41,10 @@ public class ReactTable extends JFrame {
    * To be documented.
    */
   private GroupListener groupListener;
+  /**
+   * To be documented.
+   */
+  private RaidListener raidListener;
   /**
    * To be documented.
    */
@@ -110,8 +111,25 @@ public class ReactTable extends JFrame {
 
     groupListener = (account, exists) -> {
       final DefaultTableModel tableModel = (DefaultTableModel) reactTable.getModel();
+      final int width = account.getRecentCharacter().getCharacterImage(account.getRecentCharacter().getInventory().getReactIssue().getColors()).getIconWidth();
+      for (int i = 0; i < tableModel.getRowCount(); i++) {
+        final String nickname = String.valueOf(tableModel.getValueAt(i, ReactTableModel.Column.RAIDER.ordinal()));
+        if (Utilities.parseUsernamesFromNickname(nickname).stream().noneMatch(account.getName()::equalsIgnoreCase))
+          continue;
 
+        final React react = (React) tableModel.getValueAt(i, ReactTableModel.Column.REACT.ordinal());
+        final Character recentChar = account.getRecentCharacter();
+        recentChar.parseCharacterReact(account.getName(), react);
+        tableModel.setValueAt(account.getName(), i, ReactTableModel.Column.USERNAME.ordinal());
+        tableModel.setValueAt(recentChar.getInventory().getReactIssue().getWhisper(), i, ReactTableModel.Column.MESSAGE.ordinal());
+        tableModel.setValueAt(recentChar.getCharacterImage(account.getRecentCharacter().getInventory().getReactIssue().getColors()), i, ReactTableModel.Column.INVENTORY.ordinal());
+      }
+      reactTable.getColumnModel().getColumn(ReactTableModel.Column.INVENTORY.ordinal()).setMinWidth(width);
+      reactTable.setModel(tableModel);
+      updateFilters();
     };
+
+    raidListener = this::createTable;
 
     Gui.getRaid().getGroup().addListener(groupListener);
   }
@@ -131,9 +149,22 @@ public class ReactTable extends JFrame {
         final String id = ids.getString(i);
         final ViBotRaider viBotRaider = Gui.getRaid().getViBotRaiderById(id);
         if (viBotRaider == null) {
-          System.out.println(id);
+          final Object[] row = new Object[6];
+          row[0] = react;
+          row[1] = id;
+          row[ReactTableModel.Column.MESSAGE.ordinal()] = ";find " + id;
+          tableModel.addRow(row);
+          continue;
         }
         final Account account = Gui.getRaid().getGroup().getAccountByNickname(Utilities.parseUsernamesFromNickname(viBotRaider.getNickname()));
+        if (account == null) {
+          final Object[] row = new Object[6];
+          row[0] = react;
+          row[1] = viBotRaider.getNickname();
+          row[ReactTableModel.Column.MESSAGE.ordinal()] = ";find " + viBotRaider.getNickname();
+          tableModel.addRow(row);
+          continue;
+        }
         tableModel.addRow(createRow(react, viBotRaider, account));
       }
     }
@@ -143,20 +174,22 @@ public class ReactTable extends JFrame {
   }
 
   private Object[] createRow(final React react, final ViBotRaider viBotRaider, final Account account) {
+    account.getRecentCharacter().parseCharacterReact(account.getName(), react);
+
     final Object[] row = new Object[6];
-    row[0] = react.getName();
+    row[0] = react;
     row[1] = viBotRaider.getNickname();
 
-    if (account != null) {
-      row[2] = account.getName();
-      final ImageIcon characterImage = account.getRecentCharacter().getCharacterImage();
-      if (characterImage != null) {
-        final int cWidth = characterImage.getIconWidth();
+    row[2] = account.getName();
+    final ImageIcon characterImage = account.getRecentCharacter().getCharacterImage(account.getRecentCharacter().getInventory().getReactIssue().getColors());
+    if (characterImage != null) {
+      final int cWidth = characterImage.getIconWidth();
+      if (reactTable.getColumnModel().getColumnCount() > 0) {
         reactTable.getColumnModel().getColumn(ReactTableModel.Column.INVENTORY.ordinal()).setMinWidth(cWidth);
       }
-      row[3] = characterImage;
-      row[4] = account.getRecentCharacter().getInventory().getIssue().getMessage();
     }
+    row[3] = characterImage;
+    row[4] = account.getRecentCharacter().getInventory().getReactIssue().getWhisper();
     row[5] = false;
 
     return row;
@@ -191,10 +224,10 @@ public class ReactTable extends JFrame {
       @Override
       protected Void doInBackground() {
         if (removeGoodReactsCheckBox.isSelected()) {
-          removeGoodReacts = RowFilter.notFilter(RowFilter.regexFilter("None", 3));
+          removeGoodReacts = RowFilter.notFilter(RowFilter.regexFilter("None", ReactTableModel.Column.MESSAGE.ordinal()));
           updateFilters();
         } else {
-          removeGoodReacts = RowFilter.regexFilter("", 3);
+          removeGoodReacts = RowFilter.regexFilter("", ReactTableModel.Column.MESSAGE.ordinal());
           updateFilters();
         }
         return null;
@@ -205,10 +238,10 @@ public class ReactTable extends JFrame {
       @Override
       protected Void doInBackground() {
         if (removeBadReactsCheckBox.isSelected()) {
-          removeBadReacts = RowFilter.regexFilter("None", 3);
+          removeBadReacts = RowFilter.regexFilter("None", ReactTableModel.Column.MESSAGE.ordinal());
           updateFilters();
         } else {
-          removeBadReacts = RowFilter.regexFilter("", 3);
+          removeBadReacts = RowFilter.regexFilter("", ReactTableModel.Column.MESSAGE.ordinal());
           updateFilters();
         }
         return null;
@@ -219,10 +252,10 @@ public class ReactTable extends JFrame {
       @Override
       protected Void doInBackground() {
         if (removeManualReactsCheckBox.isSelected()) {
-          removeManualReacts = RowFilter.notFilter(RowFilter.regexFilter("/lock", 3));
+          removeManualReacts = RowFilter.notFilter(RowFilter.regexFilter("/lock", ReactTableModel.Column.MESSAGE.ordinal()));
           updateFilters();
         } else {
-          removeManualReacts = RowFilter.regexFilter("", 3);
+          removeManualReacts = RowFilter.regexFilter("", ReactTableModel.Column.MESSAGE.ordinal());
           updateFilters();
         }
         return null;
@@ -245,7 +278,7 @@ public class ReactTable extends JFrame {
   }
 
   /**
-   * Method generated by IntelliJ IDEA Gui Designer.
+   * Method generated by IntelliJ IDEA GUI Designer
    * >>> IMPORTANT!! <<<
    * DO NOT edit this method OR call it in your code!
    *
@@ -254,6 +287,7 @@ public class ReactTable extends JFrame {
   private void $$$setupUI$$$() {
     reactPanel = new JPanel();
     reactPanel.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
+    reactPanel.setPreferredSize(new Dimension(600, 700));
     final JScrollPane scrollPane1 = new JScrollPane();
     reactPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "Reacts", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
@@ -275,10 +309,7 @@ public class ReactTable extends JFrame {
   }
 
   /**
-   * To be documented.
-   *
    * @noinspection ALL
-   * @return To be documented.
    */
   public JComponent $$$getRootComponent$$$() {
     return reactPanel;

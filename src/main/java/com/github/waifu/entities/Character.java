@@ -3,10 +3,10 @@ package com.github.waifu.entities;
 import com.github.waifu.assets.RotmgAssets;
 import com.github.waifu.assets.objects.PlayerXmlObject;
 import com.github.waifu.assets.objects.SkinXmlObject;
-import com.github.waifu.enums.Problem;
+import com.github.waifu.enums.InventorySlots;
 import com.github.waifu.enums.Stat;
-import com.github.waifu.gui.Gui;
 import com.github.waifu.handlers.ClassDataHandler;
+import com.github.waifu.handlers.ReactHandler;
 import com.github.waifu.handlers.RequirementSheetHandler;
 import com.github.waifu.util.Utilities;
 import java.awt.Color;
@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
 /**
  * Character class to store character data.
@@ -330,14 +330,23 @@ public class Character {
 
   /**
    * Parses character stat.
-   *
    */
-  public void parseCharacter() {
+  public void parseCharacterInventory(final String name) {
+    inventory.resetIssue();
     characterStats.resetProblemStats();
-    inventory.getIssue().resetProblem();
     RequirementSheetHandler.parseMaxedStats(this);
-    inventory.parseInventory();
+    inventory.parseInventory(name);
   }
+
+  /**
+   * Parse react.
+   */
+  public void parseCharacterReact(final String name, final React react) {
+    inventory.resetReactIssue();
+    ReactHandler.parseReact(name, react, this);
+  }
+
+
 
   /**
    * Checks if an account is private (no data).
@@ -361,11 +370,17 @@ public class Character {
    *
    * @return To be documented.
    */
-  public ImageIcon getCharacterImage() {
-    final ImageIcon weapon = new ImageIcon(inventory.getWeapon().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-    final ImageIcon ability = new ImageIcon(inventory.getAbility().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-    final ImageIcon armor = new ImageIcon(inventory.getArmor().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-    final ImageIcon ring = new ImageIcon(inventory.getRing().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+  public ImageIcon getCharacterImage(final Color[] colors) {
+    ImageIcon weapon = new ImageIcon(inventory.getWeapon().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+    ImageIcon ability = new ImageIcon(inventory.getAbility().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+    ImageIcon armor = new ImageIcon(inventory.getArmor().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+    ImageIcon ring = new ImageIcon(inventory.getRing().getImage().getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+
+    if (colors[InventorySlots.WEAPON.getIndex()] != null) weapon = Utilities.markImage(weapon, colors[InventorySlots.WEAPON.getIndex()]);
+    if (colors[InventorySlots.ABILITY.getIndex()] != null) ability = Utilities.markImage(ability, colors[InventorySlots.ABILITY.getIndex()]);
+    if (colors[InventorySlots.ARMOR.getIndex()] != null) armor = Utilities.markImage(armor, colors[InventorySlots.ARMOR.getIndex()]);
+    if (colors[InventorySlots.RING.getIndex()] != null) ring = Utilities.markImage(ring, colors[InventorySlots.RING.getIndex()]);
+
     final List<Integer> widths = new ArrayList<>();
     widths.add(weapon.getIconWidth());
     widths.add(ability.getIconWidth());
@@ -380,6 +395,8 @@ public class Character {
         widths.add(clazz.getIconWidth());
       }
     }
+
+    if (clazz != null && colors[InventorySlots.SKIN.getIndex()] != null) clazz = Utilities.markImage(clazz, colors[InventorySlots.SKIN.getIndex()]);
 
     if (!hasDefaultSkin()) {
       for (final SkinXmlObject skinXMLObject : RotmgAssets.skinXmlObjectList) {
@@ -422,7 +439,7 @@ public class Character {
     appendImageIcon(combined, ring, pos);
 
     final ImageIcon imageIcon = new ImageIcon(combined);
-    imageIcon.setDescription(inventory.printInventory());
+    imageIcon.setDescription(inventory.printInventory() + "\n" + characterStats);
     return imageIcon;
   }
 

@@ -20,7 +20,11 @@ public enum InventorySlots {
   /**
    * To be documented.
    */
-  RING(3);
+  RING(3),
+  /**
+   * The skin being used.
+   */
+  SKIN(4);
 
   /**
    * To be documented.
@@ -43,5 +47,16 @@ public enum InventorySlots {
    */
   public int getIndex() {
     return index;
+  }
+
+  public static InventorySlots getEnumByType(final String type) {
+    return switch (type) {
+      case "weapon" -> WEAPON;
+      case "ability" -> ABILITY;
+      case "armor" -> ARMOR;
+      case "ring" -> RING;
+      case "skin" -> SKIN;
+      default -> null;
+    };
   }
 }

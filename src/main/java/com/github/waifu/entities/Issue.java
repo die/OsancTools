@@ -1,6 +1,7 @@
 package com.github.waifu.entities;
 
 import com.github.waifu.enums.Problem;
+import java.awt.*;
 
 /**
  * Stores issue of an Inventory.
@@ -19,6 +20,10 @@ public class Issue {
    * Stores message to prompt in the table.
    */
   private String message;
+  /**
+   * Mark colors.
+   */
+  private final Color[] colors;
 
   /**
    * Creates an Issue with no whisper or message specified.
@@ -29,6 +34,7 @@ public class Issue {
     this.problem = problem;
     this.whisper = "None";
     this.message = "";
+    colors = new Color[5];
   }
 
   /**
@@ -76,6 +82,10 @@ public class Issue {
     return this.problem;
   }
 
+  public Color[] getColors() {
+    return colors;
+  }
+
   /**
    * setProblem method.
    *
@@ -94,7 +104,8 @@ public class Issue {
     }
   }
 
-  public void resetProblem() {
-    this.problem = Problem.NONE;
+  public void mark(final int pos, final Color color) {
+    if (pos >= colors.length) return;
+    colors[pos] = color;
   }
 }

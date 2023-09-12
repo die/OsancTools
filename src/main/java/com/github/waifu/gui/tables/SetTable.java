@@ -11,7 +11,7 @@ import com.github.waifu.gui.actions.ExportWhoAction;
 import com.github.waifu.gui.actions.ParseGuildLeakersAction;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.listeners.GroupListener;
-import com.github.waifu.gui.listeners.RaidListener;
+import com.github.waifu.gui.listeners.ViBotListener;
 import com.github.waifu.gui.models.SetTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -44,7 +44,7 @@ public class SetTable extends JFrame {
   /**
    * To be documented.
    */
-  private RaidListener raidListener;
+  private ViBotListener viBotListener;
   /**
    * To be documented.
    */
@@ -125,16 +125,17 @@ public class SetTable extends JFrame {
 
     groupListener = (account, exists) -> {
       final DefaultTableModel tableModel = (DefaultTableModel) setsTable.getModel();
-      account.getRecentCharacter().parseCharacter();
-      final int width = account.getRecentCharacter().getCharacterImage().getIconWidth();
+      account.getRecentCharacter().parseCharacterInventory(account.getName());
+      final int width = account.getRecentCharacter().getCharacterImage(account.getRecentCharacter().getInventory().getIssue().getColors()).getIconWidth();
       if (exists) {
         final int nameColumn = 1;
         for (int i = 0; i < tableModel.getRowCount(); i++) {
           if (!tableModel.getValueAt(i, nameColumn).equals(account.getName())) continue;
           final Character recentChar = account.getRecentCharacter();
           tableModel.setValueAt(recentChar.getInventory().getIssue().getProblem().getProblem(), i, 0);
-          tableModel.setValueAt(recentChar.getCharacterImage(), i, 2);
+          tableModel.setValueAt(recentChar.getCharacterImage(recentChar.getInventory().getIssue().getColors()), i, 2);
           tableModel.setValueAt(recentChar.getMaxedStatsImage(), i, 3);
+          tableModel.setValueAt(recentChar.getInventory().getIssue().getWhisper(), i, SetTableModel.Column.MESSAGE.ordinal());
         }
       } else {
         final Object[] row = createRow(account);
@@ -164,6 +165,7 @@ public class SetTable extends JFrame {
     if (group.accounts.isEmpty()) return;
 
     for (final Account account : group.accounts) {
+      account.getRecentCharacter().parseCharacterInventory(account.getName());
       final Object[] row = createRow(account);
       tableModel.addRow(row);
     }
@@ -176,12 +178,12 @@ public class SetTable extends JFrame {
     row[0] = account.getRecentCharacter().getInventory().getIssue().getProblem().getProblem();
     row[1] = account.getName();
 
-    final ImageIcon characterImage = account.getRecentCharacter().getCharacterImage();
+    final ImageIcon characterImage = account.getRecentCharacter().getCharacterImage(account.getRecentCharacter().getInventory().getIssue().getColors());
     if (characterImage != null) {
       final int cWidth = characterImage.getIconWidth();
       setsTable.getColumnModel().getColumn(2).setMinWidth(cWidth);
     }
-    row[2] = account.getRecentCharacter().getCharacterImage();
+    row[2] = account.getRecentCharacter().getCharacterImage(account.getRecentCharacter().getInventory().getIssue().getColors());
 
     final ImageIcon statsImage = account.getRecentCharacter().getMaxedStatsImage();
     if (statsImage != null) {
@@ -191,7 +193,7 @@ public class SetTable extends JFrame {
     }
     row[3] = statsImage;
 
-    row[4] = account.getRecentCharacter().getInventory().getIssue().getMessage();
+    row[4] = account.getRecentCharacter().getInventory().getIssue().getWhisper();
     row[5] = false;
     return row;
   }

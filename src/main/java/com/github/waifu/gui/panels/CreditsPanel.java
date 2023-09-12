@@ -1,16 +1,16 @@
 package com.github.waifu.gui.panels;
 
+import com.github.waifu.debug.Debug;
 import com.github.waifu.debug.KeyListener;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Insets;
-import java.net.URL;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  * To be documented.
@@ -25,6 +25,13 @@ public class CreditsPanel extends JPanel {
     addCreditLabel();
     addKeyListener(new KeyListener(Arrays.asList('g', 'e', 'r', 'p', 'e', 'p'), "images/gui/bluecat.png", "how did you get here?"));
     addKeyListener(new KeyListener(Arrays.asList('g', 'i', 'm', 'r', 'e', 'a', 'p', 'e', 'r'), "images/gui/obito.png", "can i have a drink of water"));
+    getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK), "debug");
+    getActionMap().put("debug", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        new Debug();
+      }
+    });
   }
 
   /**

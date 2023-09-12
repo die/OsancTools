@@ -10,6 +10,7 @@ import com.github.waifu.assets.resextractor.ObjectReader;
 import com.github.waifu.assets.resextractor.SerializedFile;
 import com.github.waifu.assets.resextractor.TextAsset;
 import com.github.waifu.assets.resextractor.Texture2D;
+import com.github.waifu.debug.Debug;
 import com.github.waifu.gui.Main;
 import java.awt.Graphics2D;
 import java.awt.Transparency;
@@ -190,6 +191,7 @@ public class RotmgAssets {
 
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       return false;
     }
   }
@@ -235,6 +237,7 @@ public class RotmgAssets {
         }
       }
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -303,6 +306,7 @@ public class RotmgAssets {
       }
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -349,6 +353,7 @@ public class RotmgAssets {
       }
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -391,6 +396,7 @@ public class RotmgAssets {
       }
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -413,6 +419,7 @@ public class RotmgAssets {
       mapObjects = flippedImage;
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -435,6 +442,7 @@ public class RotmgAssets {
       groundTiles = flippedImage;
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -457,6 +465,7 @@ public class RotmgAssets {
       characters = flippedImage;
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       e.printStackTrace();
     }
     return false;
@@ -467,6 +476,7 @@ public class RotmgAssets {
       spritesheet = new JSONObject(new String(textAsset.getmScript()));
       return true;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       return false;
     }
   }

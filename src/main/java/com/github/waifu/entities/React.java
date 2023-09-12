@@ -369,4 +369,9 @@ public class React {
       account.getRecentCharacter().setSkinImage(Utilities.markImage(account.getRecentCharacter().getSkinImage(), Problem.MISSING_REACT_CLASS.getColor()));
     }
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }

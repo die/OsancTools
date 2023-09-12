@@ -1,5 +1,6 @@
 package com.github.waifu.util;
 
+import com.github.waifu.debug.Debug;
 import com.github.waifu.gui.Main;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -80,6 +81,7 @@ public final class Utilities {
       }
       return version;
     } catch (Exception e) {
+      Debug.printStacktrace(e.toString());
       return null;
     }
   }

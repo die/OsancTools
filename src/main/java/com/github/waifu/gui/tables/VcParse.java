@@ -6,16 +6,13 @@ import com.github.waifu.entities.ViBotRaider;
 import com.github.waifu.gui.Gui;
 import com.github.waifu.gui.actions.TableCopyAction;
 import com.github.waifu.gui.listeners.GroupListener;
-import com.github.waifu.gui.listeners.RaidListener;
+import com.github.waifu.gui.listeners.ViBotListener;
 import com.github.waifu.gui.models.VcTableModel;
 import com.github.waifu.util.Utilities;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -30,7 +27,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class VcParse extends JFrame {
 
-  private RaidListener raidListener;
+  private ViBotListener viBotListener;
 
   private GroupListener groupListener;
 
@@ -113,6 +110,13 @@ public class VcParse extends JFrame {
             tableModel.setValueAt(raider.getNickname(), i, 0);
             tableModel.setValueAt(raider.inVC() ? raider.getVoiceChannel().getName() : null, i, 2);
             tableModel.setValueAt(raider.isDeaf(), i, 3);
+            String message = "None";
+            if (!raider.inVC()) {
+              message = "/t " + account.getName() + " Please join a voice channel and I'll drag you back in.";
+            } else if (raider.isDeaf()) {
+              message = "/t " + account.getName() + " Please undeafen whenever you're available to.";
+            }
+            tableModel.setValueAt(message, i, VcTableModel.Column.MESSAGE.ordinal());
           }
         }
       } else if (!exists) {
@@ -127,7 +131,13 @@ public class VcParse extends JFrame {
           row[1] = account.getName();
           row[2] = viBotRaider.inVC() ? viBotRaider.getVoiceChannel().getName() : null;
           row[3] = viBotRaider.isDeaf();
-          row[4] = "None";
+          String message = "None";
+          if (!viBotRaider.inVC()) {
+            message = "/t " + account.getName() + " Please join a voice channel and I'll drag you back in.";
+          } else if (viBotRaider.isDeaf()) {
+            message = "/t " + account.getName() + " Please undeafen whenever you're available to.";
+          }
+          row[4] = message;
           row[5] = false;
           tableModel.addRow(row);
         }
@@ -136,20 +146,28 @@ public class VcParse extends JFrame {
       updateFilters();
     };
 
-    raidListener = (vibotRaider) -> {
+    viBotListener = (vibotRaider) -> {
       final DefaultTableModel tableModel = (DefaultTableModel) vcParseTable.getModel();
       for (int i = 0; i < tableModel.getRowCount(); i++) {
-        if (vibotRaider.hasIGN(String.valueOf(tableModel.getValueAt(i, 1)))) {
+        final String name = String.valueOf(tableModel.getValueAt(i, 1));
+        if (vibotRaider.hasIGN(name)) {
           tableModel.setValueAt(vibotRaider.getNickname(), i, 0);
           tableModel.setValueAt(vibotRaider.inVC() ? vibotRaider.getVoiceChannel().getName() : null, i, 2);
           tableModel.setValueAt(vibotRaider.isDeaf(), i, 3);
+          String message = "None";
+          if (!vibotRaider.inVC()) {
+            message = "/t " + name + " Please join a voice channel and I'll drag you back in.";
+          } else if (vibotRaider.isDeaf()) {
+            message = "/t " + name + " Please undeafen whenever you're available to.";
+          }
+          tableModel.setValueAt(message, i, VcTableModel.Column.MESSAGE.ordinal());
         }
       }
       vcParseTable.setModel(tableModel);
       updateFilters();
     };
 
-    Gui.getRaid().addListener(raidListener);
+    Gui.getRaid().addViBotListener(viBotListener);
     Gui.getRaid().getGroup().addListener(groupListener);
   }
 
@@ -172,7 +190,13 @@ public class VcParse extends JFrame {
         row[1] = a.getName();
         row[2] = viBotRaider.inVC() ? viBotRaider.getVoiceChannel().getName() : null;
         row[3] = viBotRaider.isDeaf();
-        row[4] = "None";
+        String message = "None";
+        if (!viBotRaider.inVC()) {
+          message = "/t " + a.getName() + " Please join a voice channel and I'll drag you back in.";
+        } else if (viBotRaider.isDeaf()) {
+          message = "/t " + a.getName() + " Please undeafen whenever you're available to.";
+        }
+        row[4] = message;
         row[5] = false;
         tableModel.addRow(row);
       }
@@ -289,7 +313,6 @@ public class VcParse extends JFrame {
             names.add(String.valueOf(tableModel.getValueAt(i, 1)));
           }
         }
-        System.out.println(names.toString());
         final StringSelection stringSelection = new StringSelection(names.toString());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
         return null;

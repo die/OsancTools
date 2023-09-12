@@ -38,12 +38,12 @@ public final class RequirementSheetHandler {
    *
    * @param inventory to be documented.
    */
-  public static void parse(final Inventory inventory) {
+  public static void parse(final Inventory inventory, final String name) {
     final List<Item> items = inventory.getItems();
     final Issue issue = inventory.getIssue();
     if (items.stream().allMatch(item -> item.getName().equals("Empty slot"))) {
       issue.setProblem(Problem.EMPTY_SLOT);
-      items.forEach(item -> item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor())));
+      items.forEach(item -> issue.mark(InventorySlots.getEnumByType(item.getType()).getIndex(), Problem.EMPTY_SLOT.getColor()));
       issue.setMessage("");
       issue.setWhisper("");
     } else {
@@ -53,13 +53,13 @@ public final class RequirementSheetHandler {
 
       switch (metric) {
         case "points" -> {
-          baseParse(items, issue);
+          baseParse(items, issue, name);
           int points = 0;
           for (final Item i : items) {
-            final int calculatedPoints = calculatePoints(i, items);
+            final int calculatedPoints = calculatePoints(issue, i, items);
 
             if (calculatedPoints > 0) {
-              i.setImage(Utilities.markImage(i.getImage(), Color.CYAN));
+              issue.mark(InventorySlots.getEnumByType(i.getType()).getIndex(), Color.CYAN);
               i.getImage().setDescription("marked");
             }
             points += calculatedPoints;
@@ -71,7 +71,7 @@ public final class RequirementSheetHandler {
           }
         }
 
-        case "name" -> baseParse(items, issue);
+        case "name" -> baseParse(items, issue, name);
         default -> throw new IllegalStateException("Unexpected value: " + metric);
       }
     }
@@ -83,13 +83,13 @@ public final class RequirementSheetHandler {
    * @param items to be documented.
    * @param issue to be documented.
    */
-  private static void baseParse(final List<Item> items, final Issue issue) {
+  private static void baseParse(final List<Item> items, final Issue issue, final String name) {
     for (final Item i : items) {
       if (!RequirementSheetHandler.parseEmptySlot(i, issue)) {
         switch (i.getLabel()) {
           case "UT", "ST" -> {
-            parseSwapout(i, issue);
-            parseBannedItem(i, items, issue);
+            parseSwapout(i, issue, name);
+            parseBannedItem(i, items, issue, name);
           }
           default -> RequirementSheetHandler.parseTier(i, issue);
         }
@@ -145,7 +145,7 @@ public final class RequirementSheetHandler {
    * @param items to be documented.
    * @return To be documented.
    */
-  private static int calculatePoints(final Item item, final List<Item> items) {
+  private static int calculatePoints(final Issue issue, final Item item, final List<Item> items) {
     final JSONObject requirementSheet = getRequirementSheet();
     if (requirementSheet == null) return 0;
     /*
@@ -206,8 +206,10 @@ public final class RequirementSheetHandler {
                     case "ring" -> items.get(InventorySlots.RING.getIndex());
                     default -> null;
                   };
-                  item1.setImage(Utilities.markImage(item1.getImage(), Color.CYAN));
-                  item1.getImage().setDescription("marked");
+                  if (item1 != null) {
+                    issue.mark(InventorySlots.getEnumByType(item1.getType()).getIndex(), Color.CYAN);
+                    item1.getImage().setDescription("marked");
+                  }
                 }
                 return Integer.parseInt(keys);
               }
@@ -231,7 +233,7 @@ public final class RequirementSheetHandler {
   private static boolean parseEmptySlot(final Item item, final Issue issue) {
     if (item.getName().equals("Empty slot")) {
       issue.setProblem(Problem.EMPTY_SLOT);
-      item.setImage(Utilities.markImage(item.getImage(), Problem.EMPTY_SLOT.getColor()));
+      issue.mark(InventorySlots.getEnumByType(item.getType()).getIndex(), Problem.EMPTY_SLOT.getColor());
       item.getImage().setDescription("marked");
       return true;
     } else {
@@ -257,13 +259,13 @@ public final class RequirementSheetHandler {
 
       if (tier < getRequirementSheet().getJSONObject("tier").getInt(item.getType())) {
         issue.setProblem(Problem.UNDER_REQS);
-        item.setImage(Utilities.markImage(item.getImage(), Problem.UNDER_REQS.getColor()));
+        issue.mark(InventorySlots.getEnumByType(item.getType()).getIndex(), Problem.UNDER_REQS.getColor());
         item.getImage().setDescription("marked");
       }
     } catch (final Exception e) {
       e.printStackTrace();
       issue.setProblem(Problem.ERROR);
-      item.setImage(Utilities.markImage(item.getImage(), Problem.ERROR.getColor()));
+      issue.mark(InventorySlots.getEnumByType(item.getType()).getIndex(), Problem.ERROR.getColor());
       item.getImage().setDescription("marked");
     }
   }
@@ -276,7 +278,7 @@ public final class RequirementSheetHandler {
    * @param items to be documented.
    * @return To be documented.
    */
-  public static boolean parseBannedItem(final Item item, final List<Item> items, final Issue issue) {
+  public static boolean parseBannedItem(final Item item, final List<Item> items, final Issue issue, final String name) {
     final JSONObject requirementSheet = getRequirementSheet();
     if (requirementSheet == null) return false;
     if (requirementSheet.has("bannedItems")) {
@@ -294,8 +296,8 @@ public final class RequirementSheetHandler {
 
       if (!allowedStSet) {
         issue.setProblem(Problem.BANNED_ITEM);
-        item.setImage(Utilities.markImage(item.getImage(), Problem.BANNED_ITEM.getColor()));
-        item.getImage().setDescription("marked");
+        issue.mark(InventorySlots.getEnumByType(item.getType()).getIndex(), Problem.BANNED_ITEM.getColor());
+        issue.setWhisper("/t " + name + " " + item.getNameWithoutLabel() + " is a banned item. Do you have another item to swap to?");
       }
       return true;
     } else {
@@ -345,15 +347,16 @@ public final class RequirementSheetHandler {
    * @param issue To be documented.
    * @return To be documented.
    */
-  public static boolean parseSwapout(final Item item, final Issue issue) {
+  public static boolean parseSwapout(final Item item, final Issue issue, final String name) {
     final JSONObject requirementSheet = getRequirementSheet();
     if (requirementSheet == null) return false;
     if (requirementSheet.has("swapoutItems")) {
       final JSONArray swapouts = requirementSheet.getJSONArray("swapoutItems");
       if (swapouts.toList().contains(item.getNameWithoutLabel())) {
         issue.setProblem(Problem.SWAPOUT_ITEM);
-        item.setImage(Utilities.markImage(item.getImage(), Problem.SWAPOUT_ITEM.getColor()));
+        issue.mark(InventorySlots.getEnumByType(item.getType()).getIndex(), Problem.SWAPOUT_ITEM.getColor());
         item.getImage().setDescription("marked");
+        issue.setWhisper("/t " + name + " " + item.getNameWithoutLabel() + " is a swapout item. Do you have another item that meets reqs? You can swap after I confirm.");
         return true;
       } else {
         return false;

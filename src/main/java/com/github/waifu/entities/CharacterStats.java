@@ -6,6 +6,7 @@ import com.github.waifu.enums.Stat;
 import com.github.waifu.handlers.ClassDataHandler;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Stores stats of a character.
@@ -97,5 +98,25 @@ public class CharacterStats {
     }
 
     return ClassDataHandler.getMaxedStatIndices(playerXmlObject, maxHp, maxMp, maxAtt, maxDef, maxSpd, maxDex, maxVit, maxWis);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder stringBuilder = new StringBuilder("Stats: [");
+    StringJoiner stringJoiner = new StringJoiner(", ");
+    for (int i = 0; i < stats.size(); i++) {
+      final Stat stat = Stat.getStatByIndex(i);
+      stringJoiner.add(stat + ": " + stats.get(i));
+    }
+    stringBuilder.append(stringJoiner).append("]\nStat Boosts: [");
+
+    stringJoiner = new StringJoiner(", ");
+    for (int i = 0; i < statBoosts.size(); i++) {
+      final Stat stat = Stat.getStatByIndex(i);
+      stringJoiner.add(stat + ": " + statBoosts.get(i));
+    }
+    stringBuilder.append(stringJoiner).append("]\n");
+
+    return stringBuilder.toString();
   }
 }

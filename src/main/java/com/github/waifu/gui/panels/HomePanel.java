@@ -1,5 +1,6 @@
 package com.github.waifu.gui.panels;
 
+import com.github.waifu.debug.Debug;
 import com.github.waifu.entities.Raid;
 import com.github.waifu.entities.React;
 import com.github.waifu.gui.Gui;
@@ -14,12 +15,9 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -189,6 +187,7 @@ public class HomePanel extends JPanel {
       try {
         new VcParse();
       } catch (Exception ex) {
+        Debug.printStacktrace(ex.toString());
         ex.printStackTrace();
       }
     });
@@ -216,7 +215,6 @@ public class HomePanel extends JPanel {
       final JSONObject raid = map.get(selectionObject);
 
       // reacts
-      System.out.println(raid.getJSONObject("reactables"));
       if (raid.has("reactables")) {
         final JSONObject reactables = raid.getJSONObject("reactables");
         for (final String key : reactables.keySet()) {
@@ -240,7 +238,6 @@ public class HomePanel extends JPanel {
       if (raid.has("time")) {
         Gui.getRaid().setStartTime(new Date(raid.getLong("time")).toString());
       }
-      System.out.println(raid.toString(4));
 
       final JSONArray members = raid.getJSONArray("members");
       final JSONArray earlySlotMembers = raid.getJSONArray("earlySlotMembers");

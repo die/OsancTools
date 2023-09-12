@@ -521,6 +521,7 @@ public enum StatType {
    * Unknown.
    */
   UNKNOWN128(128);
+
   /**
    * Index of the Stat type.
    */

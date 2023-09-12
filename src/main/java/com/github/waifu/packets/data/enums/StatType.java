@@ -328,7 +328,7 @@ public enum StatType {
   /**
    * To be documented.
    */
-  TEXTURE_STAT(80),
+  ENCHANTMENTS(80),
   /**
    * To be documented.
    */
@@ -514,9 +514,9 @@ public enum StatType {
    */
   UNKNOWN126(126),
   /**
-   * Enchantment stat.
+   * Unknown.
    */
-  ENCHANTMENT(127),
+  UNKNOWN127(127),
   /**
    * Unknown.
    */

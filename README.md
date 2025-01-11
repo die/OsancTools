@@ -3,7 +3,7 @@
 OsancTools is a Java application containing various tools for making security work in the Oryx Sanctuary discord server much easier.
 
 ## Installation
-> Note: This project is deprecated. Changes made by Deca combined with missing resource extractor class files make the program inoperable. This repository exists to serve as an archive of the project.
+> Note: This project is deprecated. Changes made by Deca make the program inoperable, such as the new FlatBuffer spritesheet changes. This repository exists to serve as an archive of the project.
 
 Download the [latest release](https://github.com/Waifu/OsancTools/releases/latest) and run the executable.
 
